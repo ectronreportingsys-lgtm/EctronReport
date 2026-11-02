@@ -25,7 +25,8 @@ import {
   Check,
   Calendar,
   ArrowUpDown,
-  Sparkles
+  Sparkles,
+  Filter
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -60,6 +61,38 @@ const MONTH_NAMES = [
   { value: 12, en: 'December', ar: 'ديسمبر' }
 ];
 
+const ALL_STATUS_KEYS: Array<'In Progress' | 'Ready' | 'Submitted'> = ['In Progress', 'Ready', 'Submitted'];
+
+const STATUS_ITEMS: Array<{
+  key: 'In Progress' | 'Ready' | 'Submitted';
+  en: string;
+  ar: string;
+  dotClass: string;
+  activeClass: string;
+}> = [
+  {
+    key: 'In Progress',
+    en: 'In Progress',
+    ar: 'قيد العمل',
+    dotClass: 'bg-amber-500',
+    activeClass: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/50 shadow-xs'
+  },
+  {
+    key: 'Ready',
+    en: 'Ready',
+    ar: 'جاهز للرفع',
+    dotClass: 'bg-emerald-500',
+    activeClass: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-400 border-emerald-500/50 shadow-xs'
+  },
+  {
+    key: 'Submitted',
+    en: 'Submitted',
+    ar: 'تم الرفع',
+    dotClass: 'bg-blue-500',
+    activeClass: 'bg-blue-500/15 text-blue-800 dark:text-blue-400 border-blue-500/50 shadow-xs'
+  }
+];
+
 interface PettyCashBatchesSectionProps {
   initialBatches: PettyCashBatch[];
   expensesData: any[];
@@ -91,7 +124,30 @@ export default function PettyCashBatchesSection({
   // Filter state - Default to all months & all statuses
   const [filterMonth, setFilterMonth] = useState<number | 'all'>('all');
   const [filterYear, setFilterYear] = useState<number>(today.getFullYear());
-  const [filterStatus, setFilterStatus] = useState<'all' | 'In Progress' | 'Ready' | 'Submitted'>('all');
+  const [selectedStatuses, setSelectedStatuses] = useState<Array<'In Progress' | 'Ready' | 'Submitted'>>(ALL_STATUS_KEYS);
+
+  const isAllStatusesSelected = selectedStatuses.length === ALL_STATUS_KEYS.length;
+
+  const handleSelectAllStatuses = () => {
+    setSelectedStatuses(ALL_STATUS_KEYS);
+  };
+
+  const handleToggleStatus = (status: 'In Progress' | 'Ready' | 'Submitted') => {
+    setSelectedStatuses(prev => {
+      // If currently all are selected, clicking one isolates that single status
+      if (prev.length === ALL_STATUS_KEYS.length) {
+        return [status];
+      }
+      // If already included, toggle off
+      if (prev.includes(status)) {
+        const next = prev.filter(s => s !== status);
+        // If nothing left, reset to all
+        return next.length === 0 ? ALL_STATUS_KEYS : next;
+      }
+      // Otherwise, add it (multi-select)
+      return [...prev, status];
+    });
+  };
 
   // Modals state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -150,15 +206,35 @@ export default function PettyCashBatchesSection({
     return map;
   }, [batches]);
 
-  // Filtered batches for display (supports status, month, year)
+  // Status counts based on the current month/year
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      'In Progress': 0,
+      'Ready': 0,
+      'Submitted': 0,
+      'all': 0
+    };
+    batches.forEach(b => {
+      if (filterMonth !== 'all' && b.month !== filterMonth) return;
+      if (b.year !== filterYear) return;
+      counts.all++;
+      if (counts[b.status] !== undefined) {
+        counts[b.status]++;
+      }
+    });
+    return counts;
+  }, [batches, filterMonth, filterYear]);
+
+  // Filtered batches for display (supports multi-status, month, year)
   const displayedBatches = useMemo(() => {
     return batches.filter(b => {
-      if (filterStatus !== 'all' && b.status !== filterStatus) return false;
+      if (selectedStatuses.length > 0 && !selectedStatuses.includes(b.status)) return false;
+      if (selectedStatuses.length === 0) return false;
       if (filterMonth !== 'all' && b.month !== filterMonth) return false;
       if (b.year !== filterYear) return false;
       return true;
     });
-  }, [batches, filterStatus, filterMonth, filterYear]);
+  }, [batches, selectedStatuses, filterMonth, filterYear]);
 
   const activeBatch = useMemo(
     () => batches.find(b => b.id === activeBatchId) || null,
@@ -500,66 +576,125 @@ export default function PettyCashBatchesSection({
       )}
 
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={openCreateBatchModal}
-            className="flex items-center gap-2 px-4 py-2 rounded-full btn-primary-gradient bg-zinc-100 hover:bg-white text-zinc-900 font-semibold text-sm transition-all shadow-sm cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Batch +</span>
-          </button>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Status Filter */}
-            <select
-              value={filterStatus}
-              onChange={e =>
-                setFilterStatus(e.target.value as 'all' | 'In Progress' | 'Ready' | 'Submitted')
-              }
-              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
+      <div className="flex flex-col gap-3.5 border-b border-zinc-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              onClick={openCreateBatchModal}
+              className="flex items-center gap-2 px-4 py-2 rounded-full btn-primary-gradient bg-zinc-100 hover:bg-white text-zinc-900 font-semibold text-sm transition-all shadow-sm cursor-pointer"
             >
-              <option value="all">{t('All Statuses', 'كل الحالات')}</option>
-              <option value="In Progress">{t('In Progress', 'قيد العمل (In Progress)')}</option>
-              <option value="Ready">{t('Ready', 'جاهز (Ready)')}</option>
-              <option value="Submitted">{t('Submitted', 'تم الرفع (Submitted)')}</option>
-            </select>
+              <Plus className="w-4 h-4" />
+              <span>New Batch +</span>
+            </button>
 
-            <select
-              value={filterMonth}
-              onChange={e =>
-                setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))
-              }
-              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
-            >
-              <option value="all">{t('All Months', 'كل الأشهر')}</option>
-              {MONTH_NAMES.map(m => (
-                <option key={m.value} value={m.value}>
-                  {lang === 'ar' ? m.ar : m.en}
-                </option>
-              ))}
-            </select>
+            {/* Month & Year Selectors */}
+            <div className="flex items-center gap-2">
+              <select
+                value={filterMonth}
+                onChange={e =>
+                  setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                }
+                className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
+              >
+                <option value="all">{t('All Months', 'كل الأشهر')}</option>
+                {MONTH_NAMES.map(m => (
+                  <option key={m.value} value={m.value}>
+                    {lang === 'ar' ? m.ar : m.en}
+                  </option>
+                ))}
+              </select>
 
-            <select
-              value={filterYear}
-              onChange={e => setFilterYear(Number(e.target.value))}
-              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
-            >
-              {[2024, 2025, 2026, 2027].map(y => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+              <select
+                value={filterYear}
+                onChange={e => setFilterYear(Number(e.target.value))}
+                className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
+              >
+                {[2024, 2025, 2026, 2027].map(y => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <h2 className="text-lg font-bold text-white flex items-center sm:justify-end gap-2">
+              <span>Petty Cash Batches</span>
+              <FolderOpen className="w-5 h-5 text-[#14B8A6]" />
+            </h2>
+            <p className="text-xs text-zinc-400">{currentMonthLabel} — {t('Batches for accounting reports preparation', 'مجموعات تجهيز ملفات الحسابات')}</p>
           </div>
         </div>
 
-        <div className="text-right">
-          <h2 className="text-lg font-bold text-white flex items-center sm:justify-end gap-2">
-            <span>Petty Cash Batches</span>
-            <FolderOpen className="w-5 h-5 text-[#14B8A6]" />
-          </h2>
-          <p className="text-xs text-zinc-400">{currentMonthLabel} — {t('Batches for accounting reports preparation', 'مجموعات تجهيز ملفات الحسابات')}</p>
+        {/* Status Multi-Select Filter Bar (Allows selecting 1, multiple, or all statuses) */}
+        <div className="flex items-center justify-between gap-3 flex-wrap pt-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-bold text-[#173B63] dark:text-zinc-400 flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-[#14B8A6]" />
+              <span>{t('Status Filter:', 'تصفية الحالات:')}</span>
+            </span>
+
+            {/* "All Statuses" toggle pill */}
+            <button
+              type="button"
+              onClick={handleSelectAllStatuses}
+              className={clsx(
+                "px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5",
+                isAllStatusesSelected
+                  ? "bg-[#173B63] dark:bg-zinc-100 text-white dark:text-zinc-900 border-[#173B63] dark:border-white shadow-xs"
+                  : "bg-white dark:bg-zinc-900 text-[#475569] dark:text-zinc-400 border-[#D2E3F0] dark:border-zinc-800 hover:border-zinc-500"
+              )}
+            >
+              <span>{t('All Statuses', 'كل الحالات')}</span>
+              <span className="text-[10px] opacity-75">({statusCounts.all})</span>
+            </button>
+
+            {/* Individual Status pills with multi-select support */}
+            {STATUS_ITEMS.map(status => {
+              const isSelected = selectedStatuses.includes(status.key);
+              const count = statusCounts[status.key] || 0;
+              return (
+                <button
+                  key={status.key}
+                  type="button"
+                  onClick={() => handleToggleStatus(status.key)}
+                  className={clsx(
+                    "px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5",
+                    isSelected
+                      ? status.activeClass
+                      : "bg-white/80 dark:bg-zinc-900 text-[#475569] dark:text-zinc-500 border-[#D2E3F0] dark:border-zinc-800/80 hover:border-zinc-600 opacity-60 hover:opacity-100"
+                  )}
+                  title={t('Click to toggle this status (select one or multiple)', 'اضغط لاختيار أو إلغاء هذه الحالة (يمكن اختيار أكثر من حالة معاً)')}
+                >
+                  <span className={clsx("w-2 h-2 rounded-full", isSelected ? status.dotClass : "bg-zinc-400 dark:bg-zinc-600")} />
+                  <span>{lang === 'ar' ? status.ar : status.en}</span>
+                  <span className="text-[10px] opacity-80">({count})</span>
+                  {isSelected && !isAllStatusesSelected && (
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Helper text */}
+          <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
+            <span>
+              {selectedStatuses.length === ALL_STATUS_KEYS.length
+                ? t('Showing all available statuses', 'عرض جميع الحالات المتاحة')
+                : t(`${selectedStatuses.length} of ${ALL_STATUS_KEYS.length} statuses selected`, `تم اختيار ${selectedStatuses.length} من أصل ${ALL_STATUS_KEYS.length} حالات`)}
+            </span>
+            {selectedStatuses.length !== ALL_STATUS_KEYS.length && (
+              <button
+                type="button"
+                onClick={handleSelectAllStatuses}
+                className="text-[#14B8A6] hover:underline cursor-pointer font-semibold text-xs"
+              >
+                {t('Reset to All', 'استعادة الكل')}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -571,8 +706,10 @@ export default function PettyCashBatchesSection({
           </div>
           <div>
             <h3 className="text-base font-bold text-white">
-              {filterStatus !== 'all'
-                ? t(`No invoice batches found with status "${filterStatus}"`, `لا توجد مجموعات فواتير بالحالة "${filterStatus}"`)
+              {selectedStatuses.length === 0
+                ? t('No status selected. Please select at least one status.', 'لم يتم تحديد أي حالة. يرجى اختيار حالة واحدة على الأقل.')
+                : !isAllStatusesSelected
+                ? t(`No invoice batches found matching the selected statuses (${selectedStatuses.map(s => t(s, s)).join(', ')})`, `لا توجد مجموعات فواتير مطابقة للحالات المحددة (${selectedStatuses.map(s => t(s, s)).join('، ')})`)
                 : t(`No invoice batches found in ${currentMonthLabel}`, `لا توجد مجموعات فواتير في ${currentMonthLabel}`)}
             </h3>
             <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
