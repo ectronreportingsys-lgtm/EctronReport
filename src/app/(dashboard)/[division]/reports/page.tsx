@@ -10,10 +10,12 @@ import * as XLSX from 'xlsx';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/components/layout/ThemeProvider';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 const TABS = ['Daily', 'Weekly', 'Monthly', 'Yearly'];
 
 export default function ReportsPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const division = params.division as string;
   const [activeTab, setActiveTab] = useState('Daily');
@@ -210,13 +212,13 @@ export default function ReportsPage() {
         </div>
         <div className="flex items-center gap-3">
           <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 text-zinc-200 text-sm font-medium hover:bg-zinc-700 transition-colors border border-zinc-700">
-            <Printer className="w-4 h-4" /> Print Report
+            <Printer className="w-4 h-4" /> {t('Print Report')}
           </button>
           <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-lg btn-primary-gradient bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20">
-            <Download className="w-4 h-4" /> Export PDF
+            <Download className="w-4 h-4" /> {t('Export PDF')}
           </button>
           <button onClick={exportToExcel} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-900/20">
-            <Download className="w-4 h-4" /> Export Excel
+            <Download className="w-4 h-4" /> {t('Export Excel')}
           </button>
         </div>
       </div>
@@ -335,6 +337,7 @@ export default function ReportsPage() {
 }
 
 function DailyReport({ division, totals, date, target, shiftData, failersData }: { division: string, totals: any, date: string, target: number, shiftData: any, failersData?: any }) {
+  const { t } = useLanguage();
   const isWater = division === 'water';
   
   const achieved = isWater ? totals.packaging : totals.multy_test;
@@ -359,17 +362,17 @@ function DailyReport({ division, totals, date, target, shiftData, failersData }:
 
 
 
-      <h3 className="text-lg font-semibold text-white print:text-black mb-2">Daily Summary</h3>
+      <h3 className="text-lg font-semibold text-white print:text-black mb-2">{t('Daily Summary')}</h3>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <StatBox label="Today's Target" value={target.toLocaleString()} />
-        <StatBox label="Production" value={achieved.toLocaleString()} color="text-[#0F766E] dark:text-[#00a99d]" />
-        <StatBox label="Remaining" value={remaining.toLocaleString()} color="text-orange-500" />
-        <StatBox label="Total Failers" value={totalFailers.toLocaleString()} color="text-red-500" />
-        <StatBox label="Efficiency" value={`${eff}%`} />
+        <StatBox label={t("Today's Target")} value={target.toLocaleString()} />
+        <StatBox label={t("Production")} value={achieved.toLocaleString()} color="text-[#0F766E] dark:text-[#00a99d]" />
+        <StatBox label={t("Remaining")} value={remaining.toLocaleString()} color="text-orange-500" />
+        <StatBox label={t("Total Failers")} value={totalFailers.toLocaleString()} color="text-red-500" />
+        <StatBox label={t("Efficiency")} value={`${eff}%`} />
       </div>
       
       <div className="mt-4">
-        <h4 className="text-sm text-zinc-400 mb-3 font-medium">Production Steps Efficiency</h4>
+        <h4 className="text-sm text-zinc-400 mb-3 font-medium">{t('Production Steps Efficiency')}</h4>
         {isWater ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <StepBox name="Assembly" value={formatStep(totals.assembly)} status={getStatus(totals.assembly)} />
@@ -394,7 +397,7 @@ function DailyReport({ division, totals, date, target, shiftData, failersData }:
       </div>
       
       <div className="mt-8">
-        <h4 className="text-sm text-zinc-400 mb-3 font-medium">Detailed Production Table</h4>
+        <h4 className="text-sm text-zinc-400 mb-3 font-medium">{t('Detailed Production Table')}</h4>
         <ProductionTable 
           type={division as 'water' | 'electricity'} 
           dynamicWaterData={shiftData}
@@ -425,6 +428,7 @@ function StepBox({ name, value, status }: { name: string, value: string, status:
 }
 
 function WeeklyReport({ dbData, division, year, month, target }: { dbData: any[], division: string, year: string, month: string, target: number }) {
+  const { t } = useLanguage();
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const isWater = division === 'water';
@@ -545,12 +549,12 @@ function WeeklyReport({ dbData, division, year, month, target }: { dbData: any[]
   return (
     <div className="flex flex-col gap-8 h-full">
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4">Weekly Production - {monthName} {year}</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">{t('Weekly Production')} - {monthName} {year}</h3>
         <ReactECharts option={options} style={{ height: '300px' }} />
       </div>
 
       <div className="flex-1 min-h-0">
-        <h4 className="text-sm text-zinc-400 mb-3 font-medium">Detailed Production Table (Horizontal Scroll)</h4>
+        <h4 className="text-sm text-zinc-400 mb-3 font-medium">{t('Detailed Production Table (Horizontal Scroll)')}</h4>
         <div className="w-full overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 custom-scrollbar pb-2">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
@@ -678,6 +682,7 @@ function WeeklyReport({ dbData, division, year, month, target }: { dbData: any[]
 }
 
 function MonthlyReport({ dbData, division, year, target }: { dbData: any[], division: string, year: string, target: number }) {
+  const { t } = useLanguage();
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const isWater = division === 'water';
@@ -768,12 +773,12 @@ function MonthlyReport({ dbData, division, year, target }: { dbData: any[], divi
   return (
     <div className="flex flex-col gap-8 h-full">
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4">Monthly Production - {year}</h3>
+        <h3 className="text-lg font-semibold text-white mb-4">{t('Monthly Production')} - {year}</h3>
         <ReactECharts option={options} style={{ height: '300px' }} />
       </div>
 
       <div className="flex-1 min-h-0">
-        <h4 className="text-sm text-zinc-400 mb-3 font-medium">Detailed Monthly Table (Horizontal Scroll)</h4>
+        <h4 className="text-sm text-zinc-400 mb-3 font-medium">{t('Detailed Monthly Table (Horizontal Scroll)')}</h4>
         <div className="w-full overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 custom-scrollbar pb-2">
           <table className="w-full text-left border-collapse min-w-max">
             <thead>
@@ -855,6 +860,7 @@ function MonthlyReport({ dbData, division, year, target }: { dbData: any[], divi
 }
 
 function YearlyReport({ dbData, division }: { dbData: any[], division: string }) {
+  const { t } = useLanguage();
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const isWater = division === 'water';
@@ -881,7 +887,7 @@ function YearlyReport({ dbData, division }: { dbData: any[], division: string })
     yAxis: { type: 'value', axisLabel: { color: isLight ? '#475569' : '#a1a1aa' }, splitLine: { lineStyle: { color: isLight ? '#E2E8F0' : '#27272a' } } },
     series: [{ type: 'bar', data: data, label: { show: true, position: 'top', color: isLight ? '#173B63' : '#fff', fontWeight: 'bold' }, itemStyle: { color: isLight ? '#14B8A6' : '#00a99d', borderRadius: [4, 4, 0, 0] } }]
   };
-  return <div className="h-full"><h3 className="text-lg font-semibold text-white mb-4">Yearly Growth</h3><ReactECharts option={options} style={{ height: '300px' }} /></div>;
+  return <div className="h-full"><h3 className="text-lg font-semibold text-white mb-4">{t('Yearly Growth')}</h3><ReactECharts option={options} style={{ height: '300px' }} /></div>;
 }
 
 function StatBox({ label, value, color = "text-white" }: { label: string, value: string | number, color?: string }) {

@@ -2,11 +2,13 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function TableDateRangePicker() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const [dateFilter, setDateFilter] = useState(searchParams.get('dateFilter') || 'today');
   const [startDate, setStartDate] = useState(searchParams.get('startDate') || '');
@@ -89,11 +91,11 @@ export default function TableDateRangePicker() {
         onChange={e => handleFilterChange(e.target.value)}
         className="bg-zinc-800/50 border border-zinc-700 text-zinc-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500/50"
       >
-        <option value="today">اليوم (Today)</option>
-        <option value="yesterday">أمس (Yesterday)</option>
-        <option value="last_week">الأسبوع الأخير (Last Week)</option>
-        <option value="this_month">هذا الشهر (This Month)</option>
-        <option value="custom">تحديد فترة (Custom)</option>
+        <option value="today">{t('Today', 'اليوم')}</option>
+        <option value="yesterday">{t('Yesterday', 'أمس')}</option>
+        <option value="last_week">{t('Last Week', 'الأسبوع الأخير')}</option>
+        <option value="this_month">{t('This Month', 'هذا الشهر')}</option>
+        <option value="custom">{t('Custom Range', 'تحديد فترة')}</option>
       </select>
 
       <div className="flex items-center gap-2">

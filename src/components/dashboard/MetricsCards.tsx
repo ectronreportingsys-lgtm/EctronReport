@@ -1,5 +1,8 @@
+'use client';
+
 import { Target, CheckCircle2, TrendingUp, AlertCircle, Zap } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface MetricsProps {
   target: number;
@@ -10,41 +13,42 @@ interface MetricsProps {
 }
 
 export default function MetricsCards({ metrics }: { metrics: MetricsProps }) {
+  const { t } = useLanguage();
   const isWarning = metrics.efficiency < 90;
   const isExcellent = metrics.achieved >= metrics.target;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       <MetricCard 
-        title="Target" 
+        title={t("Target", "المستهدف")} 
         value={metrics.target.toLocaleString()} 
         icon={Target} 
         color="text-blue-400" 
         bg="bg-blue-500/10" 
       />
       <MetricCard 
-        title="Achieved" 
+        title={t("Achieved", "المحقق")} 
         value={metrics.achieved.toLocaleString()} 
         icon={CheckCircle2} 
         color="text-emerald-400" 
         bg="bg-emerald-500/10" 
       />
       <MetricCard 
-        title="Achievement" 
+        title={t("Achievement", "نسبة الإنجاز")} 
         value={`${metrics.achievement}%`} 
         icon={TrendingUp} 
         color={isExcellent ? "text-emerald-400" : "text-blue-400"} 
         bg={isExcellent ? "bg-emerald-500/10" : "bg-blue-500/10"} 
       />
       <MetricCard 
-        title="Remaining" 
+        title={t("Remaining", "المتبقي")} 
         value={metrics.remaining.toLocaleString()} 
         icon={AlertCircle} 
         color="text-yellow-400" 
         bg="bg-yellow-500/10" 
       />
       <MetricCard 
-        title="Efficiency" 
+        title={t("Efficiency", "الكفاءة")} 
         value={`${metrics.efficiency}%`} 
         icon={Zap} 
         color={isWarning ? "text-danger" : "text-emerald-400"} 

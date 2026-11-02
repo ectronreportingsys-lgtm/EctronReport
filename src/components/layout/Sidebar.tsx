@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import { createClient } from '@/lib/supabase';
+import { useLanguage } from './LanguageProvider';
 
 interface SidebarProps {
   userPermissions?: string[];
@@ -32,13 +33,16 @@ interface SidebarProps {
 export default function Sidebar({ userPermissions = [], roleName = '', isCollapsed = false, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLanguage();
   
   // Extract division from pathname (e.g. /water/dashboard -> water)
   const parts = pathname.split('/');
   const division = parts[1] && (parts[1] === 'water' || parts[1] === 'electricity' || parts[1] === 'electricity-ecs1100' || parts[1] === 'petty-cash' || parts[1] === 'visits' || parts[1] === 'visitor') ? parts[1] : 'electricity'; 
 
-  const hasPermission = (key: string) => {
+  const hasPermission = (key?: string) => {
+    if (!key) return true;
     if (roleName === 'Admin') return true;
+    if (userPermissions.includes('visitor_admin') && key.startsWith('visitor_')) return true;
     return userPermissions.includes(key);
   };
 
@@ -48,34 +52,34 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
 
   if (division === 'petty-cash') {
     navItems = [
-      { name: 'Home (الرئيسية)', href: '/home', icon: Home, showAlways: true },
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: `petty_cash_dashboard` },
-      { name: 'Employee Settlement', href: '/settlement', icon: Users, permission: `petty_cash_expenses` },
-      { name: 'Resources (المصادر)', href: '/resources', icon: Settings, permission: `petty_cash_dashboard` },
-      { name: 'Analysis', href: '/analysis', icon: BarChart3, permission: `petty_cash_dashboard` },
+      { name: t('Home', 'الرئيسية'), href: '/home', icon: Home, showAlways: true },
+      { name: t('Dashboard', 'لوحة التحكم'), href: '/dashboard', icon: LayoutDashboard, permission: 'petty_cash_dashboard' },
+      { name: t('Analytics', 'التحليلات'), href: '/analytics', icon: BarChart3, permission: 'petty_cash_dashboard' },
+      { name: t('Employee Settlement', 'تصفية العهد'), href: '/settlement', icon: Users, permission: 'petty_cash_expenses' },
+      { name: t('Resources', 'المصادر والإعدادات'), href: '/resources', icon: Settings, permission: 'petty_cash_resources' },
     ];
   } else if (division === 'visits' || division === 'visitor') {
     navItems = [
-      { name: 'Home (الرئيسية)', href: '/home', icon: Home, showAlways: true },
-      { name: 'Visitor Dashboard', href: '/visitor/dashboard', icon: LayoutDashboard, showAlways: true },
-      { name: 'Register New Visit', href: '/visitor/new', icon: UserPlus, showAlways: true },
-      { name: 'Visits List', href: '/visitor/list', icon: ListFilter, showAlways: true },
-      { name: 'QR Code', href: '/visitor/qrcode', icon: QrCode, showAlways: true },
-      { name: 'Import Excel', href: '/visitor/import', icon: FileSpreadsheet, showAlways: true },
+      { name: t('Home', 'الرئيسية'), href: '/home', icon: Home, showAlways: true },
+      { name: t('Visitor Dashboard', 'لوحة تحكم الزوار'), href: '/visitor/dashboard', icon: LayoutDashboard, permission: 'visitor_dashboard' },
+      { name: t('Register New Visit', 'تسجيل زيارة جديدة'), href: '/visitor/new', icon: UserPlus, permission: 'visitor_register' },
+      { name: t('Visits List', 'قائمة الزيارات'), href: '/visitor/list', icon: ListFilter, permission: 'visitor_list' },
+      { name: t('QR Code', 'رمز الاستجابة QR'), href: '/visitor/qrcode', icon: QrCode, permission: 'visitor_register' },
+      { name: t('Import Excel', 'استيراد إكسل'), href: '/visitor/import', icon: FileSpreadsheet, permission: 'visitor_list' },
     ];
   } else {
     navItems = [
-      { name: 'Home (الرئيسية)', href: '/home', icon: Home, showAlways: true },
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: `${division}_dashboard` },
-      { name: 'Reports', href: '/reports', icon: FileText, permission: `${division}_reports` },
-      { name: 'Upload Data', href: '/upload', icon: UploadCloud, permission: `${division}_daily_entry` },
-      { name: 'AI Analysis', href: '/analysis', icon: BrainCircuit, permission: `${division}_reports` },
+      { name: t('Home', 'الرئيسية'), href: '/home', icon: Home, showAlways: true },
+      { name: t('Dashboard', 'لوحة التحكم'), href: '/dashboard', icon: LayoutDashboard, permission: `${division}_dashboard` },
+      { name: t('Reports', 'التقارير'), href: '/reports', icon: FileText, permission: `${division}_reports` },
+      { name: t('Upload Data', 'رفع البيانات'), href: '/upload', icon: UploadCloud, permission: `${division}_daily_entry` },
+      { name: t('AI Analysis', 'تحليل الذكاء الاصطناعي'), href: '/analysis', icon: BrainCircuit, permission: `${division}_reports` },
     ];
   }
 
   // Admin items
   if (roleName === 'Admin' || userPermissions.includes('admin_panel')) {
-    navItems.push({ name: 'Admin Panel', href: '/admin/users', icon: Users, permission: 'admin_panel' });
+    navItems.push({ name: t('Admin Panel', 'لوحة الإدارة'), href: '/admin/users', icon: Users, permission: 'admin_panel' });
   }
 
   const getHref = (baseHref: string) => {

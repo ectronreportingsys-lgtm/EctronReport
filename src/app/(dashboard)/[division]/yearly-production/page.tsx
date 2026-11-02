@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server';
 import YearlyTable from './YearlyTable';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import T from '@/components/layout/T';
 
 export default async function YearlyProductionPage(props: { params: Promise<{ division: string }> }) {
   const params = await props.params;

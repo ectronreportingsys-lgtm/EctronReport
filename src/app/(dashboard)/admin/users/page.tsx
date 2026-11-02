@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server';
 import UsersTable from './UsersTable';
 import { UserPlus, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
+import T from '@/components/layout/T';
 
 export default async function AdminUsersPage() {
   const supabase = await createClient();
@@ -64,14 +65,14 @@ export default async function AdminUsersPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Users Management</h1>
-          <p className="text-zinc-400 text-sm mt-1">Manage system users, roles, and permissions</p>
+          <h1 className="text-2xl font-bold text-white"><T text="Users Management" /></h1>
+          <p className="text-zinc-400 text-sm mt-1"><T text="Manage system users, roles, and permissions" /></p>
         </div>
         
         <div className="flex items-center gap-3">
           <Link href="/api/admin/users/export-template" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors">
             <Download className="w-4 h-4" />
-            Download Template
+            <T text="Download Template" />
           </Link>
         </div>
       </div>

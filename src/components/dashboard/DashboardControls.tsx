@@ -4,10 +4,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Calendar as CalendarIcon, Clock, Filter } from 'lucide-react';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function DashboardControls({ currentMode, currentDate, currentYear, division }: { currentMode: string, currentDate: string, currentYear: string, division: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
 
   const handleYearChange = (year: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -35,7 +37,7 @@ export default function DashboardControls({ currentMode, currentDate, currentYea
           )}
         >
           <Clock className="w-4 h-4" />
-          يومي (Daily)
+          {t('Daily', 'يومي')}
         </Link>
         <Link
           href={createUrl('yearly')}
@@ -45,7 +47,7 @@ export default function DashboardControls({ currentMode, currentDate, currentYea
           )}
         >
           <CalendarIcon className="w-4 h-4 text-white" />
-          سنوي (Yearly)
+          {t('Yearly', 'سنوي')}
         </Link>
       </div>
 

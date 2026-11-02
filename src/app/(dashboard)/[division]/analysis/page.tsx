@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { BrainCircuit, Sparkles, AlertTriangle, TrendingDown } from 'lucide-react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function AnalysisPage() {
+  const { t } = useLanguage();
   const [isGenerating, setIsGenerating] = useState(true);
   const [text, setText] = useState('');
 
@@ -34,8 +36,8 @@ export default function AnalysisPage() {
           <BrainCircuit className="w-6 h-6 text-[#0F766E] dark:text-purple-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">AI Automated Analysis</h1>
-          <p className="text-[#475569] dark:text-zinc-400 text-sm">Insights generated automatically from your production data.</p>
+          <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">{t('AI Automated Analysis')}</h1>
+          <p className="text-[#475569] dark:text-zinc-400 text-sm">{t('Insights generated automatically from your production data.')}</p>
         </div>
       </div>
 

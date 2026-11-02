@@ -33,6 +33,7 @@ import {
   updateRecurringDescription,
   deleteRecurringDescription
 } from '@/app/(dashboard)/petty-cash/actions/resourcesActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface ResourcesProps {
   initialEmployees: any[];
@@ -47,6 +48,7 @@ export default function ResourcesManagement({
   initialCategories,
   initialDescriptions
 }: ResourcesProps) {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'employees' | 'projects' | 'categories' | 'descriptions'>('employees');
 
   // Lists state
@@ -107,12 +109,12 @@ export default function ResourcesManagement({
         setEmployees(prev => prev.map(emp => 
           emp.id === id ? { ...emp, isPettyCashAllowed: !emp.isPettyCashAllowed } : emp
         ));
-        showToast('success', 'تم تحديث حالة الموظف بنجاح.');
+        showToast('success', t('Employee status updated successfully.', 'تم تحديث حالة الموظف بنجاح.'));
       } else {
-        showToast('error', 'فشل في تحديث حالة الموظف.');
+        showToast('error', t('Failed to update employee status.', 'فشل في تحديث حالة الموظف.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء التحديث.');
+      showToast('error', e.message || t('Error while updating.', 'خطأ أثناء التحديث.'));
     } finally {
       setLoading(false);
     }
@@ -128,12 +130,12 @@ export default function ResourcesManagement({
           emp.id === id ? { ...emp, full_name: editingEmployeeName.trim(), displayName: editingEmployeeName.trim() } : emp
         ));
         setEditingEmployeeId(null);
-        showToast('success', 'تم تعديل اسم الموظف بنجاح.');
+        showToast('success', t('Employee name updated successfully.', 'تم تعديل اسم الموظف بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في تعديل الاسم.');
+        showToast('error', res.error || t('Failed to update employee name.', 'فشل في تعديل الاسم.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء تعديل الاسم.');
+      showToast('error', e.message || t('Error while updating name.', 'خطأ أثناء تعديل الاسم.'));
     } finally {
       setLoading(false);
     }
@@ -151,12 +153,12 @@ export default function ResourcesManagement({
       if (res.success && res.data) {
         setProjects(prev => [...prev, ...res.data].sort((a, b) => a.name.localeCompare(b.name)));
         setNewProjectName('');
-        showToast('success', 'تمت إضافة المشروع بنجاح.');
+        showToast('success', t('Project added successfully.', 'تمت إضافة المشروع بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في إضافة المشروع.');
+        showToast('error', res.error || t('Failed to add project.', 'فشل في إضافة المشروع.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء الإضافة.');
+      showToast('error', e.message || t('Error while adding project.', 'خطأ أثناء الإضافة.'));
     } finally {
       setLoading(false);
     }
@@ -170,12 +172,12 @@ export default function ResourcesManagement({
       if (res.success && res.data) {
         setProjects(prev => prev.map(p => p.id === id ? res.data[0] : p));
         setEditingProjectId(null);
-        showToast('success', 'تم تعديل اسم المشروع بنجاح.');
+        showToast('success', t('Project name updated successfully.', 'تم تعديل اسم المشروع بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في تعديل المشروع.');
+        showToast('error', res.error || t('Failed to update project.', 'فشل في تعديل المشروع.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء التعديل.');
+      showToast('error', e.message || t('Error while updating project.', 'خطأ أثناء التعديل.'));
     } finally {
       setLoading(false);
     }
@@ -193,12 +195,12 @@ export default function ResourcesManagement({
       if (res.success && res.data) {
         setCategories(prev => [...prev, ...res.data].sort((a, b) => a.name.localeCompare(b.name)));
         setNewCategoryName('');
-        showToast('success', 'تمت إضافة التصنيف بنجاح.');
+        showToast('success', t('Category added successfully.', 'تمت إضافة التصنيف بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في إضافة التصنيف.');
+        showToast('error', res.error || t('Failed to add category.', 'فشل في إضافة التصنيف.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء الإضافة.');
+      showToast('error', e.message || t('Error while adding category.', 'خطأ أثناء الإضافة.'));
     } finally {
       setLoading(false);
     }
@@ -212,12 +214,12 @@ export default function ResourcesManagement({
       if (res.success && res.data) {
         setCategories(prev => prev.map(c => c.id === id ? res.data[0] : c));
         setEditingCategoryId(null);
-        showToast('success', 'تم تعديل اسم التصنيف بنجاح.');
+        showToast('success', t('Category name updated successfully.', 'تم تعديل اسم التصنيف بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في تعديل التصنيف.');
+        showToast('error', res.error || t('Failed to update category.', 'فشل في تعديل التصنيف.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء التعديل.');
+      showToast('error', e.message || t('Error while updating category.', 'خطأ أثناء التعديل.'));
     } finally {
       setLoading(false);
     }
@@ -235,12 +237,12 @@ export default function ResourcesManagement({
       if (res.success && res.item) {
         setDescriptions(prev => [...prev, res.item]);
         setNewDescText('');
-        showToast('success', 'تمت إضافة الوصف المتكرر بنجاح.');
+        showToast('success', t('Recurring description added successfully.', 'تمت إضافة الوصف المتكرر بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في إضافة الوصف.');
+        showToast('error', res.error || t('Failed to add description.', 'فشل في إضافة الوصف.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء الإضافة.');
+      showToast('error', e.message || t('Error while adding description.', 'خطأ أثناء الإضافة.'));
     } finally {
       setLoading(false);
     }
@@ -254,12 +256,12 @@ export default function ResourcesManagement({
       if (res.success && res.item) {
         setDescriptions(prev => prev.map(d => d.id === id ? res.item : d));
         setEditingDescId(null);
-        showToast('success', 'تم تعديل الوصف بنجاح.');
+        showToast('success', t('Description updated successfully.', 'تم تعديل الوصف بنجاح.'));
       } else {
-        showToast('error', res.error || 'فشل في تعديل الوصف.');
+        showToast('error', res.error || t('Failed to update description.', 'فشل في تعديل الوصف.'));
       }
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء التعديل.');
+      showToast('error', e.message || t('Error while updating description.', 'خطأ أثناء التعديل.'));
     } finally {
       setLoading(false);
     }
@@ -276,30 +278,30 @@ export default function ResourcesManagement({
         const res = await deleteProject(deleteTarget.id);
         if (res.success) {
           setProjects(prev => prev.filter(p => p.id !== deleteTarget.id));
-          showToast('success', 'تم حذف المشروع بنجاح.');
+          showToast('success', t('Project deleted successfully.', 'تم حذف المشروع بنجاح.'));
         } else {
-          showToast('error', res.error || 'فشل في حذف المشروع.');
+          showToast('error', res.error || t('Failed to delete project.', 'فشل في حذف المشروع.'));
         }
       } else if (deleteTarget.type === 'category') {
         const res = await deleteCategory(deleteTarget.id);
         if (res.success) {
           setCategories(prev => prev.filter(c => c.id !== deleteTarget.id));
-          showToast('success', 'تم حذف التصنيف بنجاح.');
+          showToast('success', t('Category deleted successfully.', 'تم حذف التصنيف بنجاح.'));
         } else {
-          showToast('error', res.error || 'فشل في حذف التصنيف.');
+          showToast('error', res.error || t('Failed to delete category.', 'فشل في حذف التصنيف.'));
         }
       } else if (deleteTarget.type === 'description') {
         const res = await deleteRecurringDescription(deleteTarget.id);
         if (res.success) {
           setDescriptions(prev => prev.filter(d => d.id !== deleteTarget.id));
-          showToast('success', 'تم حذف الوصف بنجاح.');
+          showToast('success', t('Description deleted successfully.', 'تم حذف الوصف بنجاح.'));
         } else {
-          showToast('error', 'فشل في حذف الوصف.');
+          showToast('error', t('Failed to delete description.', 'فشل في حذف الوصف.'));
         }
       }
       setDeleteTarget(null);
     } catch (e: any) {
-      showToast('error', e.message || 'خطأ أثناء الحذف.');
+      showToast('error', e.message || t('Error while deleting.', 'خطأ أثناء الحذف.'));
     } finally {
       setLoading(false);
     }
@@ -357,14 +359,14 @@ export default function ResourcesManagement({
           <Link 
             href="/petty-cash/dashboard" 
             className="flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
-            title="العودة إلى لوحة تحكم العهدة"
+            title={t("Back to Petty Cash Dashboard", "العودة إلى لوحة تحكم العهدة")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Resources (إدارة المصادر والقوائم)</h1>
+            <h1 className="text-2xl font-bold text-white">{t("Resources Management", "إدارة المصادر والقوائم")}</h1>
             <p className="text-zinc-400 text-sm mt-0.5">
-              تحديد الموظفين المصرح لهم، وإدارة المشاريع والتصنيفات ونصوص الوصف المتكررة
+              {t("Manage eligible employees, projects, categories, and recurring descriptions", "تحديد الموظفين المصرح لهم، وإدارة المشاريع والتصنيفات ونصوص الوصف المتكررة")}
             </p>
           </div>
         </div>
@@ -382,7 +384,7 @@ export default function ResourcesManagement({
           )}
         >
           <Users className="w-4 h-4" />
-          <span>Employee</span>
+          <span>{t("Employees", "الموظفون")}</span>
           <span className={clsx(
             "text-xs px-2 py-0.5 rounded-full font-bold",
             activeTab === 'employees' ? "bg-white/20 text-white" : "bg-zinc-800 text-blue-400"
@@ -401,7 +403,7 @@ export default function ResourcesManagement({
           )}
         >
           <Briefcase className="w-4 h-4" />
-          <span>Projects</span>
+          <span>{t("Projects", "المشاريع")}</span>
           <span className={clsx(
             "text-xs px-2 py-0.5 rounded-full font-bold",
             activeTab === 'projects' ? "bg-white/20 text-white" : "bg-zinc-800 text-purple-400"
@@ -420,7 +422,7 @@ export default function ResourcesManagement({
           )}
         >
           <Tags className="w-4 h-4" />
-          <span>Categories</span>
+          <span>{t("Categories", "التصنيفات")}</span>
           <span className={clsx(
             "text-xs px-2 py-0.5 rounded-full font-bold",
             activeTab === 'categories' ? "bg-white/20 text-white" : "bg-zinc-800 text-emerald-400"
@@ -439,7 +441,7 @@ export default function ResourcesManagement({
           )}
         >
           <FileText className="w-4 h-4" />
-          <span>Descriptions</span>
+          <span>{t("Descriptions", "الأوصاف المتكررة")}</span>
           <span className={clsx(
             "text-xs px-2 py-0.5 rounded-full font-bold",
             activeTab === 'descriptions' ? "bg-white/20 text-white" : "bg-zinc-800 text-amber-400"
@@ -458,15 +460,15 @@ export default function ResourcesManagement({
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-400" />
-                Employee (الموظفون المصرح لهم في العهدة)
+                {t("Eligible Employees for Petty Cash", "الموظفون المصرح لهم في العهدة")}
               </h2>
               <p className="text-zinc-400 text-xs mt-1">
-                الموظفون المفعّلون هنا سيظهرون في قائمة اختيار الموظف عند تسجيل أي فاتورة أو مصروف جديد.
+                {t("Active employees here will appear in the employee selection dropdown when recording expenses.", "الموظفون المفعّلون هنا سيظهرون في قائمة اختيار الموظف عند تسجيل أي فاتورة أو مصروف جديد.")}
               </p>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">
-              <span>المفعّلون حالياً:</span>
-              <span className="font-bold text-white">{activeEmployeeCount} موظف</span>
+              <span>{t("Currently Active:", "المفعّلون حالياً:")}</span>
+              <span className="font-bold text-white">{t(`${activeEmployeeCount} employees`, `${activeEmployeeCount} موظف`)}</span>
             </div>
           </div>
 
@@ -476,7 +478,7 @@ export default function ResourcesManagement({
               <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="بحث عن موظف بالاسم أو الرقم الوظيفي..."
+                placeholder={t("Search employee by name or staff ID...", "بحث عن موظف بالاسم أو الرقم الوظيفي...")}
                 value={empSearch}
                 onChange={e => setEmpSearch(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
@@ -492,7 +494,7 @@ export default function ResourcesManagement({
                     : "text-zinc-400 border-zinc-800 hover:bg-zinc-800/40"
                 )}
               >
-                الكل ({employees.length})
+                {t(`All (${employees.length})`, `الكل (${employees.length})`)}
               </button>
               <button
                 onClick={() => setEmpFilter('active')}
@@ -503,7 +505,7 @@ export default function ResourcesManagement({
                     : "text-zinc-400 border-zinc-800 hover:bg-zinc-800/40"
                 )}
               >
-                المفعّلون للعهدة فقط ({activeEmployeeCount})
+                {t(`Active for PC (${activeEmployeeCount})`, `المفعّلون للعهدة فقط (${activeEmployeeCount})`)}
               </button>
             </div>
           </div>
@@ -513,17 +515,17 @@ export default function ResourcesManagement({
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-zinc-400 bg-zinc-800/50 uppercase">
                 <tr>
-                  <th className="px-4 py-3 text-center w-24">مفعّل للعهدة</th>
-                  <th className="px-4 py-3">اسم الموظف (Employee Name)</th>
-                  <th className="px-4 py-3">الرقم الوظيفي / المعرف</th>
-                  <th className="px-4 py-3 text-center w-36">الإجراءات</th>
+                  <th className="px-4 py-3 text-center w-24">{t("Active for PC", "مفعّل للعهدة")}</th>
+                  <th className="px-4 py-3">{t("Employee Name", "اسم الموظف")}</th>
+                  <th className="px-4 py-3">{t("Staff ID / Username", "الرقم الوظيفي / المعرف")}</th>
+                  <th className="px-4 py-3 text-center w-36">{t("Actions", "الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEmployees.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-4 py-8 text-center text-zinc-500">
-                      لا يوجد موظفون مطابقون لبحثك.
+                      {t("No employees matching your search.", "لا يوجد موظفون مطابقون لبحثك.")}
                     </td>
                   </tr>
                 ) : (
@@ -547,7 +549,7 @@ export default function ResourcesManagement({
                             onChange={() => handleToggleEmployee(emp.id)}
                             disabled={loading}
                             className="w-4 h-4 rounded bg-zinc-800 border-zinc-600 text-blue-600 focus:ring-0 cursor-pointer accent-blue-600"
-                            title={isAllowed ? "إلغاء التفعيل للعهدة" : "تفعيل للعهدة"}
+                            title={isAllowed ? t("Disable for petty cash", "إلغاء التفعيل للعهدة") : t("Enable for petty cash", "تفعيل للعهدة")}
                           />
                         </td>
 
@@ -566,14 +568,14 @@ export default function ResourcesManagement({
                                 onClick={() => handleSaveEmployeeName(emp.id)}
                                 disabled={loading}
                                 className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-                                title="حفظ"
+                                title={t("Save", "حفظ")}
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setEditingEmployeeId(null)}
                                 className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 transition-colors"
-                                title="إلغاء"
+                                title={t("Cancel", "إلغاء")}
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -583,7 +585,7 @@ export default function ResourcesManagement({
                               <span>{emp.displayName}</span>
                               {isAllowed && (
                                 <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-semibold">
-                                  متاح للعهدة
+                                  {t("Active for PC", "متاح للعهدة")}
                                 </span>
                               )}
                             </div>
@@ -604,7 +606,7 @@ export default function ResourcesManagement({
                                 setEditingEmployeeName(emp.full_name || emp.displayName);
                               }}
                               className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                              title="تعديل الاسم"
+                              title={t("Edit Name", "تعديل الاسم")}
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
@@ -618,7 +620,7 @@ export default function ResourcesManagement({
                                   : "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30"
                               )}
                             >
-                              {isAllowed ? 'تعطيل' : 'تفعيل'}
+                              {isAllowed ? t('Disable', 'تعطيل') : t('Enable', 'تفعيل')}
                             </button>
                           </div>
                         </td>
@@ -641,14 +643,14 @@ export default function ResourcesManagement({
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-purple-400" />
-                Projects (إدارة المشاريع)
+                {t("Projects Management", "إدارة المشاريع")}
               </h2>
               <p className="text-zinc-400 text-xs mt-1">
-                إضافة مشاريع جديدة أو تعديل أسمائها أو حذفها لتظهر في خيارات تسجيل المصروفات.
+                {t("Add new projects, edit names, or delete them to appear in expense options.", "إضافة مشاريع جديدة أو تعديل أسمائها أو حذفها لتظهر في خيارات تسجيل المصروفات.")}
               </p>
             </div>
             <div className="text-xs px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold">
-              إجمالي المشاريع: {projects.length}
+              {t("Total Projects:", "إجمالي المشاريع:")} {projects.length}
             </div>
           </div>
 
@@ -657,7 +659,7 @@ export default function ResourcesManagement({
             <input
               type="text"
               required
-              placeholder="اسم المشروع الجديد (e.g. ECT Project)..."
+              placeholder={t("New project name (e.g. ECT Project)...", "اسم المشروع الجديد (e.g. ECT Project)...")}
               value={newProjectName}
               onChange={e => setNewProjectName(e.target.value)}
               className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
@@ -668,7 +670,7 @@ export default function ResourcesManagement({
               className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              <span>إضافة مشروع</span>
+              <span>{t("Add Project", "إضافة مشروع")}</span>
             </button>
           </form>
 
@@ -677,7 +679,7 @@ export default function ResourcesManagement({
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="بحث في المشاريع..."
+              placeholder={t("Search projects...", "بحث في المشاريع...")}
               value={projSearch}
               onChange={e => setProjSearch(e.target.value)}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
@@ -690,16 +692,16 @@ export default function ResourcesManagement({
               <thead className="text-xs text-zinc-400 bg-zinc-800/50 uppercase">
                 <tr>
                   <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3">اسم المشروع (Project Name)</th>
-                  <th className="px-4 py-3 text-center w-28">الحالة</th>
-                  <th className="px-4 py-3 text-center w-36">الإجراءات</th>
+                  <th className="px-4 py-3">{t("Project Name", "اسم المشروع")}</th>
+                  <th className="px-4 py-3 text-center w-28">{t("Status", "الحالة")}</th>
+                  <th className="px-4 py-3 text-center w-36">{t("Actions", "الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProjects.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-4 py-8 text-center text-zinc-500">
-                      لا توجد مشاريع مضافة.
+                      {t("No projects added yet.", "لا توجد مشاريع مضافة.")}
                     </td>
                   </tr>
                 ) : (
@@ -722,14 +724,14 @@ export default function ResourcesManagement({
                                 onClick={() => handleSaveProjectName(proj.id)}
                                 disabled={loading}
                                 className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
-                                title="حفظ"
+                                title={t("Save", "حفظ")}
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setEditingProjectId(null)}
                                 className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400"
-                                title="إلغاء"
+                                title={t("Cancel", "إلغاء")}
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -740,7 +742,7 @@ export default function ResourcesManagement({
                         </td>
                         <td className="px-4 py-3 text-center">
                           <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">
-                            نشط
+                            {t("Active", "نشط")}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -751,14 +753,14 @@ export default function ResourcesManagement({
                                 setEditingProjectName(proj.name);
                               }}
                               className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                              title="تعديل اسم المشروع"
+                              title={t("Edit project name", "تعديل اسم المشروع")}
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setDeleteTarget({ type: 'project', id: proj.id, name: proj.name })}
                               className="p-1.5 rounded-lg hover:bg-danger/10 text-zinc-400 hover:text-danger transition-colors"
-                              title="حذف المشروع"
+                              title={t("Delete project", "حذف المشروع")}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -783,14 +785,14 @@ export default function ResourcesManagement({
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <Tags className="w-5 h-5 text-emerald-400" />
-                Categories (إدارة فئات المصروفات)
+                {t("Expense Categories Management", "إدارة فئات المصروفات")}
               </h2>
               <p className="text-zinc-400 text-xs mt-1">
-                إضافة تصنيفات جديدة أو تعديل أسمائها أو حذفها لتظهر في خيارات فئات المصروفات.
+                {t("Add new categories, edit names, or delete them to appear in expense category options.", "إضافة تصنيفات جديدة أو تعديل أسمائها أو حذفها لتظهر في خيارات فئات المصروفات.")}
               </p>
             </div>
             <div className="text-xs px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">
-              إجمالي التصنيفات: {categories.length}
+              {t("Total Categories:", "إجمالي التصنيفات:")} {categories.length}
             </div>
           </div>
 
@@ -799,7 +801,7 @@ export default function ResourcesManagement({
             <input
               type="text"
               required
-              placeholder="اسم التصنيف الجديد (e.g. Office Supplies)..."
+              placeholder={t("New category name (e.g. Office Supplies)...", "اسم التصنيف الجديد (e.g. Office Supplies)...")}
               value={newCategoryName}
               onChange={e => setNewCategoryName(e.target.value)}
               className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
@@ -810,7 +812,7 @@ export default function ResourcesManagement({
               className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              <span>إضافة تصنيف</span>
+              <span>{t("Add Category", "إضافة تصنيف")}</span>
             </button>
           </form>
 
@@ -819,7 +821,7 @@ export default function ResourcesManagement({
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="بحث في التصنيفات..."
+              placeholder={t("Search categories...", "بحث في التصنيفات...")}
               value={catSearch}
               onChange={e => setCatSearch(e.target.value)}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
@@ -832,16 +834,16 @@ export default function ResourcesManagement({
               <thead className="text-xs text-zinc-400 bg-zinc-800/50 uppercase">
                 <tr>
                   <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3">اسم التصنيف (Category Name)</th>
-                  <th className="px-4 py-3 text-center w-28">الحالة</th>
-                  <th className="px-4 py-3 text-center w-36">الإجراءات</th>
+                  <th className="px-4 py-3">{t("Category Name", "اسم التصنيف")}</th>
+                  <th className="px-4 py-3 text-center w-28">{t("Status", "الحالة")}</th>
+                  <th className="px-4 py-3 text-center w-36">{t("Actions", "الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCategories.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-4 py-8 text-center text-zinc-500">
-                      لا توجد تصنيفات مضافة.
+                      {t("No categories added yet.", "لا توجد تصنيفات مضافة.")}
                     </td>
                   </tr>
                 ) : (
@@ -864,14 +866,14 @@ export default function ResourcesManagement({
                                 onClick={() => handleSaveCategoryName(cat.id)}
                                 disabled={loading}
                                 className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
-                                title="حفظ"
+                                title={t("Save", "حفظ")}
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setEditingCategoryId(null)}
                                 className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400"
-                                title="إلغاء"
+                                title={t("Cancel", "إلغاء")}
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -882,7 +884,7 @@ export default function ResourcesManagement({
                         </td>
                         <td className="px-4 py-3 text-center">
                           <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">
-                            نشط
+                            {t("Active", "نشط")}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -893,14 +895,14 @@ export default function ResourcesManagement({
                                 setEditingCategoryName(cat.name);
                               }}
                               className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                              title="تعديل اسم التصنيف"
+                              title={t("Edit category name", "تعديل اسم التصنيف")}
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setDeleteTarget({ type: 'category', id: cat.id, name: cat.name })}
                               className="p-1.5 rounded-lg hover:bg-danger/10 text-zinc-400 hover:text-danger transition-colors"
-                              title="حذف التصنيف"
+                              title={t("Delete category", "حذف التصنيف")}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -925,14 +927,14 @@ export default function ResourcesManagement({
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 <FileText className="w-5 h-5 text-amber-400" />
-                Descriptions (الأوصاف المتكررة)
+                {t("Recurring Descriptions Management", "الأوصاف المتكررة")}
               </h2>
               <p className="text-zinc-400 text-xs mt-1">
-                نصوص الوصف المتكررة تظهر في القائمة السريعة عند تسجيل أي فاتورة لتسريع الإدخال كخيار اختياري.
+                {t("Recurring descriptions appear in quick select during expense entry for faster recording.", "نصوص الوصف المتكررة تظهر في القائمة السريعة عند تسجيل أي فاتورة لتسريع الإدخال كخيار اختياري.")}
               </p>
             </div>
             <div className="text-xs px-3 py-1.5 rounded-xl bg-amber-500/10 border border-purple-500/20 text-amber-400 font-bold">
-              إجمالي الأوصاف: {descriptions.length}
+              {t("Total Descriptions:", "إجمالي الأوصاف:")} {descriptions.length}
             </div>
           </div>
 
@@ -941,7 +943,7 @@ export default function ResourcesManagement({
             <input
               type="text"
               required
-              placeholder="نص الوصف المتكرر الجديد (e.g. ضيافة واجتماعات ووجبات خفيفة)..."
+              placeholder={t("New recurring description text (e.g. Hospitality and snacks)...", "نص الوصف المتكرر الجديد (e.g. ضيافة واجتماعات ووجبات خفيفة)...")}
               value={newDescText}
               onChange={e => setNewDescText(e.target.value)}
               className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -952,7 +954,7 @@ export default function ResourcesManagement({
               className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              <span>إضافة وصف</span>
+              <span>{t("Add Description", "إضافة وصف")}</span>
             </button>
           </form>
 
@@ -961,7 +963,7 @@ export default function ResourcesManagement({
             <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="بحث في الأوصاف المتكررة..."
+              placeholder={t("Search recurring descriptions...", "بحث في الأوصاف المتكررة...")}
               value={descSearch}
               onChange={e => setDescSearch(e.target.value)}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -974,15 +976,15 @@ export default function ResourcesManagement({
               <thead className="text-xs text-zinc-400 bg-zinc-800/50 uppercase">
                 <tr>
                   <th className="px-4 py-3">#</th>
-                  <th className="px-4 py-3">نص الوصف (Description)</th>
-                  <th className="px-4 py-3 text-center w-36">الإجراءات</th>
+                  <th className="px-4 py-3">{t("Description Text", "نص الوصف")}</th>
+                  <th className="px-4 py-3 text-center w-36">{t("Actions", "الإجراءات")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredDescriptions.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="px-4 py-8 text-center text-zinc-500">
-                      لا توجد أوصاف متكررة مضافة.
+                      {t("No recurring descriptions added yet.", "لا توجد أوصاف متكررة مضافة.")}
                     </td>
                   </tr>
                 ) : (
@@ -1005,14 +1007,14 @@ export default function ResourcesManagement({
                                 onClick={() => handleSaveDescription(desc.id)}
                                 disabled={loading}
                                 className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white"
-                                title="حفظ"
+                                title={t("Save", "حفظ")}
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setEditingDescId(null)}
                                 className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400"
-                                title="إلغاء"
+                                title={t("Cancel", "إلغاء")}
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -1029,14 +1031,14 @@ export default function ResourcesManagement({
                                 setEditingDescText(desc.text);
                               }}
                               className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                              title="تعديل الوصف"
+                              title={t("Edit description", "تعديل الوصف")}
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => setDeleteTarget({ type: 'description', id: desc.id, name: desc.text })}
                               className="p-1.5 rounded-lg hover:bg-danger/10 text-zinc-400 hover:text-danger transition-colors"
-                              title="حذف الوصف"
+                              title={t("Delete description", "حذف الوصف")}
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1066,11 +1068,14 @@ export default function ResourcesManagement({
                 <Trash2 className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">تأكيد الحذف</h3>
+                <h3 className="text-lg font-bold text-white">{t("Confirm Delete", "تأكيد الحذف")}</h3>
                 <p className="text-xs text-zinc-400 mt-1">
-                  هل أنت متأكد من حذف {deleteTarget.type === 'project' ? 'المشروع' : deleteTarget.type === 'category' ? 'التصنيف' : 'الوصف'}:
+                  {t(
+                    `Are you sure you want to delete this ${deleteTarget.type === 'project' ? 'project' : deleteTarget.type === 'category' ? 'category' : 'description'}:`,
+                    `هل أنت متأكد من حذف ${deleteTarget.type === 'project' ? 'المشروع' : deleteTarget.type === 'category' ? 'التصنيف' : 'الوصف'}:`
+                  )}
                   <br />
-                  <span className="text-white font-semibold mt-1 inline-block">"{deleteTarget.name}"</span>؟
+                  <span className="text-white font-semibold mt-1 inline-block">"{deleteTarget.name}"</span>?
                 </p>
               </div>
             </div>
@@ -1082,7 +1087,7 @@ export default function ResourcesManagement({
                 disabled={loading}
                 className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
               >
-                إلغاء
+                {t("Cancel", "إلغاء")}
               </button>
               <button
                 type="button"
@@ -1091,7 +1096,7 @@ export default function ResourcesManagement({
                 className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-danger hover:bg-red-600 text-white transition-colors disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                <span>حذف نهائي</span>
+                <span>{t("Permanent Delete", "حذف نهائي")}</span>
               </button>
             </div>
           </div>

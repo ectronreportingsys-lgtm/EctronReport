@@ -50,17 +50,17 @@ export default function VisitorThankYouPage() {
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#173B63] dark:text-white mb-2">
-          شكراً لزيارتكم إلكترون!
+          Thank You for Visiting ECTRON!
         </h1>
         <h2 className="text-lg font-semibold text-[#0F766E] dark:text-[#00a99d] mb-4">
-          Thank You for Visiting ECTRON!
+          شكراً لزيارتكم إلكترون!
         </h2>
 
         <p className="text-sm text-slate-600 dark:text-zinc-300 mb-8 leading-relaxed">
-          تم تسجيل بياناتكم بنجاح. نتطلع للترحيب بكم ونتمنى لكم زيارة مثمرة وموفقة في رحاب مصنع إلكترون الذكي.
+          Your registration has been completed successfully. We look forward to welcoming you to the ECTRON Smart Factory.
           <br />
           <span className="text-xs text-slate-500 dark:text-zinc-400 block mt-2">
-            Your registration has been completed successfully. We look forward to welcoming you.
+            تم تسجيل بياناتكم بنجاح. نتطلع للترحيب بكم ونتمنى لكم زيارة مثمرة وموفقة في رحاب مصنع إلكترون الذكي.
           </span>
         </p>
 
@@ -72,7 +72,7 @@ export default function VisitorThankYouPage() {
               className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2"
             >
               <Home className="w-4 h-4" />
-              <span>العودة للوحة الإدارة (Dashboard)</span>
+              <span>Back to Dashboard</span>
             </Link>
           ) : (
             <Link
@@ -80,7 +80,7 @@ export default function VisitorThankYouPage() {
               className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-[#0F766E] to-[#14B8A6] text-white text-sm font-bold shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>العودة لصفحة التسجيل (New Registration)</span>
+              <span>Register Another Visit</span>
             </Link>
           )}
         </div>

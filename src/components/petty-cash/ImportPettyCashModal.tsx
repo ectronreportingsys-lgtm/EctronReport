@@ -22,6 +22,7 @@ import clsx from 'clsx';
 import * as XLSX from 'xlsx';
 import { importPettyCashExpenses, ImportExpenseInputRow } from '@/app/(dashboard)/petty-cash/actions/pettyCashActions';
 import { PettyCashBatch } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface ImportPettyCashModalProps {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export default function ImportPettyCashModal({
   batches = [],
   options
 }: ImportPettyCashModalProps) {
+  const { t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [parsing, setParsing] = useState(false);
@@ -161,7 +163,7 @@ export default function ImportPettyCashModal({
       const workbook = XLSX.read(buffer, { type: 'array' });
       
       if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-        throw new Error('الملف لا يحتوي على أوراق عمل صالحة.');
+        throw new Error(t('File does not contain valid worksheets.', 'الملف لا يحتوي على أوراق عمل صالحة.'));
       }
 
       const firstSheetName = workbook.SheetNames[0];
@@ -170,7 +172,7 @@ export default function ImportPettyCashModal({
       
       const rawData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
       if (!rawData || rawData.length === 0) {
-        throw new Error('ورقة العمل فارغة.');
+        throw new Error(t('Worksheet is empty.', 'ورقة العمل فارغة.'));
       }
 
       // Step 1: Find Header Row
@@ -238,7 +240,7 @@ export default function ImportPettyCashModal({
       }
 
       if (headerRowIndex === -1) {
-        throw new Error('لم يتم العثور على صف العناوين الرئيسي في الملف. يرجى التأكد من وجود أعمدة (التاريخ، الوصف، المبلغ).');
+        throw new Error(t('Could not find header row. Please ensure Date, Description, and Amount columns exist.', 'لم يتم العثور على صف العناوين الرئيسي في الملف. يرجى التأكد من وجود أعمدة (التاريخ، الوصف، المبلغ).'));
       }
 
       const hasCategoryCol = colMap.category !== -1;
@@ -286,17 +288,17 @@ export default function ImportPettyCashModal({
 
         if (!parsedDate) {
           isValid = false;
-          error = 'تاريخ غير صالح';
+          error = t('Invalid date', 'تاريخ غير صالح');
         } else if (rawAmt <= 0) {
           isValid = false;
-          error = 'المبلغ غير صالح';
+          error = t('Invalid amount', 'المبلغ غير صالح');
         }
 
         rows.push({
           rawNo: rawNo || String(rows.length + 1).padStart(3, '0'),
           date: parsedDate?.iso || '',
           rawDate: parsedDate?.display || cleanStr(rawDateCell),
-          description: rawDesc || 'مصروف نثري عام',
+          description: rawDesc || t('General Expense', 'مصروف نثري عام'),
           categoryName: rawCat,
           employeeName: rawEmp,
           amount: rawAmt,
@@ -307,13 +309,13 @@ export default function ImportPettyCashModal({
       }
 
       if (rows.length === 0) {
-        throw new Error('لم يتم العثور على أي قيود صالحة في الملف.');
+        throw new Error(t('No valid records found in file.', 'لم يتم العثور على أي قيود صالحة في الملف.'));
       }
 
       setParsedRows(rows);
     } catch (err: any) {
       console.error('Error parsing excel:', err);
-      setErrorMessage(err.message || 'حدث خطأ أثناء قراءة الملف. يرجى التحقق من صحة تنسيق الملف.');
+      setErrorMessage(err.message || t('Error reading file. Please check file format.', 'حدث خطأ أثناء قراءة الملف. يرجى التحقق من صحة تنسيق الملف.'));
     } finally {
       setParsing(false);
     }
@@ -355,7 +357,7 @@ export default function ImportPettyCashModal({
   // Submit to Server
   const handleConfirmImport = async () => {
     if (validRows.length === 0) {
-      setErrorMessage('لا توجد بيانات صالحة للاستيراد.');
+      setErrorMessage(t('No valid records to import.', 'لا توجد بيانات صالحة للاستيراد.'));
       return;
     }
 
@@ -393,7 +395,7 @@ export default function ImportPettyCashModal({
       onClose();
     } catch (err: any) {
       console.error('Import error:', err);
-      setErrorMessage(err.message || 'حدث خطأ أثناء حفظ القيود.');
+      setErrorMessage(err.message || t('Error while saving records.', 'حدث خطأ أثناء حفظ القيود.'));
     } finally {
       setSubmitting(false);
     }
@@ -413,13 +415,13 @@ export default function ImportPettyCashModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>رفع واستيراد بيانات النثرية (Excel / CSV)</span>
+                <span>{t('Upload & Import Petty Cash (Excel / CSV)', 'رفع واستيراد بيانات النثرية (Excel / CSV)')}</span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-medium">
                   Smart Importer
                 </span>
               </h2>
               <p className="text-xs text-zinc-400 mt-0.5">
-                يدعم تنسيقات الماستر شيت الداخلية وتنسيقات الأشهر السابقة ونماذج HR تلقائياً
+                {t('Supports Master Data formats, previous monthly files, and HR expense templates automatically', 'يدعم تنسيقات الماستر شيت الداخلية وتنسيقات الأشهر السابقة ونماذج HR تلقائياً')}
               </p>
             </div>
           </div>
@@ -463,19 +465,18 @@ export default function ImportPettyCashModal({
                 <Upload className="w-7 h-7" />
               </div>
               <h3 className="text-base font-semibold text-white">
-                اضغط هنا لاختيار ملف Excel أو اسحبه إلى هذا المربع
+                {t('Click here to choose an Excel file or drag and drop it here', 'اضغط هنا لاختيار ملف Excel أو اسحبه إلى هذا المربع')}
               </h3>
               <p className="text-xs text-zinc-400 mt-1.5 max-w-md">
-                يقبل ملفات <span className="text-blue-400 font-medium">.xlsx</span> أو <span className="text-blue-400 font-medium">.xls</span> أو <span className="text-blue-400 font-medium">.csv</span>.
-                يتعرف النظام تلقائياً على الأعمدة وتواريخ المصروفات والمبالغ والمشاريع.
+                {t('Accepts .xlsx, .xls, or .csv files. Columns, dates, amounts, and projects are automatically recognized.', 'يقبل ملفات .xlsx أو .xls أو .csv. يتعرف النظام تلقائياً على الأعمدة وتواريخ المصروفات والمبالغ والمشاريع.')}
               </p>
               
               <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-[11px] text-zinc-500">
                 <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 border border-zinc-700/50 text-zinc-300">
-                  تنسيق أكتوبر (ماستر شامل)
+                  {t('October Format (Master Data)', 'تنسيق أكتوبر (ماستر شامل)')}
                 </span>
                 <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 border border-zinc-700/50 text-zinc-300">
-                  تنسيق سبتمبر والأشهر السابقة (5 أعمدة)
+                  {t('Standard 5-column format', 'تنسيق سبتمبر والأشهر السابقة (5 أعمدة)')}
                 </span>
               </div>
             </div>
@@ -493,7 +494,7 @@ export default function ImportPettyCashModal({
                     </span>
                     {sheetName && (
                       <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300">
-                        ورقة: {sheetName}
+                        {t('Sheet:', 'ورقة:')} {sheetName}
                       </span>
                     )}
                   </div>
@@ -501,12 +502,12 @@ export default function ImportPettyCashModal({
                     {detectedFormat === 'master' ? (
                       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">
                         <CheckCircle2 className="w-3 h-3" />
-                        تم التعرف: ماستر شيت داخلي (يشمل الموظف والتصنيف)
+                        {t('Detected: Master Data (includes Employee & Category)', 'تم التعرف: ماستر شيت داخلي (يشمل الموظف والتصنيف)')}
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
                         <CheckCircle2 className="w-3 h-3" />
-                        تم التعرف: تنسيق قياسي / أشهر سابقة (5 أعمدة)
+                        {t('Detected: Standard Format (5 columns)', 'تم التعرف: تنسيق قياسي / أشهر سابقة (5 أعمدة)')}
                       </span>
                     )}
                   </div>
@@ -520,7 +521,7 @@ export default function ImportPettyCashModal({
                 }}
                 className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
               >
-                تغيير الملف
+                {t('Change File', 'تغيير الملف')}
               </button>
             </div>
           )}
@@ -529,7 +530,7 @@ export default function ImportPettyCashModal({
           {parsing && (
             <div className="flex items-center justify-center py-10 gap-3 text-zinc-400">
               <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
-              <span className="text-sm font-medium">جاري فحص وقراءة بيانات الملف وتحليل الأعمدة...</span>
+              <span className="text-sm font-medium">{t('Parsing and analyzing columns...', 'جاري فحص وقراءة بيانات الملف وتحليل الأعمدة...')}</span>
             </div>
           )}
 
@@ -547,31 +548,31 @@ export default function ImportPettyCashModal({
               {/* Stats Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                  <span className="text-zinc-400 text-xs block">عدد القيود المقروءة</span>
+                  <span className="text-zinc-400 text-xs block">{t('Parsed Records Count', 'عدد القيود المقروءة')}</span>
                   <span className="text-xl font-bold text-white mt-0.5 block">{validRows.length}</span>
                   {parsedRows.length !== validRows.length && (
-                    <span className="text-[10px] text-red-400">({parsedRows.length - validRows.length} قيود غير صالحة تم استبعادها)</span>
+                    <span className="text-[10px] text-red-400">{t(`(${parsedRows.length - validRows.length} invalid records excluded)`, `(${parsedRows.length - validRows.length} قيود غير صالحة تم استبعادها)`)}</span>
                   )}
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                  <span className="text-zinc-400 text-xs block">إجمالي المبالغ</span>
+                  <span className="text-zinc-400 text-xs block">{t('Total Amount', 'إجمالي المبالغ')}</span>
                   <span className="text-xl font-bold text-emerald-400 mt-0.5 block">
                     {totalAmount.toFixed(3)} <span className="text-xs font-normal text-zinc-400">OMR</span>
                   </span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                  <span className="text-zinc-400 text-xs block">الفترة الزمنية</span>
+                  <span className="text-zinc-400 text-xs block">{t('Date Range', 'الفترة الزمنية')}</span>
                   <span className="text-xs font-semibold text-zinc-200 mt-1 block truncate">
                     {dateRange ? `${dateRange.min} → ${dateRange.max}` : '-'}
                   </span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800">
-                  <span className="text-zinc-400 text-xs block">نوع البيانات</span>
+                  <span className="text-zinc-400 text-xs block">{t('Data Format', 'نوع البيانات')}</span>
                   <span className="text-xs font-semibold text-blue-400 mt-1 block">
-                    {detectedFormat === 'master' ? 'Master Data (كامل)' : 'Standard (سابق)'}
+                    {detectedFormat === 'master' ? t('Master Data', 'Master Data (كامل)') : t('Standard', 'Standard (سابق)')}
                   </span>
                 </div>
               </div>
@@ -580,7 +581,7 @@ export default function ImportPettyCashModal({
               <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
                 <h4 className="text-xs font-semibold text-zinc-300 flex items-center gap-2">
                   <Filter className="w-3.5 h-3.5 text-blue-400" />
-                  <span>إعدادات مطابقة البيانات وتخصيص القيود</span>
+                  <span>{t('Data Mapping & Assignment Settings', 'إعدادات مطابقة البيانات وتخصيص القيود')}</span>
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -588,14 +589,14 @@ export default function ImportPettyCashModal({
                   {/* Default Employee (especially if format is standard/september) */}
                   <div>
                     <label className="text-[11px] text-zinc-400 block mb-1">
-                      الموظف الافتراضي (للقيود غير المعينة):
+                      {t('Default Employee (for unassigned records):', 'الموظف الافتراضي (للقيود غير المعينة):')}
                     </label>
                     <select
                       value={defaultEmployeeId}
                       onChange={(e) => setDefaultEmployeeId(e.target.value)}
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
                     >
-                      <option value="">-- دون تعيين موظف حالياً (Unassigned) --</option>
+                      <option value="">{t('-- Leave Unassigned --', '-- دون تعيين موظف حالياً (Unassigned) --')}</option>
                       {(options?.profiles || []).map((p: any) => (
                         <option key={p.id} value={p.id}>
                           {p.full_name || p.username}
@@ -607,14 +608,14 @@ export default function ImportPettyCashModal({
                   {/* Batch Selection */}
                   <div>
                     <label className="text-[11px] text-zinc-400 block mb-1">
-                      إضافة مباشرة إلى حزمة شهرية (اختياري):
+                      {t('Assign directly to Monthly Batch (Optional):', 'إضافة مباشرة إلى حزمة شهرية (اختياري):')}
                     </label>
                     <select
                       value={targetBatchId}
                       onChange={(e) => setTargetBatchId(e.target.value)}
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
                     >
-                      <option value="">-- دون تخصيص لحزمة حالياً --</option>
+                      <option value="">{t('-- No Batch Assigned --', '-- دون تخصيص لحزمة حالياً --')}</option>
                       {batches.map((b) => (
                         <option key={b.id} value={b.id}>
                           {b.name} ({b.month}/{b.year})
@@ -626,15 +627,15 @@ export default function ImportPettyCashModal({
                   {/* Expense Number Prefix Mode */}
                   <div>
                     <label className="text-[11px] text-zinc-400 block mb-1">
-                      صيغة رقم المصروف (Expense No):
+                      {t('Expense Numbering Format:', 'صيغة رقم المصروف (Expense No):')}
                     </label>
                     <select
                       value={prefixMode}
                       onChange={(e) => setPrefixMode(e.target.value as any)}
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
                     >
-                      <option value="monthly">PC-YYYY-MM-### (موصى به - يمنع أي تكرار)</option>
-                      <option value="as_is">الرقم الأصلي من الشيت (إن وجد)</option>
+                      <option value="monthly">{t('PC-YYYY-MM-### (Recommended - Prevents duplicates)', 'PC-YYYY-MM-### (موصى به - يمنع أي تكرار)')}</option>
+                      <option value="as_is">{t('Keep original number from file (as is)', 'الرقم الأصلي من الشيت (إن وجد)')}</option>
                     </select>
                   </div>
                 </div>
@@ -648,18 +649,18 @@ export default function ImportPettyCashModal({
                       onChange={(e) => setAutoCategorize(e.target.checked)}
                       className="w-4 h-4 rounded text-blue-600 bg-zinc-800 border-zinc-700 focus:ring-0"
                     />
-                    <span>تفعيل التصنيف الذكي التلقائي من نص الوصف (في حال عدم وجود عمود التصنيف)</span>
+                    <span>{t('Enable auto-categorization from description (if Category column missing)', 'تفعيل التصنيف الذكي التلقائي من نص الوصف (في حال عدم وجود عمود التصنيف)')}</span>
                   </label>
 
                   {/* Fallback category */}
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-zinc-400">التصنيف البديل:</span>
+                    <span className="text-zinc-400">{t('Fallback Category:', 'التصنيف البديل:')}</span>
                     <select
                       value={defaultCategoryId}
                       onChange={(e) => setDefaultCategoryId(e.target.value)}
                       className="bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none"
                     >
-                      <option value="">تلقائي (Other / Office Supplies)</option>
+                      <option value="">{t('Auto (Other / Office Supplies)', 'تلقائي (Other / Office Supplies)')}</option>
                       {(options?.categories || []).map((c: any) => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
@@ -671,23 +672,23 @@ export default function ImportPettyCashModal({
               {/* Preview Table (First 8 Rows) */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
-                  <span>معاينة القيود المقروءة (عرض أول {Math.min(8, validRows.length)} من إجمالي {validRows.length} قيد)</span>
-                  <span className="text-[11px] text-emerald-400 font-medium">✓ جاهزة للاستيراد</span>
+                  <span>{t(`Preview Parsed Records (showing first ${Math.min(8, validRows.length)} of ${validRows.length})`, `معاينة القيود المقروءة (عرض أول ${Math.min(8, validRows.length)} من إجمالي ${validRows.length} قيد)`)}</span>
+                  <span className="text-[11px] text-emerald-400 font-medium">{t('✓ Ready to import', '✓ جاهزة للاستيراد')}</span>
                 </div>
 
                 <div className="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-900/40">
                   <div className="overflow-x-auto max-h-56">
-                    <table className="w-full text-right text-xs">
+                    <table className="w-full text-left text-xs">
                       <thead className="bg-zinc-900/90 text-zinc-400 sticky top-0 border-b border-zinc-800 text-[11px]">
                         <tr>
                           <th className="py-2.5 px-3">#</th>
-                          <th className="py-2.5 px-3">رقم المصروف</th>
-                          <th className="py-2.5 px-3">التاريخ</th>
-                          <th className="py-2.5 px-3">البيان / الوصف</th>
-                          <th className="py-2.5 px-3">التصنيف</th>
-                          <th className="py-2.5 px-3">الموظف</th>
-                          <th className="py-2.5 px-3">المشروع</th>
-                          <th className="py-2.5 px-3 text-left">المبلغ (OMR)</th>
+                          <th className="py-2.5 px-3">{t('Expense No', 'رقم المصروف')}</th>
+                          <th className="py-2.5 px-3">{t('Date', 'التاريخ')}</th>
+                          <th className="py-2.5 px-3">{t('Description', 'البيان / الوصف')}</th>
+                          <th className="py-2.5 px-3">{t('Category', 'التصنيف')}</th>
+                          <th className="py-2.5 px-3">{t('Employee', 'الموظف')}</th>
+                          <th className="py-2.5 px-3">{t('Project', 'المشروع')}</th>
+                          <th className="py-2.5 px-3 text-left">{t('Amount (OMR)', 'المبلغ (OMR)')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-800/60 font-mono text-[11px]">
@@ -705,14 +706,14 @@ export default function ImportPettyCashModal({
                                   {r.categoryName}
                                 </span>
                               ) : (
-                                <span className="text-zinc-500 italic">تلقائي</span>
+                                <span className="text-zinc-500 italic">{t('Auto', 'تلقائي')}</span>
                               )}
                             </td>
                             <td className="py-2 px-3 font-sans">
                               {r.employeeName ? (
                                 <span className="text-blue-300 font-medium">{r.employeeName}</span>
                               ) : (
-                                <span className="text-zinc-500 italic">غير محدد</span>
+                                <span className="text-zinc-500 italic">{t('Unassigned', 'غير محدد')}</span>
                               )}
                             </td>
                             <td className="py-2 px-3 font-sans text-zinc-300">{r.projectName}</td>
@@ -737,7 +738,7 @@ export default function ImportPettyCashModal({
             disabled={submitting}
             className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
           >
-            إلغاء
+            {t('Cancel', 'إلغاء')}
           </button>
 
           <button
@@ -753,12 +754,12 @@ export default function ImportPettyCashModal({
             {submitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>جاري الحفظ والتسجيل في الماستر شيت...</span>
+                <span>{t('Saving to Master Sheet...', 'جاري الحفظ والتسجيل في الماستر شيت...')}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span>تأكيد واستيراد ({validRows.length} قيود - OMR {totalAmount.toFixed(3)})</span>
+                <span>{t(`Confirm & Import (${validRows.length} records - OMR ${totalAmount.toFixed(3)})`, `تأكيد واستيراد (${validRows.length} قيود - OMR ${totalAmount.toFixed(3)})`)}</span>
               </>
             )}
           </button>

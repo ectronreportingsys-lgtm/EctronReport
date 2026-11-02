@@ -38,7 +38,7 @@ interface OrganizationFormItem {
 
 export default function PublicVisitorRegisterPage() {
   const router = useRouter();
-  const [lang, setLang] = useState<'ar' | 'en'>('ar');
+  const [lang, setLang] = useState<'ar' | 'en'>('en');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 

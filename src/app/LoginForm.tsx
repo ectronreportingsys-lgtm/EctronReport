@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function LoginForm() {
+  const { t } = useLanguage();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +29,7 @@ export default function LoginForm() {
     });
 
     if (error) {
-      setError(error.message);
+      setError(error.message === 'Invalid login credentials' ? t('Invalid username or password', 'اسم المستخدم أو كلمة المرور غير صحيحة') : error.message);
       setIsLoading(false);
     } else {
       router.refresh();
@@ -38,13 +40,13 @@ export default function LoginForm() {
     <form onSubmit={handleLogin} className="space-y-6">
       {error && (
         <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg">
-          {error === 'Invalid login credentials' ? 'اسم المستخدم أو كلمة المرور غير صحيحة' : error}
+          {error}
         </div>
       )}
       
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-2">
-          Username (اسم المستخدم)
+          {t('Username')}
         </label>
         <input
           type="text"
@@ -58,7 +60,7 @@ export default function LoginForm() {
       
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-2">
-          Password (كلمة المرور)
+          {t('Password')}
         </label>
         <input
           type="password"
@@ -73,15 +75,15 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full btn-primary-gradient dark:bg-none dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+        className="w-full btn-primary-gradient dark:bg-none dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
       >
         {isLoading ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            جاري تسجيل الدخول...
+            {t('Logging in...', 'جاري تسجيل الدخول...')}
           </>
         ) : (
-          'تسجيل الدخول (Login)'
+          t('Sign In')
         )}
       </button>
     </form>

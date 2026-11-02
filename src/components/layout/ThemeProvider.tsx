@@ -74,7 +74,7 @@ export function ThemeToggleSwitch() {
       onClick={toggleTheme}
       role="switch"
       aria-checked={isLight}
-      title={isLight ? 'التبديل إلى الوضع الليلي (Dark Mode)' : 'التبديل إلى الوضع النهاري (Light Mode)'}
+      title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
       className={clsx(
         "relative inline-flex items-center h-9 w-[76px] rounded-full p-1 transition-all duration-300 cursor-pointer border shadow-inner select-none",
         isLight

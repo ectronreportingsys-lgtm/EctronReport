@@ -19,6 +19,10 @@ import {
   Download, 
   ChevronLeft, 
   ChevronRight, 
+  ChevronsLeft,
+  ChevronsRight,
+  Eye,
+  ExternalLink,
   Layers,
   FileSpreadsheet,
   AlertCircle,
@@ -39,6 +43,7 @@ import {
   PettyCashBatch,
   assignInvoicesToBatch
 } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface ExpenseTableProps {
   expensesData: any[];
@@ -68,6 +73,7 @@ const MONTH_NAMES = [
 
 export default function ExpenseTable({ expensesData, batches = [], options }: ExpenseTableProps) {
   const router = useRouter();
+  const { lang, t } = useLanguage();
   const [targetBatchIdForBulk, setTargetBatchIdForBulk] = useState<string>('');
 
   const invoiceBatchMap = useMemo(() => {
@@ -84,9 +90,9 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
     setDataList(expensesData || []);
   }, [expensesData]);
 
-  // View state: 'monthly' or 'master'
+  // View state: 'monthly' or 'master' - Defaults to master (All Records) as requested
   const today = new Date();
-  const [viewMode, setViewMode] = useState<'monthly' | 'master'>('monthly');
+  const [viewMode, setViewMode] = useState<'monthly' | 'master'>('master');
   const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
 
@@ -97,6 +103,19 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Pagination state (default: 100 rows per page as requested)
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(100);
+
+  // Attachment Direct Preview Modal state
+  const [previewAttachment, setPreviewAttachment] = useState<{
+    url: string;
+    title?: string;
+    expenseNo?: string;
+    amount?: number;
+    date?: string;
+  } | null>(null);
 
   // Modals state
   const [selectedExpense, setSelectedExpense] = useState<any | null>(null);
@@ -187,28 +206,68 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
     });
   }, [dataList, viewMode, selectedYear, selectedMonth, categoryFilter, employeeFilter, searchQuery]);
 
-  // Set indeterminate state on master checkbox
+  // Reset pagination on filter or view mode change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [viewMode, selectedYear, selectedMonth, categoryFilter, employeeFilter, searchQuery, pageSize]);
+
+  // Escape key listener for direct attachment preview
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && previewAttachment) {
+        setPreviewAttachment(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [previewAttachment]);
+
+  // Total pages and paginated slice (100 rows per page by default)
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredData.slice(start, start + pageSize);
+  }, [filteredData, currentPage, pageSize]);
+
+  // Helper to generate numbered pagination list
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 4) {
+        pages.push(1, 2, 3, 4, 5, '...', totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    return pages;
+  };
+
+  // Set indeterminate state on master checkbox based on current page items
   useEffect(() => {
     if (masterCheckboxRef.current) {
-      const visibleIds = filteredData.map(d => d.id);
+      const visibleIds = paginatedData.map(d => d.id);
       const selectedVisibleCount = visibleIds.filter(id => selectedIds.includes(id)).length;
       const isAllSelected = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
       const isIndeterminate = selectedVisibleCount > 0 && !isAllSelected;
 
       masterCheckboxRef.current.indeterminate = isIndeterminate;
     }
-  }, [selectedIds, filteredData]);
+  }, [selectedIds, paginatedData]);
 
-  // Selection handlers
+  // Selection handlers for current visible page
   const handleToggleSelectAll = () => {
-    const visibleIds = filteredData.map(d => d.id);
+    const visibleIds = paginatedData.map(d => d.id);
     const allSelected = visibleIds.length > 0 && visibleIds.every(id => selectedIds.includes(id));
 
     if (allSelected) {
-      // Deselect all visible
+      // Deselect visible
       setSelectedIds(prev => prev.filter(id => !visibleIds.includes(id)));
     } else {
-      // Select all visible
+      // Select all visible on current page
       setSelectedIds(prev => Array.from(new Set([...prev, ...visibleIds])));
     }
   };
@@ -300,7 +359,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
     formData.append('project_text', projectText.trim());
     
     const input = document.getElementById('edit-file-upload') as HTMLInputElement;
-    let successMessage = 'تم حفظ البيانات بنجاح.';
+    let successMessage = t('Data saved successfully.', 'تم حفظ البيانات بنجاح.');
 
     if (input && input.files && input.files.length > 0) {
       const originalFile = input.files[0];
@@ -315,7 +374,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           if (fileToUpload.size < originalFile.size) {
             const origSize = (originalFile.size / 1024 / 1024).toFixed(2);
             const compSize = (fileToUpload.size / 1024 / 1024).toFixed(2);
-            successMessage = `تم تقليل حجم المرفق من ${origSize}MB إلى ${compSize}MB وحفظ البيانات بنجاح.`;
+            successMessage = t(`Attachment compressed from ${origSize}MB to ${compSize}MB and data saved successfully.`, `تم تقليل حجم المرفق من ${origSize}MB إلى ${compSize}MB وحفظ البيانات بنجاح.`);
           }
         } catch (err) {
           console.error("Error compressing image", err);
@@ -374,11 +433,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         setDataList(prev => prev.filter(item => !selectedIds.includes(item.id)));
         setSelectedIds([]);
         setIsDeleteModalOpen(false);
-        setToastMessage({ type: 'success', text: `تم حذف ${count} سجل بنجاح.` });
+        setToastMessage({ type: 'success', text: t(`Successfully deleted ${count} records.`, `تم حذف ${count} سجل بنجاح.`) });
         router.refresh();
       }
     } catch (err: any) {
-      setToastMessage({ type: 'error', text: err.message || 'فشل في حذف السجلات.' });
+      setToastMessage({ type: 'error', text: err.message || t('Failed to delete records.', 'فشل في حذف السجلات.') });
     } finally {
       setLoading(false);
     }
@@ -396,7 +455,8 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         setToastMessage({ type: 'error', text: result.error });
       } else {
         const count = selectedIds.length;
-        const targetMonthName = MONTH_NAMES.find(m => m.value === transferTargetMonth)?.ar || `شهر ${transferTargetMonth}`;
+        const targetMonthEn = MONTH_NAMES.find(m => m.value === transferTargetMonth)?.en || `Month ${transferTargetMonth}`;
+        const targetMonthAr = MONTH_NAMES.find(m => m.value === transferTargetMonth)?.ar || `شهر ${transferTargetMonth}`;
         
         // Optimistically update local data list dates
         const maxDays = new Date(transferTargetYear, transferTargetMonth, 0).getDate();
@@ -422,12 +482,12 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         setIsTransferModalOpen(false);
         setToastMessage({ 
           type: 'success', 
-          text: `تم نقل ${count} سجل بنجاح إلى ملف ${targetMonthName} ${transferTargetYear}.` 
+          text: t(`Successfully transferred ${count} records to ${targetMonthEn} ${transferTargetYear}.`, `تم نقل ${count} سجل بنجاح إلى ملف ${targetMonthAr} ${transferTargetYear}.`) 
         });
         router.refresh();
       }
     } catch (err: any) {
-      setToastMessage({ type: 'error', text: err.message || 'فشل في نقل السجلات.' });
+      setToastMessage({ type: 'error', text: err.message || t('Failed to transfer records.', 'فشل في نقل السجلات.') });
     } finally {
       setLoading(false);
     }
@@ -445,7 +505,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       if (bulkDate) updates.expense_date = bulkDate;
 
       if (Object.keys(updates).length === 0) {
-        setToastMessage({ type: 'error', text: 'يرجى تحديد حقل واحد على الأقل للتعديل.' });
+        setToastMessage({ type: 'error', text: t('Please select at least one field to update.', 'يرجى تحديد حقل واحد على الأقل للتعديل.') });
         setLoading(false);
         return;
       }
@@ -479,11 +539,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
         setSelectedIds([]);
         setIsBulkEditModalOpen(false);
-        setToastMessage({ type: 'success', text: `تم تحديث ${count} سجل بنجاح.` });
+        setToastMessage({ type: 'success', text: t(`Successfully updated ${count} records.`, `تم تحديث ${count} سجل بنجاح.`) });
         router.refresh();
       }
     } catch (err: any) {
-      setToastMessage({ type: 'error', text: err.message || 'فشل في تحديث السجلات.' });
+      setToastMessage({ type: 'error', text: err.message || t('Failed to update records.', 'فشل في تحديث السجلات.') });
     } finally {
       setLoading(false);
     }
@@ -492,14 +552,14 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
   // Export to Excel
   const handleExportExcel = () => {
     const exportRows = filteredData.map(item => ({
-      'رقم المصروف': item.expense_no,
-      'التاريخ': item.expense_date,
-      'الوصف': item.request_description,
-      'التصنيف': item.petty_cash_categories?.name || 'N/A',
-      'الموظف': item.profiles?.full_name || item.profiles?.username || 'N/A',
-      'المشروع': item.projects?.name || '-',
-      'المبلغ (OMR)': Number(item.amount || 0).toFixed(3),
-      'المرفق': item.attachment_url ? 'يوجد مرفق' : 'لا يوجد'
+      'Expense No': item.expense_no,
+      'Date': item.expense_date,
+      'Description': item.request_description,
+      'Category': item.petty_cash_categories?.name || 'N/A',
+      'Employee': item.profiles?.full_name || item.profiles?.username || 'N/A',
+      'Project': item.projects?.name || '-',
+      'Amount (OMR)': Number(item.amount || 0).toFixed(3),
+      'Attachment': item.attachment_url ? 'Attached' : 'None'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportRows);
@@ -546,14 +606,14 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               setSelectedIds([]);
             }}
             className={clsx(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
               viewMode === 'monthly'
                 ? "btn-primary-gradient bg-blue-600 text-white shadow-md"
                 : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
             )}
           >
             <Calendar className="w-4 h-4" />
-            <span>ملفات الأشهر (Monthly Files)</span>
+            <span>{t('Monthly Files', 'ملفات الأشهر')}</span>
           </button>
 
           <button
@@ -562,14 +622,14 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               setSelectedIds([]);
             }}
             className={clsx(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
               viewMode === 'master'
                 ? "bg-purple-600 text-white shadow-md"
                 : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
             )}
           >
             <FolderArchive className="w-4 h-4" />
-            <span>ماستر داتا (Master Data - All Records)</span>
+            <span>{t('Master Data (All Records)', 'البيانات الرئيسية (جميع السجلات)')}</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-200">
               {dataList.length}
             </span>
@@ -581,8 +641,8 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrevMonth}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700"
-              title="الشهر السابق"
+              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700 cursor-pointer"
+              title={t('Previous Month', 'الشهر السابق')}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -594,11 +654,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 setSelectedMonth(Number(e.target.value));
                 setSelectedIds([]);
               }}
-              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium"
+              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer"
             >
               {MONTH_NAMES.map(m => (
                 <option key={m.value} value={m.value}>
-                  {m.ar} ({m.en})
+                  {lang === 'ar' ? m.ar : m.en}
                 </option>
               ))}
             </select>
@@ -609,7 +669,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 setSelectedYear(Number(e.target.value));
                 setSelectedIds([]);
               }}
-              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium"
+              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer"
             >
               {availableYears.map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -618,8 +678,8 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
             <button
               onClick={handleNextMonth}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700"
-              title="الشهر التالي"
+              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700 cursor-pointer"
+              title={t('Next Month', 'الشهر التالي')}
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -627,12 +687,12 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         )}
 
         {/* Right: Summary Badges & Export */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex items-center gap-3 ml-auto flex-wrap">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-zinc-800/80 border border-zinc-700 text-xs">
-            <span className="text-zinc-400">السجلات:</span>
+            <span className="text-zinc-400">{t('Records:', 'السجلات:')}</span>
             <span className="font-bold text-white">{filteredData.length}</span>
             <span className="text-zinc-600">|</span>
-            <span className="text-zinc-400">الإجمالي:</span>
+            <span className="text-zinc-400">{t('Total:', 'الإجمالي:')}</span>
             <span className="font-bold text-emerald-400">OMR {currentTotalAmount.toFixed(3)}</span>
           </div>
 
@@ -641,7 +701,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition-colors border border-emerald-500/30 cursor-pointer shadow-xs"
           >
             <FileSpreadsheet className="w-4 h-4" />
-            <span>تصدير Excel</span>
+            <span>{t('Export Excel', 'تصدير Excel')}</span>
           </button>
 
           <button
@@ -649,17 +709,17 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs font-medium transition-colors border border-blue-500/30 cursor-pointer shadow-xs"
           >
             <Upload className="w-4 h-4" />
-            <span>رفع / استيراد Excel</span>
+            <span>{t('Import Excel', 'رفع / استيراد Excel')}</span>
           </button>
 
           <a
             href="/Ectron_Petty_Cash_User_Guide.docx"
             download="Ectron_Petty_Cash_User_Guide.docx"
             className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-xs font-medium transition-colors border border-purple-500/30 cursor-pointer shadow-xs"
-            title="تحميل دليل المستخدم التنفيذي المعتمد بصيغة Word لإرساله للإدارة"
+            title={t('Download approved user guide in Word format', 'تحميل دليل المستخدم التنفيذي المعتمد بصيغة Word')}
           >
             <FileText className="w-4 h-4 text-purple-400" />
-            <span>دليل Word للإدارة</span>
+            <span>{t('User Guide (Word)', 'دليل Word')}</span>
           </a>
         </div>
       </div>
@@ -671,7 +731,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="بحث في الوصف، رقم المصروف، الموظف، المشروع..."
+            placeholder={t('Search description, expense no, employee, project...', 'بحث في الوصف، رقم المصروف، الموظف، المشروع...')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
@@ -684,7 +744,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           onChange={e => setCategoryFilter(e.target.value)}
           className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500"
         >
-          <option value="all">كل التصنيفات (All Categories)</option>
+          <option value="all">{t('All Categories', 'كل التصنيفات')}</option>
           {options?.categories?.map(c => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
@@ -696,7 +756,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           onChange={e => setEmployeeFilter(e.target.value)}
           className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500"
         >
-          <option value="all">كل الموظفين (All Employees)</option>
+          <option value="all">{t('All Employees', 'كل الموظفين')}</option>
           {options?.profiles?.map(p => (
             <option key={p.id} value={p.id}>{p.full_name || p.username}</option>
           ))}
@@ -711,10 +771,10 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               {selectedIds.length}
             </span>
             <span className="text-sm font-semibold text-white">
-              تم تحديد {selectedIds.length} سجل من القائمة
+              {t(`Selected ${selectedIds.length} records from the list`, `تم تحديد ${selectedIds.length} سجل من القائمة`)}
             </span>
             <span className="text-xs text-blue-300/80">
-              (إجمالي المبالغ المحددة: OMR {filteredData.filter(d => selectedIds.includes(d.id)).reduce((s, d) => s + Number(d.amount || 0), 0).toFixed(3)})
+              ({t('Total Selected:', 'إجمالي المبالغ المحددة:')} OMR {filteredData.filter(d => selectedIds.includes(d.id)).reduce((s, d) => s + Number(d.amount || 0), 0).toFixed(3)})
             </span>
           </div>
 
@@ -727,7 +787,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   onChange={e => setTargetBatchIdForBulk(e.target.value)}
                   className="bg-transparent text-xs text-white focus:outline-none"
                 >
-                  <option value="" className="bg-zinc-900">إضافة إلى مجموعة (Batch)...</option>
+                  <option value="" className="bg-zinc-900">{t('Add to Batch...', 'إضافة إلى مجموعة (Batch)...')}</option>
                   {batches.map(b => (
                     <option key={b.id} value={b.id} className="bg-zinc-900">
                       {b.name}
@@ -746,7 +806,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                       } else {
                         setToastMessage({
                           type: 'success',
-                          text: `تمت إضافة ${selectedIds.length} فاتورة إلى مجموعة "${res.batch?.name}".`
+                          text: t(`Added ${selectedIds.length} invoices to batch "${res.batch?.name}".`, `تمت إضافة ${selectedIds.length} فاتورة إلى مجموعة "${res.batch?.name}".`)
                         });
                         setSelectedIds([]);
                         setTargetBatchIdForBulk('');
@@ -780,11 +840,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   setIsBulkEditModalOpen(true);
                 }
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors shadow-sm"
-              title="تعديل السجلات المحددة"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors shadow-sm cursor-pointer"
+              title={t('Update selected records', 'تعديل السجلات المحددة')}
             >
               <Edit className="w-3.5 h-3.5" />
-              <span>تعديل (Update)</span>
+              <span>{t('Update', 'تعديل')}</span>
             </button>
 
             {/* Transfer to Month Button */}
@@ -796,28 +856,28 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 setTransferCustomDate('');
                 setIsTransferModalOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium transition-colors shadow-sm"
-              title="نقل السجلات إلى ملف شهر آخر"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium transition-colors shadow-sm cursor-pointer"
+              title={t('Transfer records to another month', 'نقل السجلات إلى ملف شهر آخر')}
             >
               <ArrowRightLeft className="w-3.5 h-3.5" />
-              <span>نقل إلى شهر آخر (Transfer)</span>
+              <span>{t('Transfer to Month', 'نقل إلى شهر آخر')}</span>
             </button>
 
             {/* Delete Button */}
             <button
               onClick={() => setIsDeleteModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-danger/80 hover:bg-danger text-white text-xs font-medium transition-colors shadow-sm"
-              title="حذف السجلات المحددة"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-danger/80 hover:bg-danger text-white text-xs font-medium transition-colors shadow-sm cursor-pointer"
+              title={t('Delete selected records', 'حذف السجلات المحددة')}
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>حذف (Delete)</span>
+              <span>{t('Delete', 'حذف')}</span>
             </button>
 
             {/* Clear Selection */}
             <button
               onClick={handleClearSelection}
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
-              title="إلغاء التحديد"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              title={t('Clear Selection', 'إلغاء التحديد')}
             >
               <X className="w-4 h-4" />
             </button>
@@ -835,20 +895,20 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 <input
                   ref={masterCheckboxRef}
                   type="checkbox"
-                  checked={filteredData.length > 0 && filteredData.every(d => selectedIds.includes(d.id))}
+                  checked={paginatedData.length > 0 && paginatedData.every(d => selectedIds.includes(d.id))}
                   onChange={handleToggleSelectAll}
                   className="w-4 h-4 rounded bg-zinc-800 border-zinc-600 text-blue-600 focus:ring-0 focus:ring-offset-0 cursor-pointer accent-blue-600"
-                  title="تحديد الكل / إلغاء تحديد الكل"
+                  title={t('Select all on this page', 'تحديد الكل في هذه الصفحة')}
                 />
               </th>
-              <th className="px-4 py-3">Expense No</th>
-              <th className="px-4 py-3">Date</th>
-              <th className="px-4 py-3">Description</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Employee</th>
-              <th className="px-4 py-3">Project</th>
-              <th className="px-4 py-3 text-center">Attachment</th>
-              <th className="px-4 py-3">Amount</th>
+              <th className="px-4 py-3">{t('Expense No', 'رقم المصروف')}</th>
+              <th className="px-4 py-3">{t('Date', 'التاريخ')}</th>
+              <th className="px-4 py-3">{t('Description', 'الوصف')}</th>
+              <th className="px-4 py-3">{t('Category', 'التصنيف')}</th>
+              <th className="px-4 py-3">{t('Employee', 'الموظف')}</th>
+              <th className="px-4 py-3">{t('Project', 'المشروع')}</th>
+              <th className="px-4 py-3 text-center">{t('Attachment', 'المرفق')}</th>
+              <th className="px-4 py-3">{t('Amount', 'المبلغ')}</th>
             </tr>
           </thead>
           <tbody>
@@ -857,15 +917,15 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 <td colSpan={9} className="px-4 py-12 text-center text-zinc-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <FolderArchive className="w-8 h-8 text-zinc-600" />
-                    <p className="font-medium">لا توجد سجلات مطابقة في هذا العرض.</p>
+                    <p className="font-medium">{t('No matching records found in this view.', 'لا توجد سجلات مطابقة في هذا العرض.')}</p>
                     <p className="text-xs text-zinc-600">
-                      {viewMode === 'monthly' ? `ملف شهر ${currentMonthObj?.ar} ${selectedYear} فارغ أو تم نقل السجلات منه.` : 'لا توجد سجلات في الماستر داتا.'}
+                      {viewMode === 'monthly' ? t(`Month file for ${currentMonthObj?.en || selectedMonth} ${selectedYear} is empty or records were moved.`, `ملف شهر ${currentMonthObj?.ar} ${selectedYear} فارغ أو تم نقل السجلات منه.`) : t('No records found in Master Data.', 'لا توجد سجلات في الماستر داتا.')}
                     </p>
                   </div>
                 </td>
               </tr>
             ) : (
-              filteredData.map((exp) => {
+              paginatedData.map((exp) => {
                 const isSelected = selectedIds.includes(exp.id);
                 return (
                   <tr 
@@ -877,7 +937,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                         ? "bg-blue-600/15 border-blue-500/40 hover:bg-blue-600/25" 
                         : "hover:bg-zinc-800/40"
                     )}
-                    title="انقر مرتين لعرض التفاصيل وتعديل السجل"
+                    title={t('Double click to view details and edit record', 'انقر مرتين لعرض التفاصيل وتعديل السجل')}
                   >
                     {/* Checkbox Cell */}
                     <td 
@@ -928,12 +988,19 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            window.open(exp.attachment_url, '_blank');
+                            setPreviewAttachment({
+                              url: exp.attachment_url,
+                              title: exp.request_description,
+                              expenseNo: exp.expense_no,
+                              amount: Number(exp.amount || 0),
+                              date: exp.expense_date
+                            });
                           }}
-                          className="p-1 hover:bg-zinc-800 rounded transition-colors text-blue-400"
-                          title="عرض المرفق"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#14B8A6]/15 hover:bg-[#14B8A6]/30 text-[#0F766E] dark:text-[#2DD4BF] border border-[#14B8A6]/30 transition-all font-semibold text-xs shadow-xs cursor-pointer group"
+                          title={t('Preview attachment directly', 'عرض المرفق مباشرة')}
                         >
-                          <Paperclip className="w-4 h-4 inline-block" />
+                          <Eye className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                          <span>{t('View', 'عرض')}</span>
                         </button>
                       ) : (
                         <span className="text-zinc-600">-</span>
@@ -951,6 +1018,123 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       </div>
 
       {/* ========================================================================= */}
+      {/* PAGINATION BAR (Numbered Navigation & 100 Rows View)                       */}
+      {/* ========================================================================= */}
+      {filteredData.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-zinc-900/70 border border-zinc-800 text-xs text-zinc-400 mt-2 shadow-xs">
+          {/* Left: Records summary and Page Size dropdown */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span>
+              {t('Showing', 'عرض')} <strong className="text-white">{(currentPage - 1) * pageSize + 1}</strong> {t('to', 'إلى')}{' '}
+              <strong className="text-white">
+                {Math.min(currentPage * pageSize, filteredData.length)}
+              </strong>{' '}
+              {t('of', 'من إجمالي')} <strong className="text-white">{filteredData.length}</strong> {t('records', 'سجل')}
+            </span>
+
+            <span className="text-zinc-700">|</span>
+
+            <div className="flex items-center gap-1.5">
+              <span>{t('Rows per page:', 'عدد الصفوف:')}</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-zinc-800 border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-white font-semibold focus:outline-none focus:border-blue-500 cursor-pointer"
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100 ({t('Default', 'الافتراضي')})</option>
+                <option value={200}>200</option>
+                <option value={filteredData.length}>{t(`Show All (${filteredData.length})`, `عرض الكل (${filteredData.length})`)}</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Right: Numbered Page Navigation */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1 flex-wrap justify-center">
+              {/* First Page Button */}
+              <button
+                type="button"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 disabled:opacity-30 disabled:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('First Page', 'الصفحة الأولى')}
+              >
+                <ChevronsLeft className="w-4 h-4" />
+              </button>
+
+              {/* Prev Page Button */}
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 disabled:opacity-30 disabled:hover:bg-zinc-800 transition-colors font-medium cursor-pointer"
+                title={t('Previous Page', 'الصفحة السابقة')}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('Prev', 'السابق')}</span>
+              </button>
+
+              {/* Numbered Page Buttons */}
+              {getPageNumbers().map((p, idx) => {
+                if (p === '...') {
+                  return (
+                    <span key={`dots-${idx}`} className="px-2 py-1 text-zinc-500 select-none">
+                      ...
+                    </span>
+                  );
+                }
+                const pageNum = Number(p);
+                const isActive = pageNum === currentPage;
+                return (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={clsx(
+                      "min-w-8 h-8 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center justify-center px-1.5",
+                      isActive
+                        ? "bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white shadow-sm border border-[#14B8A6]/40"
+                        : "bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                    )}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {/* Next Page Button */}
+              <button
+                type="button"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 disabled:opacity-30 disabled:hover:bg-zinc-800 transition-colors font-medium cursor-pointer"
+                title="الصفحة التالية"
+              >
+                <span className="hidden sm:inline">{t('Next', 'التالي')}</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              {/* Last Page Button */}
+              <button
+                type="button"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 disabled:opacity-30 disabled:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('Last Page', 'الصفحة الأخيرة')}
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
       {/* MODAL 1: TRANSFER TO ANOTHER MONTH                                        */}
       {/* ========================================================================= */}
       {isTransferModalOpen && (
@@ -965,8 +1149,8 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   <ArrowRightLeft className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">نقل السجلات إلى ملف شهر آخر</h3>
-                  <p className="text-xs text-zinc-400">سيتم نقل {selectedIds.length} سجل محدد إلى ملف الشهر المختار</p>
+                  <h3 className="text-lg font-bold text-white">{t('Transfer Records to Another Month File', 'نقل السجلات إلى ملف شهر آخر')}</h3>
+                  <p className="text-xs text-zinc-400">{t(`Will transfer ${selectedIds.length} selected records to the chosen month file`, `سيتم نقل ${selectedIds.length} سجل محدد إلى ملف الشهر المختار`)}</p>
                 </div>
               </div>
               <button 
@@ -981,7 +1165,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">الشهر المنقول إليه</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t('Target Month', 'الشهر المنقول إليه')}</label>
                   <select
                     value={transferTargetMonth}
                     onChange={e => setTransferTargetMonth(Number(e.target.value))}
@@ -989,14 +1173,14 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   >
                     {MONTH_NAMES.map(m => (
                       <option key={m.value} value={m.value}>
-                        {m.ar} ({m.en})
+                        {lang === 'ar' ? m.ar : m.en}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">السنة المنقول إليها</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">{t('Target Year', 'السنة المنقول إليها')}</label>
                   <select
                     value={transferTargetYear}
                     onChange={e => setTransferTargetYear(Number(e.target.value))}
@@ -1011,7 +1195,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
               {/* Date handling options */}
               <div className="space-y-2 bg-zinc-800/40 p-4 rounded-xl border border-zinc-800">
-                <label className="block text-xs font-semibold text-zinc-300 mb-2">طريقة تعديل التاريخ في الشهر الجديد:</label>
+                <label className="block text-xs font-semibold text-zinc-300 mb-2">{t('Date modification method in target month:', 'طريقة تعديل التاريخ في الشهر الجديد:')}</label>
                 
                 <label className="flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
                   <input
@@ -1022,7 +1206,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     onChange={() => setTransferMode('keep-day')}
                     className="accent-purple-600"
                   />
-                  <span>الحفاظ على نفس رقم اليوم في الشهر الجديد (مثال: يوم 15 يبقى يوم 15)</span>
+                  <span>{t('Keep the same day number in the new month (e.g. day 15 remains day 15)', 'الحفاظ على نفس رقم اليوم في الشهر الجديد (مثال: يوم 15 يبقى يوم 15)')}</span>
                 </label>
 
                 <label className="flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
@@ -1034,7 +1218,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     onChange={() => setTransferMode('custom-date')}
                     className="accent-purple-600"
                   />
-                  <span>تحديد تاريخ محدد وموحد لجميع السجلات المنقولة</span>
+                  <span>{t('Set a specific unified date for all transferred records', 'تحديد تاريخ محدد وموحد لجميع السجلات المنقولة')}</span>
                 </label>
 
                 {transferMode === 'custom-date' && (
@@ -1053,18 +1237,18 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 type="button"
                 onClick={() => setIsTransferModalOpen(false)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmTransfer}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-purple-600 hover:bg-purple-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRightLeft className="w-4 h-4" />}
-                <span>تأكيد النقل</span>
+                <span>{t('Confirm Transfer', 'تأكيد النقل')}</span>
               </button>
             </div>
           </div>
@@ -1085,16 +1269,16 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">تأكيد حذف السجلات</h3>
+                <h3 className="text-lg font-bold text-white">{t('Confirm Records Deletion', 'تأكيد حذف السجلات')}</h3>
                 <p className="text-xs text-zinc-400 mt-1">
-                  هل أنت متأكد من حذف <span className="text-danger font-bold">{selectedIds.length}</span> سجل محدد؟
+                  {t(`Are you sure you want to delete ${selectedIds.length} selected records?`, `هل أنت متأكد من حذف ${selectedIds.length} سجل محدد؟`)}
                 </p>
               </div>
             </div>
 
             <div className="p-3 bg-zinc-800/50 rounded-xl border border-zinc-800 text-xs text-zinc-300 space-y-1">
-              <p className="font-semibold text-zinc-200">تحذير:</p>
-              <p>سيتم حذف هذه المصروفات نهائياً من قاعدة البيانات ولا يمكن استرجاعها.</p>
+              <p className="font-semibold text-zinc-200">{t('Warning:', 'تحذير:')}</p>
+              <p>{t('These expenses will be permanently deleted from the database and cannot be recovered.', 'سيتم حذف هذه المصروفات نهائياً من قاعدة البيانات ولا يمكن استرجاعها.')}</p>
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
@@ -1102,18 +1286,18 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-danger hover:bg-red-600 text-white transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-danger hover:bg-red-600 text-white transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                <span>حذف نهائي</span>
+                <span>{t('Delete Permanently', 'حذف نهائي')}</span>
               </button>
             </div>
           </div>
@@ -1135,8 +1319,8 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   <Edit className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">تعديل جماعي (Bulk Update)</h3>
-                  <p className="text-xs text-zinc-400">تعديل {selectedIds.length} سجل محدد دفعة واحدة</p>
+                  <h3 className="text-lg font-bold text-white">{t('Bulk Update', 'تعديل جماعي')}</h3>
+                  <p className="text-xs text-zinc-400">{t(`Update ${selectedIds.length} selected records at once`, `تعديل ${selectedIds.length} سجل محدد دفعة واحدة`)}</p>
                 </div>
               </div>
               <button 
@@ -1149,18 +1333,18 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             </div>
 
             <p className="text-xs text-zinc-400">
-              اختر الحقول التي ترغب في تطبيقها على جميع السجلات المحددة (اترك الحقل فارغاً إذا كنت لا ترغب بتغييره):
+              {t('Select fields you wish to apply to all selected records (leave empty to keep unchanged):', 'اختر الحقول التي ترغب في تطبيقها على جميع السجلات المحددة (اترك الحقل فارغاً إذا كنت لا ترغب بتغييره):')}
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">تغيير التصنيف (Category)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Change Category', 'تغيير التصنيف')}</label>
                 <select
                   value={bulkCategoryId}
                   onChange={e => setBulkCategoryId(e.target.value)}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="">-- بدون تغيير --</option>
+                  <option value="">{t('-- No Change --', '-- بدون تغيير --')}</option>
                   {options?.categories?.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -1168,13 +1352,13 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">تغيير الموظف (Employee)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Change Employee', 'تغيير الموظف')}</label>
                 <select
                   value={bulkEmployeeId}
                   onChange={e => setBulkEmployeeId(e.target.value)}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="">-- بدون تغيير --</option>
+                  <option value="">{t('-- No Change --', '-- بدون تغيير --')}</option>
                   {options?.profiles?.map(p => (
                     <option key={p.id} value={p.id}>{p.full_name || p.username}</option>
                   ))}
@@ -1182,13 +1366,13 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">تغيير المشروع (Project)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Change Project', 'تغيير المشروع')}</label>
                 <select
                   value={bulkProjectId}
                   onChange={e => setBulkProjectId(e.target.value)}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
                 >
-                  <option value="">-- بدون تغيير --</option>
+                  <option value="">{t('-- No Change --', '-- بدون تغيير --')}</option>
                   {options?.projects?.map(p => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
@@ -1196,7 +1380,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">تغيير التاريخ (Date)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Change Date', 'تغيير التاريخ')}</label>
                 <input
                   type="date"
                   value={bulkDate}
@@ -1211,18 +1395,18 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 type="button"
                 onClick={() => setIsBulkEditModalOpen(false)}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmBulkEdit}
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                <span>حفظ التعديلات</span>
+                <span>{t('Save Changes', 'حفظ التعديلات')}</span>
               </button>
             </div>
           </div>
@@ -1240,7 +1424,9 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
           >
             <div className="flex justify-between items-center px-5 py-4 border-b border-zinc-800 shrink-0">
               <h2 className="text-lg font-bold text-white">
-                {isEditing ? `تعديل المصروف: ${selectedExpense.expense_no}` : `تفاصيل المصروف: ${selectedExpense.expense_no}`}
+                {isEditing 
+                  ? t(`Edit Expense: ${selectedExpense.expense_no}`, `تعديل المصروف: ${selectedExpense.expense_no}`) 
+                  : t(`Expense Details: ${selectedExpense.expense_no}`, `تفاصيل المصروف: ${selectedExpense.expense_no}`)}
               </h2>
               <button onClick={closeDetails} disabled={loading} className="text-zinc-400 hover:text-white transition-colors disabled:opacity-50">
                 <X className="w-5 h-5" />
@@ -1260,7 +1446,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">Date <span className="text-danger">*</span></label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Date', 'التاريخ')} <span className="text-danger">*</span></label>
                       <input 
                         type="date" 
                         required
@@ -1270,7 +1456,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">Amount (OMR) <span className="text-danger">*</span></label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Amount (OMR)', 'المبلغ (ر.ع)')} <span className="text-danger">*</span></label>
                       <input 
                         type="number" 
                         required
@@ -1286,7 +1472,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
                   <div>
                     <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
-                      <label className="block text-sm font-medium text-zinc-400">Request Description <span className="text-danger">*</span></label>
+                      <label className="block text-sm font-medium text-zinc-400">{t('Request Description', 'وصف المصروف')} <span className="text-danger">*</span></label>
                       {options?.recurringDescriptions && options.recurringDescriptions.length > 0 && (
                         <select
                           onChange={(e) => {
@@ -1298,7 +1484,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                           defaultValue=""
                           className="text-xs bg-zinc-900 hover:bg-zinc-800 text-blue-400 border border-blue-500/30 rounded-lg px-2.5 py-1 focus:outline-none cursor-pointer"
                         >
-                          <option value="" disabled>⚡ اختيار من الأوصاف المتكررة...</option>
+                          <option value="" disabled>{t('⚡ Select from recurring descriptions...', '⚡ اختيار من الأوصاف المتكررة...')}</option>
                           {options.recurringDescriptions.map((item: any) => (
                             <option key={item.id} value={item.text} className="bg-zinc-800 text-white">
                               {item.text}
@@ -1311,35 +1497,35 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                       required
                       value={description}
                       onChange={e => setDescription(e.target.value)}
-                      placeholder="اكتب وصف المصروف هنا (أو اختر من الأوصاف المتكررة أعلاه)..."
+                      placeholder={t('Write expense description here (or select from recurring above)...', 'اكتب وصف المصروف هنا (أو اختر من الأوصاف المتكررة أعلاه)...')}
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 min-h-[75px] resize-y text-sm"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">Category <span className="text-danger">*</span></label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Category', 'التصنيف')} <span className="text-danger">*</span></label>
                       <select 
                         required
                         value={categoryId}
                         onChange={e => setCategoryId(e.target.value)}
                         className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Category</option>
+                        <option value="">{t('Select Category', 'اختر التصنيف')}</option>
                         {options?.categories?.map((cat) => (
                           <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">Employee <span className="text-danger">*</span></label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Employee', 'الموظف')} <span className="text-danger">*</span></label>
                       <select 
                         required
                         value={employeeId}
                         onChange={e => setEmployeeId(e.target.value)}
                         className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
                       >
-                        <option value="">Select Employee</option>
+                        <option value="">{t('Select Employee', 'اختر الموظف')}</option>
                         {options?.profiles?.map((prof) => (
                           <option key={prof.id} value={prof.id}>{prof.full_name || prof.username}</option>
                         ))}
@@ -1348,12 +1534,12 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Project (المشروع / النسب المئوية)</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Project / Percentages', 'المشروع / النسب المئوية')}</label>
                     <input 
                       type="text"
                       value={projectText}
                       onChange={e => setProjectText(e.target.value)}
-                      placeholder="e.g. Ectron 80%, AAMU 20% أو Head Office"
+                      placeholder={t('e.g. Ectron 80%, AAMU 20% or Head Office', 'e.g. Ectron 80%, AAMU 20% أو Head Office')}
                       list="project-edit-suggestions"
                       className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm font-medium"
                     />
@@ -1363,12 +1549,12 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                       ))}
                     </datalist>
                     <p className="text-xs text-zinc-500 mt-1">
-                      يتم استرجاع المشروع والنسب المئوية كنص في سطر واحد لتسهيل التعديل المباشر
+                      {t('Project and percentages are retrieved as a single line for easy direct editing', 'يتم استرجاع المشروع والنسب المئوية كنص في سطر واحد لتسهيل التعديل المباشر')}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">Update Attachment (Optional)</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-1.5">{t('Update Attachment (Optional)', 'تحديث المرفق (اختياري)')}</label>
                     <input 
                       type="file" 
                       id="edit-file-upload"
@@ -1376,7 +1562,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                       className="w-full text-sm text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 cursor-pointer"
                     />
                     {selectedExpense.attachment_url && (
-                      <p className="text-xs text-zinc-500 mt-1">يوجد مرفق حالي. اختيار ملف جديد سيستبدل المرفق الحالي.</p>
+                      <p className="text-xs text-zinc-500 mt-1">{t('Existing attachment found. Choosing a new file will replace it.', 'يوجد مرفق حالي. اختيار ملف جديد سيستبدل المرفق الحالي.')}</p>
                     )}
                   </div>
                 </>
@@ -1416,22 +1602,48 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   </div>
 
                   <div>
-                    <p className="text-xs text-zinc-500 uppercase font-semibold">Attachment</p>
+                    <p className="text-xs text-zinc-500 uppercase font-semibold">{t('Attachment', 'المرفق')}</p>
                     {selectedExpense.attachment_url ? (
-                      <div 
-                        className="w-full h-20 bg-zinc-800/50 border border-zinc-700 rounded-xl flex items-center justify-between px-4 text-zinc-300 hover:bg-zinc-800 transition-colors cursor-pointer mt-2"
-                        onClick={() => window.open(selectedExpense.attachment_url, '_blank')}
-                      >
-                        <div className="flex items-center gap-3 truncate">
-                          <Paperclip className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                          <span className="text-sm font-medium truncate">
-                            {selectedExpense.attachment_url.split('/').pop()?.split('?')[0] || "View Document"}
-                          </span>
+                      <div className="mt-2 p-3 bg-zinc-800/60 border border-zinc-700 rounded-xl flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20">
+                            <Paperclip className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-white truncate">
+                              {selectedExpense.attachment_url.split('/').pop()?.split('?')[0] || t("Document Attachment", "مستند مرفق")}
+                            </p>
+                            <p className="text-xs text-zinc-400">{t('Click for direct preview', 'انقر للمعاينة المباشرة فوراً أمامك')}</p>
+                          </div>
                         </div>
-                        <span className="text-xs text-blue-400 font-semibold underline flex-shrink-0">عرض الملف</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewAttachment({
+                              url: selectedExpense.attachment_url,
+                              title: selectedExpense.request_description,
+                              expenseNo: selectedExpense.expense_no,
+                              amount: Number(selectedExpense.amount || 0),
+                              date: selectedExpense.expense_date
+                            })}
+                            className="px-3.5 py-1.5 rounded-lg bg-[#14B8A6] hover:bg-[#0D9488] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>{t('Preview', 'معاينة مباشرة')}</span>
+                          </button>
+                          <a
+                            href={selectedExpense.attachment_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-zinc-300 hover:text-white transition-colors"
+                            title={t('Open in new tab', 'فتح في تبويب مستقل')}
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-zinc-500 mt-2 italic">لا يوجد مرفق لهذا السجل</p>
+                      <p className="text-sm text-zinc-500 mt-2 italic">{t('No attachment for this record', 'لا يوجد مرفق لهذا السجل')}</p>
                     )}
                   </div>
                 </>
@@ -1447,7 +1659,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-zinc-300 hover:bg-zinc-800 transition-colors disabled:opacity-50"
                   >
                     <XCircle className="w-5 h-5" />
-                    إلغاء
+                    {t('Cancel', 'إلغاء')}
                   </button>
                   <button 
                     onClick={handleSave}
@@ -1455,7 +1667,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50"
                   >
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    حفظ التغييرات
+                    {t('Save Changes', 'حفظ التغييرات')}
                   </button>
                 </>
               ) : (
@@ -1465,10 +1677,154 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-colors"
                   >
                     <Edit className="w-5 h-5" />
-                    تعديل السجل
+                    {t('Edit Record', 'تعديل السجل')}
                   </button>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* DIRECT ATTACHMENT PREVIEW MODAL (LIGHTBOX IN FRONT OF USER)               */}
+      {/* ========================================================================= */}
+      {previewAttachment && (
+        <div 
+          className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setPreviewAttachment(null)}
+        >
+          <div 
+            className="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-5xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900/90 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-[#14B8A6]/15 text-[#14B8A6] flex items-center justify-center border border-[#14B8A6]/30 shrink-0">
+                  <Paperclip className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-extrabold text-white">
+                      {previewAttachment.expenseNo || t('Invoice Attachment', 'مرفق الفاتورة')}
+                    </span>
+                    {previewAttachment.amount !== undefined && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30">
+                        OMR {Number(previewAttachment.amount).toFixed(3)}
+                      </span>
+                    )}
+                    {previewAttachment.date && (
+                      <span className="text-xs text-zinc-400 hidden sm:inline">
+                        • {previewAttachment.date}
+                      </span>
+                    )}
+                  </div>
+                  {previewAttachment.title && (
+                    <p className="text-xs text-zinc-400 truncate max-w-md mt-0.5">
+                      {previewAttachment.title}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={previewAttachment.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors border border-zinc-700"
+                  title={t('Open in new window', 'فتح في نافذة مستقلة')}
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t('New Window', 'نافذة جديدة')}</span>
+                </a>
+                <a
+                  href={previewAttachment.url}
+                  download
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors border border-zinc-700"
+                  title={t('Download file', 'تحميل الملف')}
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t('Download', 'تحميل')}</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setPreviewAttachment(null)}
+                  className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer"
+                  title={t('Close (Esc)', 'إغلاق (Esc)')}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Viewer Body */}
+            <div className="flex-1 overflow-auto bg-zinc-900/50 p-4 flex items-center justify-center min-h-[450px]">
+              {(() => {
+                const url = previewAttachment.url.toLowerCase();
+                const isPdf = url.includes('.pdf');
+                const isImage = url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png') || url.includes('.webp') || url.includes('.gif') || (!isPdf && !url.includes('.doc'));
+
+                if (isPdf) {
+                  return (
+                    <iframe
+                      src={previewAttachment.url}
+                      className="w-full h-[75vh] rounded-xl border border-zinc-800 bg-white"
+                      title={t('PDF Preview', 'معاينة ملف PDF')}
+                    />
+                  );
+                }
+
+                if (isImage) {
+                  return (
+                    <div className="flex flex-col items-center justify-center max-h-[75vh] w-full">
+                      <img
+                        src={previewAttachment.url}
+                        alt={previewAttachment.title || t('Invoice Attachment', 'مرفق الفاتورة')}
+                        className="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl border border-zinc-800/80"
+                      />
+                    </div>
+                  );
+                }
+
+                // Fallback for docx or other formats
+                return (
+                  <div className="flex flex-col items-center justify-center gap-4 p-8 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+                      <FileText className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white mb-1">
+                        {t('Attached Document File', 'ملف مستند مرفق')}
+                      </h4>
+                      <p className="text-xs text-zinc-400 max-w-xs mb-4">
+                        {t('You can open this file directly in the browser or download it to your device', 'يمكنك فتح هذا الملف مباشرة في المتصفح أو تحميله إلى جهازك')}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <a
+                        href={previewAttachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors shadow-sm"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>{t('Open File', 'فتح الملف مباشرة')}</span>
+                      </a>
+                      <a
+                        href={previewAttachment.url}
+                        download
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-colors border border-zinc-700"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>{t('Download', 'تحميل')}</span>
+                      </a>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -1481,7 +1837,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         onSuccess={({ count, totalAmount }) => {
           setToastMessage({
             type: 'success',
-            text: `تم استيراد ${count} مصروف بنجاح بإجمالي OMR ${totalAmount.toFixed(3)}!`
+            text: t(`Successfully imported ${count} expenses totaling OMR ${totalAmount.toFixed(3)}!`, `تم استيراد ${count} مصروف بنجاح بإجمالي OMR ${totalAmount.toFixed(3)}!`)
           });
           router.refresh();
         }}

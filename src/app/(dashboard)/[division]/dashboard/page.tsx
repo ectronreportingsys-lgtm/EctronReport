@@ -7,6 +7,7 @@ import { ShiftProductionChart, TargetVsActualChart, AchievementGauge, MonthlyAgg
 import DashboardControls from '@/components/dashboard/DashboardControls';
 import YearlyTable from '../yearly-production/YearlyTable';
 import TableDateRangePicker from '@/components/dashboard/TableDateRangePicker';
+import T from '@/components/layout/T';
 
 export default async function DashboardPage(props: {
   params: Promise<{ division: string }>;
@@ -257,9 +258,9 @@ export default async function DashboardPage(props: {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white print:text-black">
-            {division === 'water' ? 'Water Siconia' : division === 'electricity-ecs1100' ? 'Electricity ECS1100' : 'Electricity M212'} - {mode === 'daily' ? `Today's Production (${displayDate})` : `Yearly Overview (${year})`}
+            <T text={division === 'water' ? 'Water Siconia' : division === 'electricity-ecs1100' ? 'Electricity ECS1100' : 'Electricity M212'} /> - {mode === 'daily' ? `${displayDate}` : `${year}`}
           </h1>
-          <p className="text-zinc-400 text-sm mt-1">Real-time overview of smart meters assembly</p>
+          <p className="text-zinc-400 text-sm mt-1"><T text="Real-time overview of smart meters assembly" /></p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -268,13 +269,13 @@ export default async function DashboardPage(props: {
           {mode === 'daily' && isWarning && (
             <div className="px-4 py-2 rounded-lg bg-danger/10 border border-danger/20 text-danger text-sm font-medium flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-danger animate-pulse"></span>
-              Warning: Efficiency below 90%
+              <T text="Warning: Efficiency below 90%" />
             </div>
           )}
           {mode === 'daily' && isExcellent && (
             <div className="px-4 py-2 rounded-xl bg-[#CCFBF1] dark:bg-[#14B8A6]/15 border border-[#14B8A6]/30 text-[#0F766E] dark:text-[#2DD4BF] text-sm font-semibold flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#14B8A6] animate-pulse"></span>
-              Excellent: Target Reached!
+              <T text="Excellent: Target Reached!" />
             </div>
           )}
         </div>
@@ -287,7 +288,7 @@ export default async function DashboardPage(props: {
             <div className="lg:col-span-2 flex flex-col gap-6">
               <div className="glass rounded-2xl p-6 border border-border">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
-                  <h3 className="text-lg font-semibold text-white print:text-black">Production Overview</h3>
+                  <h3 className="text-lg font-semibold text-white print:text-black"><T text="Production Overview" /></h3>
                   <TableDateRangePicker />
                 </div>
                 <ProductionTable 
@@ -321,7 +322,7 @@ export default async function DashboardPage(props: {
               
               <div className="glass rounded-2xl p-6 border border-border">
                 <h3 className="text-lg font-semibold text-white print:text-black mb-6">
-                  Production (Last 10 Days)
+                  <T text="Production (Last 10 Days)" />
                 </h3>
                 <ShiftProductionChart 
                   data={last10ChartData} 
@@ -332,12 +333,12 @@ export default async function DashboardPage(props: {
             
             <div className="flex flex-col gap-6">
               <div className="glass rounded-2xl p-6 border border-border">
-                <h3 className="text-lg font-semibold text-white print:text-black mb-6">Achievement</h3>
+                <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Achievement" /></h3>
                 <AchievementGauge achieved={metrics.achieved} target={metrics.target} />
               </div>
 
               <div className="glass rounded-2xl p-6 border border-border">
-                <h3 className="text-lg font-semibold text-white print:text-black mb-6">Target vs Actual</h3>
+                <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Target vs Actual" /></h3>
                 <TargetVsActualChart categories={chartCategories} targetData={chartTargetData} actualData={chartActualData} />
               </div>
             </div>
@@ -347,22 +348,22 @@ export default async function DashboardPage(props: {
         <div className="grid grid-cols-1 gap-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="glass rounded-2xl p-6 border border-border lg:col-span-2">
-              <h3 className="text-lg font-semibold text-white print:text-black mb-6">Yearly Aggregation by Month - {year}</h3>
+              <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Yearly Aggregation by Month" /> - {year}</h3>
               <MonthlyAggregationChart dbData={yearlyData} division={division} year={year} />
             </div>
             <div className="glass rounded-2xl p-6 border border-border">
-              <h3 className="text-lg font-semibold text-white print:text-black mb-6">Yearly Achievement</h3>
+              <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Yearly Achievement" /></h3>
               <AchievementGauge achieved={yearlyAchieved} target={yearlyTarget} />
             </div>
           </div>
           
           <div className="glass rounded-2xl p-6 border border-border">
-            <h3 className="text-lg font-semibold text-white print:text-black mb-6">Overall Yearly Growth</h3>
+            <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Overall Yearly Growth" /></h3>
             <YearlyGrowthChart dbData={allData} division={division} />
           </div>
 
           <div className="glass rounded-2xl p-6 border border-border">
-            <h3 className="text-lg font-semibold text-white print:text-black mb-6">Production History - {year}</h3>
+            <h3 className="text-lg font-semibold text-white print:text-black mb-6"><T text="Production History" /> - {year}</h3>
             <YearlyTable data={flatData} division={division} />
           </div>
         </div>

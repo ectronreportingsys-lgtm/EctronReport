@@ -2,6 +2,8 @@ import LoginForm from './LoginForm';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import { ThemeToggleSwitch } from '@/components/layout/ThemeProvider';
+import { LanguageToggleSwitch } from '@/components/layout/LanguageProvider';
+import T from '@/components/layout/T';
 
 export default async function LoginPage() {
   const supabase = await createClient();
@@ -13,7 +15,8 @@ export default async function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative transition-colors duration-300">
-      <div className="absolute top-6 right-6 z-20">
+      <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+        <LanguageToggleSwitch />
         <ThemeToggleSwitch />
       </div>
       <div className="hidden dark:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#00a99d]/15 via-background to-background pointer-events-none"></div>
@@ -28,7 +31,9 @@ export default async function LoginPage() {
             </span>
             <span className="text-4xl font-extrabold text-[#173B63] dark:text-blue-400">n</span>
           </div>
-          <p className="text-[#475569] dark:text-zinc-400 mt-2">Sign in to your account</p>
+          <p className="text-[#475569] dark:text-zinc-400 mt-2">
+            <T text="Sign in to your account" />
+          </p>
         </div>
         
         <LoginForm />

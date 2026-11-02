@@ -7,6 +7,7 @@ import UserFormModal from './UserFormModal';
 import RolesManagementModal from './RolesManagementModal';
 import { createClient } from '@/lib/supabase';
 import * as xlsx from 'xlsx';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface User {
   id: string;
@@ -18,6 +19,7 @@ interface User {
 }
 
 export default function UsersTable({ initialUsers, roles: initialRoles }: { initialUsers: User[], roles: any[] }) {
+  const { t } = useLanguage();
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [roles, setRoles] = useState<any[]>(initialRoles);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -88,7 +90,7 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
     } catch (err) {
       // Revert on error
       setUsers(users.map(u => u.id === user.id ? { ...u, is_active: user.is_active } : u));
-      alert('حدث خطأ أثناء تحديث حالة المستخدم');
+      alert(t('An error occurred while updating user status.', 'حدث خطأ أثناء تحديث حالة المستخدم'));
     }
   };
 
@@ -174,13 +176,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
       const result = await res.json();
       
       if (result.errors && result.errors.length > 0) {
-        alert('حدثت مشكلة أثناء إضافة بعض المستخدمين:\n' + result.errors.map((e: any) => `${e.username}: ${e.error}`).join('\n'));
+        alert(t('An issue occurred while adding some users:\n', 'حدثت مشكلة أثناء إضافة بعض المستخدمين:\n') + result.errors.map((e: any) => `${e.username}: ${e.error}`).join('\n'));
       }
       
       if (result.success && result.count > 0) {
         window.location.reload();
       } else if (result.success && result.count === 0) {
-        alert('لم يتم إضافة أي مستخدم. يرجى مراجعة الأخطاء.');
+        alert(t('No users were added. Please check the errors.', 'لم يتم إضافة أي مستخدم. يرجى مراجعة الأخطاء.'));
         setIsImporting(false);
       }
     } catch (e: any) {
@@ -218,7 +220,7 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-danger/10 hover:bg-danger/20 text-danger text-sm font-medium transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
-                Delete Selected ({selectedUsers.length})
+                {t('Delete Selected', 'حذف المحدد')} ({selectedUsers.length})
               </button>
             )}
           </div>
@@ -228,27 +230,27 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-sm font-medium transition-colors cursor-pointer border border-blue-500/20"
             >
               <Download className="w-4 h-4" />
-              Export Excel
+              {t('Export Excel', 'تصدير إكسل')}
             </button>
             <button 
               onClick={() => setIsSelectFileModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-sm font-medium transition-colors cursor-pointer border border-emerald-500/20"
             >
               <Upload className="w-4 h-4" />
-              Upload Excel
+              {t('Upload Excel', 'رفع إكسل')}
             </button>
             <button 
             onClick={() => setIsRolesModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors border border-zinc-700"
           >
-            إدارة الصلاحيات (Roles)
+            {t('Manage Roles', 'إدارة الصلاحيات (Roles)')}
           </button>
           <button 
             onClick={() => { setEditingUser(null); setIsModalOpen(true); }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg btn-primary-gradient bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
           >
             <UserPlus className="w-4 h-4" />
-            Add User
+            {t('Add User', 'إضافة مستخدم')}
           </button>
         </div>
         </div>
@@ -365,10 +367,10 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
           onSuccess={(newUser) => {
             if (editingUser) {
               setUsers(users.map(u => u.id === newUser.id ? newUser : u));
-              setSuccessMessage('تم تعديل بيانات المستخدم بنجاح!');
+              setSuccessMessage(t('User updated successfully!', 'تم تعديل بيانات المستخدم بنجاح!'));
             } else {
               setUsers([newUser, ...users]);
-              setSuccessMessage('تمت إضافة المستخدم بنجاح!');
+              setSuccessMessage(t('User added successfully!', 'تمت إضافة المستخدم بنجاح!'));
             }
             setIsModalOpen(false);
           }} 
@@ -382,13 +384,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mb-4 text-emerald-400">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">نجاح</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t('Success', 'نجاح')}</h3>
             <p className="text-zinc-300 text-sm mb-6">{successMessage}</p>
             <button 
               onClick={() => setSuccessMessage(null)}
               className="w-full px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors"
             >
-              حسناً
+              {t('OK', 'حسناً')}
             </button>
           </div>
         </div>
@@ -409,13 +411,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <div className="flex items-center gap-3 text-warning mb-4">
               <ShieldAlert className="w-6 h-6" />
-              <h3 className="text-lg font-bold">تأكيد الحذف</h3>
+              <h3 className="text-lg font-bold">{t('Confirm Delete', 'تأكيد الحذف')}</h3>
             </div>
             <p className="text-zinc-300 text-sm mb-2">
-              هل أنت متأكد من حذف المستخدم <strong>"{userToDelete.full_name}"</strong>؟
+              {t('Are you sure you want to delete user', 'هل أنت متأكد من حذف المستخدم')} <strong>"{userToDelete.full_name}"</strong>?
             </p>
             <p className="text-zinc-500 text-xs mb-6">
-              لن يتمكن من تسجيل الدخول بعد الحذف.
+              {t('They will not be able to log in after deletion.', 'لن يتمكن من تسجيل الدخول بعد الحذف.')}
             </p>
             
             <div className="flex gap-3 justify-end">
@@ -423,13 +425,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                 onClick={() => setUserToDelete(null)}
                 className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button 
                 onClick={handleDelete}
                 className="px-4 py-2 rounded-lg bg-danger hover:bg-red-600 text-white text-sm font-medium transition-colors"
               >
-                حذف
+                {t('Delete', 'حذف')}
               </button>
             </div>
           </div>
@@ -442,10 +444,10 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <div className="flex items-center gap-3 text-danger mb-4">
               <Trash2 className="w-6 h-6" />
-              <h3 className="text-lg font-bold">حذف جماعي</h3>
+              <h3 className="text-lg font-bold">{t('Bulk Delete', 'حذف جماعي')}</h3>
             </div>
             <p className="text-zinc-300 text-sm mb-6">
-              سيتم حذف <strong>{selectedUsers.length}</strong> مستخدمين بشكل نهائي. هل أنت متأكد؟
+              {selectedUsers.length} {t('users will be permanently deleted. Are you sure?', 'مستخدمين سيتم حذفهم بشكل نهائي. هل أنت متأكد؟')}
             </p>
             
             <div className="flex gap-3 justify-end">
@@ -453,13 +455,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                 onClick={() => setIsBulkDeleteModalOpen(false)}
                 className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button 
                 onClick={handleBulkDelete}
                 className="px-4 py-2 rounded-lg bg-danger hover:bg-red-600 text-white text-sm font-medium transition-colors"
               >
-                تأكيد الحذف
+                {t('Confirm Delete', 'تأكيد الحذف')}
               </button>
             </div>
           </div>
@@ -470,19 +472,19 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
       {isSelectFileModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-white mb-4">اختيار ملف الإكسل</h3>
-            <p className="text-zinc-400 text-sm mb-6">الرجاء اختيار ملف بصيغة .xlsx أو .xls ليتم استيراد المستخدمين منه.</p>
+            <h3 className="text-lg font-bold text-white mb-4">{t('Select Excel File', 'اختيار ملف الإكسل')}</h3>
+            <p className="text-zinc-400 text-sm mb-6">{t('Please select a .xlsx or .xls file to import users from.', 'الرجاء اختيار ملف بصيغة .xlsx أو .xls ليتم استيراد المستخدمين منه.')}</p>
             
             <div className="mb-6">
               <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer bg-zinc-900/50 hover:bg-zinc-800/50 transition-colors">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Upload className="w-8 h-8 text-zinc-400 mb-2" />
                   <p className="mb-2 text-sm text-zinc-400">
-                    <span className="font-semibold text-blue-400">اضغط للاختيار</span> أو اسحب الملف هنا
+                    <span className="font-semibold text-blue-400">{t('Click to select', 'اضغط للاختيار')}</span> {t('or drag file here', 'أو اسحب الملف هنا')}
                   </p>
                   {selectedFile && (
                     <p className="text-emerald-400 text-sm font-medium mt-2">
-                      تم اختيار: {selectedFile.name}
+                      {t('Selected:', 'تم اختيار:')} {selectedFile.name}
                     </p>
                   )}
                 </div>
@@ -495,14 +497,14 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                 onClick={() => { setIsSelectFileModalOpen(false); setSelectedFile(null); }}
                 className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button 
                 onClick={processSelectedFile}
                 disabled={!selectedFile}
                 className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium transition-colors"
               >
-                معالجة الملف
+                {t('Process File', 'معالجة الملف')}
               </button>
             </div>
           </div>
@@ -516,29 +518,29 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
             {isImporting ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <Loader2 className="w-16 h-16 text-blue-500 animate-spin mb-4" />
-                <p className="text-zinc-300 text-lg font-medium">جاري استيراد البيانات...</p>
-                <p className="text-zinc-500 text-sm mt-2">الرجاء الانتظار حتى تكتمل العملية</p>
+                <p className="text-zinc-300 text-lg font-medium">{t('Importing data...', 'جاري استيراد البيانات...')}</p>
+                <p className="text-zinc-500 text-sm mt-2">{t('Please wait until the process is completed', 'الرجاء الانتظار حتى تكتمل العملية')}</p>
               </div>
             ) : (
               <>
-                <h3 className="text-lg font-bold text-white mb-4">ملخص استيراد المستخدمين</h3>
+                <h3 className="text-lg font-bold text-white mb-4">{t('Users Import Summary', 'ملخص استيراد المستخدمين')}</h3>
                 
                 {importSummary.fileName && (
                   <div className="mb-4 text-sm text-zinc-400 text-center bg-zinc-800/50 py-2 rounded-lg">
-                    الملف: <span className="text-zinc-200">{importSummary.fileName}</span>
+                    {t('File:', 'الملف:')} <span className="text-zinc-200">{importSummary.fileName}</span>
                   </div>
                 )}
 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center justify-between p-3 bg-zinc-950 rounded-lg border border-zinc-800">
-                    <span className="text-zinc-400 text-sm">إجمالي المستخدمين في الملف</span>
+                    <span className="text-zinc-400 text-sm">{t('Total users in file', 'إجمالي المستخدمين في الملف')}</span>
                     <span className="font-bold text-white">{importSummary.total}</span>
                   </div>
                   
                   <div className="flex items-center justify-between p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-emerald-400 text-sm">صالح للإضافة</span>
+                      <span className="text-emerald-400 text-sm">{t('Valid for addition', 'صالح للإضافة')}</span>
                     </div>
                     <span className="font-bold text-emerald-400">{importSummary.valid.length}</span>
                   </div>
@@ -547,7 +549,7 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                     <div className="flex items-center justify-between p-3 bg-warning/10 rounded-lg border border-warning/20">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-warning" />
-                        <span className="text-warning text-sm">موجود مسبقاً (تم التجاهل)</span>
+                        <span className="text-warning text-sm">{t('Already exists (ignored)', 'موجود مسبقاً (تم التجاهل)')}</span>
                       </div>
                       <span className="font-bold text-warning">{importSummary.existCount}</span>
                     </div>
@@ -557,7 +559,7 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                     <div className="flex items-center justify-between p-3 bg-danger/10 rounded-lg border border-danger/20">
                       <div className="flex items-center gap-2">
                         <XCircle className="w-4 h-4 text-danger" />
-                        <span className="text-danger text-sm">ينقصها كلمة مرور</span>
+                        <span className="text-danger text-sm">{t('Missing password', 'ينقصها كلمة مرور')}</span>
                       </div>
                       <span className="font-bold text-danger">{importSummary.missingPassCount}</span>
                     </div>
@@ -565,7 +567,7 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                 </div>
 
                 <p className="text-zinc-300 text-sm mb-6 text-center">
-                  هل تريد إضافة الـ <strong>{importSummary.valid.length}</strong> مستخدم الصالحين؟
+                  {t('Do you want to add the', 'هل تريد إضافة الـ')} <strong>{importSummary.valid.length}</strong> {t('valid users?', 'مستخدم الصالحين؟')}
                 </p>
                 
                 <div className="flex gap-3 justify-end">
@@ -573,14 +575,14 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
                     onClick={() => setIsImportModalOpen(false)}
                     className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
                   >
-                    إلغاء
+                    {t('Cancel', 'إلغاء')}
                   </button>
                   <button 
                     onClick={confirmImport}
                     disabled={importSummary.valid.length === 0}
                     className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-sm font-medium transition-colors"
                   >
-                    تأكيد الاستيراد
+                    {t('Confirm Import', 'تأكيد الاستيراد')}
                   </button>
                 </div>
               </>

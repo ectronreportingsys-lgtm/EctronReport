@@ -1,4 +1,7 @@
+'use client';
+
 import clsx from 'clsx';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 function getStatusColor(percentage: number) {
   if (percentage >= 98) return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'; // 🟢
@@ -31,6 +34,7 @@ export default function ProductionTable({
   dateRangeDisplay?: string,
   failersData?: any
 }) {
+  const { t } = useLanguage();
   const shifts = dynamicWaterData || {
     shift1: {},
     shift2: {},
@@ -61,11 +65,11 @@ export default function ProductionTable({
       <div className="mb-4 p-3 rounded-lg bg-[#F0FDFA] dark:bg-blue-500/10 border border-[#CCFBF1] dark:border-blue-500/20 flex items-center justify-between text-sm">
         <div className="flex items-center gap-2 text-[#0F766E] dark:text-blue-400">
           <span className="w-2 h-2 rounded-full bg-[#14B8A6] dark:bg-blue-400 animate-pulse"></span>
-          <span className="font-medium">أحدث ملف مرفوع:</span>
+          <span className="font-medium">{t('Latest uploaded file:', 'أحدث ملف مرفوع:')}</span>
           <span className="text-white print:text-black">{latestFileName}</span>
         </div>
         <div className="text-zinc-100 print:text-[#1b497f] font-semibold">
-          وقت الرفع: <span className="text-white print:text-black font-medium">{latestFileTime}</span>
+          {t('Upload time:', 'وقت الرفع:')} <span className="text-white print:text-black font-medium">{latestFileTime}</span>
         </div>
       </div>
     );
@@ -97,7 +101,7 @@ export default function ProductionTable({
             </tr>
             {failers.note && (
               <tr className="border-b border-[#E2E8F0] dark:border-teal-800/50 bg-[#F0FDFA] dark:bg-teal-900/40">
-                <th className="py-3 px-4 text-sm font-semibold text-[#0F766E] dark:text-teal-100 border-r border-[#E2E8F0] dark:border-teal-800/50">Note / ملاحظة</th>
+                <th className="py-3 px-4 text-sm font-semibold text-[#0F766E] dark:text-teal-100 border-r border-[#E2E8F0] dark:border-teal-800/50">{t('Note', 'الملاحظة')}</th>
                 <th colSpan={7} className="py-3 px-4 text-sm font-medium text-[#475569] dark:text-teal-100 text-center font-normal whitespace-pre-wrap text-left">{failers.note}</th>
               </tr>
             )}
@@ -170,7 +174,7 @@ export default function ProductionTable({
           </tr>
           {failers.note && (
             <tr className="border-b border-zinc-800/50 bg-zinc-800/40">
-              <th className="py-3 px-4 text-sm font-semibold text-zinc-300 print:text-[#1b497f] border-r border-zinc-800/50">Note / ملاحظة</th>
+              <th className="py-3 px-4 text-sm font-semibold text-zinc-300 print:text-[#1b497f] border-r border-zinc-800/50">{t('Note', 'الملاحظة')}</th>
               <th colSpan={7} className="py-3 px-4 text-sm font-medium text-zinc-300 print:text-black text-center font-normal whitespace-pre-wrap text-left">{failers.note}</th>
             </tr>
           )}

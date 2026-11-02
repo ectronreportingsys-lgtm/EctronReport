@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 import { getRecurringDescriptions } from './resourcesActions';
 
-export async function getFormData() {
+export async function getFormData(expenseDate?: string) {
   const supabase = await createClient();
   
   const [categoriesResp, profilesResp, projectsResp, recurring] = await Promise.all([
@@ -30,25 +30,8 @@ export async function getFormData() {
     // fallback to all profiles
   }
 
-  // Generate next Expense No
-  const currentYear = new Date().getFullYear();
-  const { data: latestExpense } = await supabase
-    .from('petty_cash_expenses')
-    .select('expense_no')
-    .like('expense_no', `PC-${currentYear}-%`)
-    .order('expense_no', { ascending: false })
-    .limit(1);
-
-  let nextNumber = 1;
-  if (latestExpense && latestExpense.length > 0) {
-    const lastNo = latestExpense[0].expense_no;
-    const parts = lastNo.split('-');
-    if (parts.length === 3) {
-      nextNumber = parseInt(parts[2], 10) + 1;
-    }
-  }
-
-  const nextExpenseNo = `PC-${currentYear}-${nextNumber.toString().padStart(4, '0')}`;
+  // Generate guaranteed unique next Expense No based on date
+  const nextExpenseNo = await generateNextExpenseNo(expenseDate);
 
   return {
     categories: categoriesResp.data || [],
@@ -57,6 +40,45 @@ export async function getFormData() {
     recurringDescriptions: recurring || [],
     nextExpenseNo
   };
+}
+
+export async function generateNextExpenseNo(expenseDate?: string): Promise<string> {
+  const supabase = await createClient();
+  const d = expenseDate ? new Date(expenseDate) : new Date();
+  const y = !isNaN(d.getFullYear()) ? d.getFullYear() : new Date().getFullYear();
+  const m = !isNaN(d.getMonth()) ? String(d.getMonth() + 1).padStart(2, '0') : String(new Date().getMonth() + 1).padStart(2, '0');
+  const prefix = `PC-${y}-${m}-`;
+
+  const { data } = await supabase
+    .from('petty_cash_expenses')
+    .select('expense_no');
+
+  const allNos = new Set((data || []).map((x: any) => (x.expense_no || '').toLowerCase().trim()));
+
+  let maxSeq = 0;
+  (data || []).forEach((x: any) => {
+    const no = (x.expense_no || '').trim();
+    if (no.startsWith(prefix)) {
+      const part = no.substring(prefix.length);
+      const num = parseInt(part, 10);
+      if (!isNaN(num) && num > maxSeq) {
+        maxSeq = num;
+      }
+    }
+  });
+
+  let nextSeq = maxSeq + 1;
+  let candidate = `${prefix}${nextSeq.toString().padStart(3, '0')}`;
+  while (allNos.has(candidate.toLowerCase())) {
+    nextSeq++;
+    candidate = `${prefix}${nextSeq.toString().padStart(3, '0')}`;
+  }
+
+  return candidate;
+}
+
+export async function getNextExpenseNoAction(expenseDate: string): Promise<string> {
+  return await generateNextExpenseNo(expenseDate);
 }
 
 async function resolveProjectAllocation(
@@ -165,7 +187,7 @@ export async function createExpense(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const expense_no = formData.get('expense_no') as string;
+  let expense_no = formData.get('expense_no') as string;
   const expense_date = formData.get('expense_date') as string;
   const request_description = formData.get('request_description') as string;
   const category_id = formData.get('category_id') as string;
@@ -233,6 +255,21 @@ export async function createExpense(formData: FormData) {
 
   if (existing && existing.length > 0 && formData.get('confirm_duplicate') !== 'true') {
     return { error: 'DUPLICATE_WARNING', message: 'A similar expense already exists. Are you sure you want to save?' };
+  }
+
+  // Ensure expense_no is unique and auto-resolve any key collision
+  if (!expense_no || !expense_no.trim()) {
+    expense_no = await generateNextExpenseNo(expense_date);
+  } else {
+    const { data: conflict } = await supabase
+      .from('petty_cash_expenses')
+      .select('id')
+      .ilike('expense_no', expense_no.trim())
+      .maybeSingle();
+
+    if (conflict) {
+      expense_no = await generateNextExpenseNo(expense_date);
+    }
   }
 
   const { data, error } = await supabase

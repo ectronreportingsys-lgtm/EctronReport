@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface UserFormModalProps {
   user?: any;
@@ -11,18 +12,68 @@ interface UserFormModalProps {
   onSuccess: (user: any) => void;
 }
 
-const ALL_PERMISSIONS = [
-  { key: 'electricity_dashboard', label: 'Electricity Dashboard' },
-  { key: 'electricity_daily_entry', label: 'Electricity Daily Entry' },
-  { key: 'electricity_reports', label: 'Electricity Reports' },
-  { key: 'water_dashboard', label: 'Water Dashboard' },
-  { key: 'water_daily_entry', label: 'Water Daily Entry' },
-  { key: 'water_reports', label: 'Water Reports' },
-  { key: 'manage_users', label: 'User Management' },
-  { key: 'admin_panel', label: 'Admin Panel' }
+export const PERMISSION_MODULES = [
+  {
+    moduleEn: 'Electricity Division (M212)',
+    moduleAr: 'قسم الكهرباء (M212)',
+    permissions: [
+      { key: 'electricity_dashboard', labelEn: 'Electricity Dashboard', labelAr: 'لوحة تحكم الكهرباء M212' },
+      { key: 'electricity_reports', labelEn: 'Electricity Reports', labelAr: 'تقارير الكهرباء M212' },
+      { key: 'electricity_daily_entry', labelEn: 'Electricity Daily Entry', labelAr: 'رفع بيانات الكهرباء M212' },
+    ]
+  },
+  {
+    moduleEn: 'Water Division (Siconia)',
+    moduleAr: 'قسم المياه (Siconia)',
+    permissions: [
+      { key: 'water_dashboard', labelEn: 'Water Dashboard', labelAr: 'لوحة تحكم المياه Siconia' },
+      { key: 'water_reports', labelEn: 'Water Reports', labelAr: 'تقارير المياه Siconia' },
+      { key: 'water_daily_entry', labelEn: 'Water Daily Entry', labelAr: 'رفع بيانات المياه Siconia' },
+    ]
+  },
+  {
+    moduleEn: 'Electricity Division (ECS1100)',
+    moduleAr: 'قسم الكهرباء (ECS1100)',
+    permissions: [
+      { key: 'electricity-ecs1100_dashboard', labelEn: 'ECS1100 Dashboard', labelAr: 'لوحة تحكم الكهرباء ECS1100' },
+      { key: 'electricity-ecs1100_reports', labelEn: 'ECS1100 Reports', labelAr: 'تقارير الكهرباء ECS1100' },
+      { key: 'electricity-ecs1100_daily_entry', labelEn: 'ECS1100 Daily Entry', labelAr: 'رفع بيانات الكهرباء ECS1100' },
+    ]
+  },
+  {
+    moduleEn: 'Petty Cash Module',
+    moduleAr: 'إدارة العهد والمصروفات النثرية',
+    permissions: [
+      { key: 'petty_cash_dashboard', labelEn: 'Petty Cash Dashboard', labelAr: 'لوحة تحكم العهد النثرية' },
+      { key: 'petty_cash_expenses', labelEn: 'Expenses & Settlement', labelAr: 'المصاريف وتصفية عهد الموظفين' },
+      { key: 'petty_cash_resources', labelEn: 'Resources & Settings', labelAr: 'المصادر وإعدادات العهد' },
+    ]
+  },
+  {
+    moduleEn: 'Visitor Management System',
+    moduleAr: 'نظام إدارة وتسجيل الزوار',
+    permissions: [
+      { key: 'visitor_dashboard', labelEn: 'Visitor Dashboard', labelAr: 'لوحة تحكم وإحصائيات الزوار' },
+      { key: 'visitor_register', labelEn: 'Visitor Registration & QR', labelAr: 'تسجيل زيارة جديدة ورمز QR' },
+      { key: 'visitor_list', labelEn: 'Visits List & Import', labelAr: 'قائمة الزيارات واستيراد إكسل' },
+      { key: 'visitor_admin', labelEn: 'Visitor Administration', labelAr: 'إدارة وتعديل الزيارات' },
+    ]
+  },
+  {
+    moduleEn: 'Admin Panel & Security',
+    moduleAr: 'لوحة الإدارة والتحكم بالنظام',
+    permissions: [
+      { key: 'admin_panel', labelEn: 'Admin Panel Access', labelAr: 'دخول لوحة الإدارة العامة' },
+      { key: 'manage_users', labelEn: 'User Management', labelAr: 'إدارة المستخدمين' },
+      { key: 'manage_roles', labelEn: 'Role & Permission Management', labelAr: 'إدارة الصلاحيات والأنواع' },
+    ]
+  }
 ];
 
+const ALL_PERMISSIONS = PERMISSION_MODULES.flatMap(m => m.permissions.map(p => ({ key: p.key, label: p.labelEn })));
+
 export default function UserFormModal({ user, roles, onClose, onSuccess }: UserFormModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -110,7 +161,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center p-6 border-b border-zinc-800">
-          <h2 className="text-xl font-bold text-white">{user ? 'Edit User' : 'Add New User'}</h2>
+          <h2 className="text-xl font-bold text-white">{user ? t('Edit User', 'تعديل المستخدم') : t('Add New User', 'إضافة مستخدم جديد')}</h2>
           <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -126,7 +177,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
           <form id="user-form" onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Username</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t('Username', 'اسم المستخدم')}</label>
                 <input
                   type="text"
                   required
@@ -138,7 +189,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
               
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Password {user && <span className="text-zinc-500 text-xs">(Leave blank to keep)</span>}
+                  {t('Password', 'كلمة المرور')} {user && <span className="text-zinc-500 text-xs">{t('(Leave blank to keep)', '(اترك فارغاً للإبقاء)')}</span>}
                 </label>
                 <input
                   type="password"
@@ -150,7 +201,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t('Full Name', 'الاسم الكامل')}</label>
                 <input
                   type="text"
                   required
@@ -161,7 +212,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">User Type (Role)</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t('User Type (Role)', 'نوع المستخدم (الدور)')}</label>
                 <select
                   value={formData.role_id}
                   onChange={e => setFormData({ ...formData, role_id: e.target.value })}
@@ -181,27 +232,62 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
                     onChange={e => setFormData({ ...formData, is_active: e.target.checked })}
                     className="w-5 h-5 rounded border-zinc-700 bg-zinc-800 text-blue-500 focus:ring-blue-500/50"
                   />
-                  <span className="text-sm font-medium text-zinc-300">Active User (مستخدم نشط)</span>
+                  <span className="text-sm font-medium text-zinc-300">{t('Active User', 'مستخدم نشط')}</span>
                 </label>
               </div>
             </div>
 
             <div className="pt-4 border-t border-zinc-800">
-              <h3 className="text-sm font-medium text-zinc-300 mb-4">Custom Permissions / Pages</h3>
-              <p className="text-xs text-zinc-500 mb-4">Select additional pages this user can access (overrides role defaults).</p>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-zinc-200">{t('Custom Permissions / Pages', 'صلاحيات مخصصة / صفحات')}</h3>
+                <span className="text-xs text-teal-400 font-semibold">
+                  {selectedPermissions.length} / {ALL_PERMISSIONS.length} {t('Selected', 'محدد')}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-500 mb-4">{t('Select additional pages this user can access (overrides role defaults).', 'حدد الصفحات الإضافية المتاحة لهذا المستخدم.')}</p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {ALL_PERMISSIONS.map(perm => (
-                  <label key={perm.key} className="flex items-center gap-3 p-3 rounded-lg border border-zinc-800 bg-zinc-950/50 hover:bg-zinc-800/50 cursor-pointer transition-colors">
-                    <input 
-                      type="checkbox"
-                      checked={selectedPermissions.includes(perm.key)}
-                      onChange={() => togglePermission(perm.key)}
-                      className="rounded border-zinc-700 bg-zinc-800 text-blue-500 focus:ring-blue-500/50"
-                    />
-                    <span className="text-sm text-zinc-300">{perm.label}</span>
-                  </label>
-                ))}
+              <div className="space-y-4">
+                {PERMISSION_MODULES.map((mod, mIdx) => {
+                  const modKeys = mod.permissions.map(p => p.key);
+                  const isAllSelected = modKeys.every(k => selectedPermissions.includes(k));
+                  
+                  return (
+                    <div key={mIdx} className="p-3.5 rounded-xl border border-zinc-800/80 bg-zinc-950/40 space-y-2.5">
+                      <div className="flex items-center justify-between border-b border-zinc-800/50 pb-2">
+                        <span className="text-xs font-bold text-teal-400">
+                          {t(mod.moduleEn, mod.moduleAr)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isAllSelected) {
+                              setSelectedPermissions(prev => prev.filter(k => !modKeys.includes(k)));
+                            } else {
+                              setSelectedPermissions(prev => [...new Set([...prev, ...modKeys])]);
+                            }
+                            setManuallyChanged(true);
+                          }}
+                          className="text-[11px] text-zinc-400 hover:text-white transition-colors"
+                        >
+                          {isAllSelected ? t('Deselect All', 'إلغاء تحديد القسم') : t('Select All', 'تحديد القسم بالكامل')}
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {mod.permissions.map(perm => (
+                          <label key={perm.key} className="flex items-center gap-2.5 p-2 rounded-lg border border-zinc-800/70 bg-zinc-900/60 hover:bg-zinc-800/60 cursor-pointer transition-colors">
+                            <input 
+                              type="checkbox"
+                              checked={selectedPermissions.includes(perm.key)}
+                              onChange={() => togglePermission(perm.key)}
+                              className="rounded border-zinc-700 bg-zinc-800 text-teal-500 focus:ring-teal-500/50"
+                            />
+                            <span className="text-xs font-medium text-zinc-300">{t(perm.labelEn, perm.labelAr)}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </form>
@@ -213,7 +299,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
             onClick={onClose}
             className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-colors"
           >
-            Cancel
+            {t('Cancel', 'إلغاء')}
           </button>
           <button 
             type="submit" 
@@ -222,7 +308,7 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
             className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Save User
+            {t('Save User', 'حفظ المستخدم')}
           </button>
         </div>
       </div>

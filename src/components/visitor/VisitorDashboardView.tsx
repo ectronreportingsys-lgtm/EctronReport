@@ -31,6 +31,7 @@ import {
 import { VisitRecord, OrganizationGroup, VisitorItem, extractOrganizationGroups } from '@/lib/visitorTypes';
 import { updateTimeOut, removeVisit, updateVisitDetails } from '@/app/visitor/actions/visitorActions';
 import { exportVisitsListToExcel, exportDetailedVisitorsToExcel, printVisitsReport } from '@/lib/visitorExporter';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface VisitorDashboardViewProps {
   initialVisits: VisitRecord[];
@@ -43,6 +44,7 @@ export default function VisitorDashboardView({
   initialYears,
   initialSelectedYear,
 }: VisitorDashboardViewProps) {
+  const { t } = useLanguage();
   const [visits, setVisits] = useState<VisitRecord[]>(initialVisits);
   const [selectedYear, setSelectedYear] = useState<number>(initialSelectedYear);
   const [selectedMonth, setSelectedMonth] = useState<number>(0); // 0 = all
@@ -87,7 +89,7 @@ export default function VisitorDashboardView({
     if (cLower === 'ectron') {
       return (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-teal-50 text-[#0F766E] border border-teal-200 dark:bg-teal-950/40 dark:text-teal-400 dark:border-teal-800">
-          إلكترون (Ectron)
+          {t('Ectron', 'إلكترون (Ectron)')}
         </span>
       );
     }
@@ -108,14 +110,14 @@ export default function VisitorDashboardView({
     if (cLower === 'tadoom') {
       return (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-cyan-50 text-cyan-700 border border-cyan-200 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-800">
-          تدوم (Tadoom)
+          {t('Tadoom', 'تدوم (Tadoom)')}
         </span>
       );
     }
     if (cLower === 'tadoomx') {
       return (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800">
-          تدوم إكس (TadoomX)
+          {t('TadoomX', 'تدوم إكس (TadoomX)')}
         </span>
       );
     }
@@ -408,21 +410,21 @@ export default function VisitorDashboardView({
     }
   };
 
-  const months = [
-    { num: 0, name: 'جميع الأشهر (All Year)' },
-    { num: 1, name: 'يناير (January)' },
-    { num: 2, name: 'فبراير (February)' },
-    { num: 3, name: 'مارس (March)' },
-    { num: 4, name: 'أبريل (April)' },
-    { num: 5, name: 'مايو (May)' },
-    { num: 6, name: 'يونيو (June)' },
-    { num: 7, name: 'يوليو (July)' },
-    { num: 8, name: 'أغسطس (August)' },
-    { num: 9, name: 'سبتمبر (September)' },
-    { num: 10, name: 'أكتوبر (October)' },
-    { num: 11, name: 'نوفمبر (November)' },
-    { num: 12, name: 'ديسمبر (December)' }
-  ];
+  const months = useMemo(() => [
+    { num: 0, name: t('All Year', 'جميع الأشهر (All Year)') },
+    { num: 1, name: t('January', 'يناير (January)') },
+    { num: 2, name: t('February', 'فبراير (February)') },
+    { num: 3, name: t('March', 'مارس (March)') },
+    { num: 4, name: t('April', 'أبريل (April)') },
+    { num: 5, name: t('May', 'مايو (May)') },
+    { num: 6, name: t('June', 'يونيو (June)') },
+    { num: 7, name: t('July', 'يوليو (July)') },
+    { num: 8, name: t('August', 'أغسطس (August)') },
+    { num: 9, name: t('September', 'سبتمبر (September)') },
+    { num: 10, name: t('October', 'أكتوبر (October)') },
+    { num: 11, name: t('November', 'نوفمبر (November)') },
+    { num: 12, name: t('December', 'ديسمبر (December)') }
+  ], [t]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
@@ -436,10 +438,10 @@ export default function VisitorDashboardView({
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-[#173B63] dark:text-white">
-                لوحة إدارة الزوار (Visitor Dashboard)
+                {t('Visitor Dashboard', 'لوحة إدارة الزوار (Visitor Dashboard)')}
               </h1>
               <p className="text-sm sm:text-base text-slate-500 dark:text-zinc-400 font-medium mt-0.5">
-                متابعة وإحصائيات الزيارات الميدانية وتسجيلات الدخول الذاتية والداخلية
+                {t('Monitor and track on-site visits, self-registrations, and delegations', 'متابعة وإحصائيات الزيارات الميدانية وتسجيلات الدخول الذاتية والداخلية')}
               </p>
             </div>
           </div>
@@ -452,7 +454,7 @@ export default function VisitorDashboardView({
             className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] hover:from-[#132f4f] hover:to-[#0c5c56] text-white text-sm sm:text-base font-extrabold shadow-md transition-all flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
-            <span>تسجيل زيارة جديدة</span>
+            <span>{t('New Visit Registration', 'تسجيل زيارة جديدة')}</span>
           </Link>
 
           <Link
@@ -460,7 +462,7 @@ export default function VisitorDashboardView({
             className="px-4 py-3 rounded-xl bg-[#F0FDFA] dark:bg-zinc-800 text-[#0F766E] dark:text-[#00a99d] border border-[#14B8A6]/40 hover:bg-[#CCFBF1] text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
           >
             <QrCode className="w-5 h-5" />
-            <span>رمز الاستجابة QR</span>
+            <span>{t('QR Code', 'رمز الاستجابة QR')}</span>
           </Link>
 
           <Link
@@ -468,32 +470,32 @@ export default function VisitorDashboardView({
             className="px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
           >
             <Upload className="w-5 h-5" />
-            <span>استيراد إكسل</span>
+            <span>{t('Import Excel', 'استيراد إكسل')}</span>
           </Link>
 
           {/* Export Dropdown / Buttons */}
           <div className="flex items-center gap-2 border-l border-slate-200 dark:border-zinc-700 pl-3">
             <button
               onClick={() => exportVisitsListToExcel(filteredVisits)}
-              title="تصدير الزيارات إلى إكسل"
+              title={t('Export Visits List to Excel', 'تصدير الزيارات إلى إكسل')}
               className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold flex items-center gap-1.5"
             >
               <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
-              <span className="hidden sm:inline">إكسل الزيارات</span>
+              <span className="hidden sm:inline">{t('Visits Excel', 'إكسل الزيارات')}</span>
             </button>
 
             <button
               onClick={() => exportDetailedVisitorsToExcel(filteredVisits)}
-              title="تصدير دليل الزوار التفصيلي"
+              title={t('Export Detailed Visitors Directory to Excel', 'تصدير دليل الزوار التفصيلي')}
               className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold flex items-center gap-1.5"
             >
               <Users className="w-5 h-5 text-[#0F766E]" />
-              <span className="hidden sm:inline">دليل الزوار</span>
+              <span className="hidden sm:inline">{t('Visitors Directory', 'دليل الزوار')}</span>
             </button>
 
             <button
               onClick={() => printVisitsReport()}
-              title="طباعة تقرير الزيارات"
+              title={t('Print Visits Report', 'طباعة تقرير الزيارات')}
               className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold"
             >
               <Printer className="w-5 h-5 text-slate-600 dark:text-zinc-400" />
@@ -507,7 +509,7 @@ export default function VisitorDashboardView({
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-sm font-bold text-[#173B63] dark:text-zinc-200 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-[#0F766E] dark:text-teal-400" />
-            الفترة الإحصائية:
+            {t('Statistical Period:', 'الفترة الإحصائية:')}
           </span>
 
           {/* Year selector */}
@@ -540,7 +542,7 @@ export default function VisitorDashboardView({
         </div>
 
         <div className="text-sm font-medium text-slate-600 dark:text-zinc-300">
-          عرض <span className="font-extrabold text-[#173B63] dark:text-teal-400 text-base">{filteredVisits.length}</span> من إجمالي <span className="font-bold">{visits.length}</span> زيارة مسجلة
+          {t('Showing', 'عرض')} <span className="font-extrabold text-[#173B63] dark:text-teal-400 text-base">{filteredVisits.length}</span> {t('of', 'من إجمالي')} <span className="font-bold">{visits.length}</span> {t('recorded visits', 'زيارة مسجلة')}
         </div>
       </div>
 
@@ -550,7 +552,7 @@ export default function VisitorDashboardView({
         {/* Card 1: Total Visits */}
         <div className="p-6 rounded-3xl bg-gradient-to-br from-white via-[#F0F7FC] to-[#E0EEF8] dark:from-zinc-900/80 dark:to-zinc-800/60 border border-[#9BB8D3] dark:border-zinc-800 shadow-sm glass transition-all hover:scale-[1.01]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">إجمالي الزيارات</span>
+            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">{t('Total Visits', 'إجمالي الزيارات')}</span>
             <div className="w-12 h-12 rounded-2xl bg-[#173B63] text-[#2DD4BF] flex items-center justify-center shadow-inner">
               <Calendar className="w-6 h-6" />
             </div>
@@ -559,18 +561,18 @@ export default function VisitorDashboardView({
             <span className="text-4xl sm:text-5xl font-black text-[#173B63] dark:text-white">
               {stats.totalVisits}
             </span>
-            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">زيارة مسجلة</span>
+            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">{t('Recorded Visits', 'زيارة مسجلة')}</span>
           </div>
           <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 border-t border-slate-200/70 dark:border-zinc-700/60 pt-2.5 flex items-center justify-between font-medium">
-            <span>لعام {selectedYear}</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-bold">100% موثقة</span>
+            <span>{t(`For Year ${selectedYear}`, `لعام ${selectedYear}`)}</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-bold">{t('100% Documented', '100% موثقة')}</span>
           </div>
         </div>
 
         {/* Card 2: Total Visitors */}
         <div className="p-6 rounded-3xl bg-gradient-to-br from-white via-[#F0FBF9] to-[#DCF5F0] dark:from-zinc-900/80 dark:to-zinc-800/60 border border-[#8ED8CD] dark:border-zinc-800 shadow-sm glass transition-all hover:scale-[1.01]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">إجمالي الزوار</span>
+            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">{t('Total Visitors', 'إجمالي الزوار')}</span>
             <div className="w-12 h-12 rounded-2xl bg-[#0F766E] text-white flex items-center justify-center shadow-inner">
               <Users className="w-6 h-6" />
             </div>
@@ -579,18 +581,18 @@ export default function VisitorDashboardView({
             <span className="text-4xl sm:text-5xl font-black text-[#0F766E] dark:text-teal-400">
               {stats.totalVisitors}
             </span>
-            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">شخص / زائر</span>
+            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">{t('Persons / Visitors', 'شخص / زائر')}</span>
           </div>
           <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 border-t border-teal-200/70 dark:border-zinc-700/60 pt-2.5 flex items-center justify-between font-medium">
-            <span>شامل الوفود والأفراد</span>
-            <span className="text-[#0F766E] dark:text-teal-400 font-bold">+ وفود متعددة</span>
+            <span>{t('Delegations & Individuals', 'شامل الوفود والأفراد')}</span>
+            <span className="text-[#0F766E] dark:text-teal-400 font-bold">{t('+ Multiple Delegations', '+ وفود متعددة')}</span>
           </div>
         </div>
 
         {/* Card 3: Total Organizations */}
         <div className="p-6 rounded-3xl bg-gradient-to-br from-white via-[#F0F7FC] to-[#E0EEF8] dark:from-zinc-900/80 dark:to-zinc-800/60 border border-[#9BB8D3] dark:border-zinc-800 shadow-sm glass transition-all hover:scale-[1.01]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">المؤسسات والشركات</span>
+            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">{t('Organizations & Companies', 'المؤسسات والشركات')}</span>
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] text-white flex items-center justify-center shadow-inner">
               <Building2 className="w-6 h-6" />
             </div>
@@ -599,18 +601,18 @@ export default function VisitorDashboardView({
             <span className="text-4xl sm:text-5xl font-black text-[#173B63] dark:text-white">
               {stats.totalOrganizations}
             </span>
-            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">مؤسسة مستقلة</span>
+            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">{t('Organizations', 'مؤسسة مستقلة')}</span>
           </div>
           <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 border-t border-slate-200/70 dark:border-zinc-700/60 pt-2.5 flex items-center justify-between font-medium">
-            <span>جهات حكومية وخاصة</span>
-            <span className="text-blue-600 dark:text-blue-400 font-bold">تنوع الشركاء</span>
+            <span>{t('Government & Private', 'جهات حكومية وخاصة')}</span>
+            <span className="text-blue-600 dark:text-blue-400 font-bold">{t('Diverse Partners', 'تنوع الشركاء')}</span>
           </div>
         </div>
 
         {/* Card 4: Average Visitors per Visit */}
         <div className="p-6 rounded-3xl bg-gradient-to-br from-white via-[#F0FBF9] to-[#DCF5F0] dark:from-zinc-900/80 dark:to-zinc-800/60 border border-[#8ED8CD] dark:border-zinc-800 shadow-sm glass transition-all hover:scale-[1.01]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">متوسط الزوار لكل زيارة</span>
+            <span className="text-sm font-bold text-[#475569] dark:text-zinc-300">{t('Avg Visitors / Visit', 'متوسط الزوار لكل زيارة')}</span>
             <div className="w-12 h-12 rounded-2xl bg-[#14B8A6] text-white flex items-center justify-center shadow-inner">
               <Users className="w-6 h-6" />
             </div>
@@ -619,11 +621,11 @@ export default function VisitorDashboardView({
             <span className="text-4xl sm:text-5xl font-black text-[#0F766E] dark:text-teal-400">
               {stats.averageVisitors}
             </span>
-            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">زائر / زيارة</span>
+            <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">{t('Visitors / Visit', 'زائر / زيارة')}</span>
           </div>
           <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 border-t border-teal-200/70 dark:border-zinc-700/60 pt-2.5 flex items-center justify-between font-medium">
-            <span>معدل حجم الوفود</span>
-            <span className="text-[#0F766E] dark:text-teal-400 font-bold">مؤشر دقيق</span>
+            <span>{t('Average Delegation Size', 'معدل حجم الوفود')}</span>
+            <span className="text-[#0F766E] dark:text-teal-400 font-bold">{t('Key Metric', 'مؤشر دقيق')}</span>
           </div>
         </div>
 
@@ -640,7 +642,7 @@ export default function VisitorDashboardView({
               type="text"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="بحث باسم الزائر، المؤسسة، رقم الزيارة، جهة التنسيق..."
+              placeholder={t('Search by visitor name, organization, visit #, coordination agency...', 'بحث باسم الزائر، المؤسسة، رقم الزيارة، جهة التنسيق...')}
               className="w-full pr-12 pl-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/80 text-foreground placeholder:text-slate-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
             />
           </div>
@@ -652,13 +654,13 @@ export default function VisitorDashboardView({
               onChange={e => setSelectedCoordination(e.target.value)}
               className="w-full px-3 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/80 text-foreground text-sm sm:text-base font-bold focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
             >
-              <option value="all">كل جهات التنسيق (All)</option>
-              <option value="Ectron">إلكترون (Ectron)</option>
+              <option value="all">{t('All Coordination Agencies', 'كل جهات التنسيق')}</option>
+              <option value="Ectron">Ectron</option>
               <option value="NEC">NEC</option>
               <option value="AAMU">AAMU</option>
-              <option value="Tadoom">تدوم (Tadoom)</option>
-              <option value="TadoomX">تدوم إكس (TadoomX)</option>
-              <option value="Other">أخرى (Other)</option>
+              <option value="Tadoom">Tadoom</option>
+              <option value="TadoomX">TadoomX</option>
+              <option value="Other">{t('Other', 'أخرى')}</option>
             </select>
           </div>
 
@@ -669,10 +671,10 @@ export default function VisitorDashboardView({
               onChange={e => setSelectedSource(e.target.value)}
               className="w-full px-3 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/80 text-foreground text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
             >
-              <option value="all">كل المصادر (All)</option>
-              <option value="public">ذاتي QR (Public)</option>
-              <option value="internal">داخلي (Internal)</option>
-              <option value="import">مستورد (Import)</option>
+              <option value="all">{t('All Sources', 'كل المصادر')}</option>
+              <option value="public">{t('Public QR', 'ذاتي QR')}</option>
+              <option value="internal">{t('Internal', 'داخلي')}</option>
+              <option value="import">{t('Imported', 'مستورد')}</option>
             </select>
           </div>
 
@@ -683,7 +685,7 @@ export default function VisitorDashboardView({
               onChange={e => setSelectedCountry(e.target.value)}
               className="w-full px-3 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/80 text-foreground text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
             >
-              <option value="all">كل الدول (All)</option>
+              <option value="all">{t('All Countries', 'كل الدول')}</option>
               {availableCountries.map(c => (
                 <option key={c} value={c}>{c}</option>
               ))}
@@ -706,7 +708,7 @@ export default function VisitorDashboardView({
               className="w-full py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-sm font-bold text-slate-700 dark:text-zinc-200 transition-colors flex items-center justify-center gap-1.5"
             >
               <RefreshCw className="w-4 h-4" />
-              <span>إعادة ضبط</span>
+              <span>{t('Reset', 'إعادة ضبط')}</span>
             </button>
           </div>
 
@@ -718,10 +720,10 @@ export default function VisitorDashboardView({
         <div className="p-5 sm:p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h2 className="text-lg sm:text-xl font-extrabold text-[#173B63] dark:text-white">
-              سجل الزيارات (Visits Log)
+              {t('Visits Log', 'سجل الزيارات')}
             </h2>
             <span className="text-sm px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200 dark:border-teal-800">
-              {filteredVisits.length} زيارة
+              {filteredVisits.length} {t('Visits', 'زيارة')}
             </span>
           </div>
         </div>
@@ -730,23 +732,23 @@ export default function VisitorDashboardView({
           <table className="w-full text-right text-base border-collapse">
             <thead>
               <tr className="bg-slate-50/90 dark:bg-zinc-800/70 border-b border-border text-slate-700 dark:text-zinc-200 font-bold text-sm sm:text-base">
-                <th className="py-4 px-4">رقم الزيارة</th>
-                <th className="py-4 px-4">التاريخ</th>
-                <th className="py-4 px-4">الدخول / الخروج</th>
-                <th className="py-4 px-4">المؤسسة / الشركة</th>
-                <th className="py-4 px-4">الدولة</th>
-                <th className="py-4 px-4">عن طريق (Coordination by)</th>
-                <th className="py-4 px-4">الزوار</th>
-                <th className="py-4 px-4">سبب الزيارة</th>
-                <th className="py-4 px-4 text-center">المصدر</th>
-                <th className="py-4 px-4 text-center">الإجراءات</th>
+                <th className="py-4 px-4">{t('Visit #', 'رقم الزيارة')}</th>
+                <th className="py-4 px-4">{t('Date', 'التاريخ')}</th>
+                <th className="py-4 px-4">{t('Time In / Out', 'الدخول / الخروج')}</th>
+                <th className="py-4 px-4">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
+                <th className="py-4 px-4">{t('Country', 'الدولة')}</th>
+                <th className="py-4 px-4">{t('Coordination by', 'عن طريق')}</th>
+                <th className="py-4 px-4">{t('Visitors', 'الزوار')}</th>
+                <th className="py-4 px-4">{t('Visit Reason', 'سبب الزيارة')}</th>
+                <th className="py-4 px-4 text-center">{t('Source', 'المصدر')}</th>
+                <th className="py-4 px-4 text-center">{t('Actions', 'الإجراءات')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredVisits.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
-                    لا توجد زيارات مطابقة لمعايير البحث الحالية
+                    {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
                   </td>
                 </tr>
               ) : (
@@ -785,9 +787,9 @@ export default function VisitorDashboardView({
                               type="button"
                               onClick={() => handleOpenTimeOut(visit)}
                               className="text-xs sm:text-sm px-3 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900 font-bold transition-colors"
-                              title="تسجيل وقت الخروج الآن"
+                              title={t('Record check-out time now', 'تسجيل وقت الخروج الآن')}
                             >
-                              تسجيل الخروج
+                              {t('Check Out', 'تسجيل الخروج')}
                             </button>
                           )}
                         </div>
@@ -798,7 +800,7 @@ export default function VisitorDashboardView({
                         {orgGroups.length > 1 ? (
                           <div className="space-y-1">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                              وفد مشترك ({orgGroups.length} مؤسسات)
+                              {t('Joint Delegation', 'وفد مشترك')} ({orgGroups.length} {t('orgs', 'مؤسسات')})
                             </span>
                             <div className="space-y-0.5 mt-0.5">
                               {orgGroups.map((og, idx) => (
@@ -835,17 +837,17 @@ export default function VisitorDashboardView({
                         <div className="flex flex-col gap-1 max-w-[200px]">
                           <div className="flex items-center gap-2">
                             <span className="px-2.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 text-xs sm:text-sm font-extrabold border border-teal-200 dark:border-teal-800 whitespace-nowrap">
-                              {visitorsList.length || 1} زائر
+                              {visitorsList.length || 1} {t('Visitors', 'زائر')}
                             </span>
                             {orgGroups.length > 1 && (
                               <span className="text-xs font-bold text-slate-400 dark:text-zinc-500 whitespace-nowrap">
-                                عبر {orgGroups.length} جهات
+                                {t('Across', 'عبر')} {orgGroups.length} {t('entities', 'جهات')}
                               </span>
                             )}
                           </div>
                           {orgGroups.length > 1 ? (
-                            <div className="text-xs text-slate-600 dark:text-zinc-300 truncate font-medium" title={orgGroups.map(og => `${og.organization_ar || og.organization_en || 'مؤسسة'}: ${(og.visitors || []).map(v => v.full_name_ar || v.full_name_en).join(', ')}`).join(' | ')}>
-                              {orgGroups.map(og => `${og.organization_ar || og.organization_en || 'مؤسسة'} (${og.visitors?.length || 0})`).join(' • ')}
+                            <div className="text-xs text-slate-600 dark:text-zinc-300 truncate font-medium" title={orgGroups.map(og => `${og.organization_ar || og.organization_en || t('Organization', 'مؤسسة')}: ${(og.visitors || []).map(v => v.full_name_ar || v.full_name_en).join(', ')}`).join(' | ')}>
+                              {orgGroups.map(og => `${og.organization_ar || og.organization_en || t('Organization', 'مؤسسة')} (${og.visitors?.length || 0})`).join(' • ')}
                             </div>
                           ) : (
                             <span className="text-sm sm:text-base font-medium text-slate-700 dark:text-zinc-200 truncate" title={visitorNames}>
@@ -870,10 +872,10 @@ export default function VisitorDashboardView({
                             : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
                         }`}>
                           {visit.registration_source === 'public'
-                            ? 'ذاتي (Public)'
+                            ? t('Public (QR)', 'ذاتي (Public)')
                             : visit.registration_source === 'internal'
-                            ? 'داخلي (Internal)'
-                            : 'إكسل (Import)'}
+                            ? t('Internal', 'داخلي (Internal)')
+                            : t('Imported (Excel)', 'إكسل (Import)')}
                         </span>
                       </td>
 
@@ -885,7 +887,7 @@ export default function VisitorDashboardView({
                             type="button"
                             onClick={() => setSelectedVisitForDetails(visit)}
                             className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors"
-                            title="عرض التفاصيل الكاملة"
+                            title={t('View Full Details', 'عرض التفاصيل الكاملة')}
                           >
                             <Eye className="w-5 h-5" />
                           </button>
@@ -903,7 +905,7 @@ export default function VisitorDashboardView({
                               setEditCustomCoordination(sisterCompaniesList.includes(coord) ? '' : coord);
                             }}
                             className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors"
-                            title="تعديل الزيارة"
+                            title={t('Edit Visit', 'تعديل الزيارة')}
                           >
                             <Edit3 className="w-5 h-5" />
                           </button>
@@ -913,7 +915,7 @@ export default function VisitorDashboardView({
                             type="button"
                             onClick={() => handleOpenTimeOut(visit)}
                             className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors"
-                            title="تسجيل/تحديث وقت الخروج"
+                            title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
                           >
                             <Clock className="w-5 h-5" />
                           </button>
@@ -923,7 +925,7 @@ export default function VisitorDashboardView({
                             type="button"
                             onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
                             className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors"
-                            title="حذف الزيارة"
+                            title={t('Delete Visit', 'حذف الزيارة')}
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -964,43 +966,43 @@ export default function VisitorDashboardView({
                     </span>
                     {detailsOrgGroups.length > 1 && (
                       <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                        وفد مشترك ({detailsOrgGroups.length} مؤسسات)
+                        {t('Joint Delegation', 'وفد مشترك')} ({detailsOrgGroups.length} {t('orgs', 'مؤسسات')})
                       </span>
                     )}
                   </div>
                   <h3 className="text-2xl font-extrabold text-[#173B63] dark:text-white mt-1">
-                    {selectedVisitForDetails.organization_ar || selectedVisitForDetails.organization_en || 'تفاصيل الزيارة'}
+                    {selectedVisitForDetails.organization_ar || selectedVisitForDetails.organization_en || t('Visit Details', 'تفاصيل الزيارة')}
                   </h3>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-6 bg-slate-50 dark:bg-zinc-800/60 p-5 rounded-2xl border border-border text-base">
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">تاريخ الزيارة</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Date', 'تاريخ الزيارة')}</span>
                   <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.visit_date}</span>
                 </div>
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">وقت الدخول</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time In', 'وقت الدخول')}</span>
                   <span className="font-extrabold text-base text-[#0F766E] dark:text-teal-400 font-mono">{selectedVisitForDetails.time_in}</span>
                 </div>
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">وقت الخروج</span>
-                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100 font-mono">{selectedVisitForDetails.time_out || 'لم يسجل بعد'}</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time Out', 'وقت الخروج')}</span>
+                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100 font-mono">{selectedVisitForDetails.time_out || t('Not recorded yet', 'لم يسجل بعد')}</span>
                 </div>
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">الدولة</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Country', 'الدولة')}</span>
                   <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.country || 'Oman'}</span>
                 </div>
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">عن طريق (Coordination by)</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Coordination by', 'عن طريق')}</span>
                   <div>{renderCoordinationBadge(selectedVisitForDetails.coordination_by)}</div>
                 </div>
                 <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">مصدر التسجيل</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Registration Source', 'مصدر التسجيل')}</span>
                   <span className="font-bold text-base capitalize text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.registration_source}</span>
                 </div>
                 <div className="col-span-2 sm:col-span-3">
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">سبب الزيارة</span>
+                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Reason', 'سبب الزيارة')}</span>
                   <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.visit_reason || '—'}</span>
                 </div>
               </div>
@@ -1008,7 +1010,7 @@ export default function VisitorDashboardView({
               {/* Notes */}
               {selectedVisitForDetails.notes && (
                 <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 text-sm">
-                  <span className="font-bold text-amber-800 dark:text-amber-300 block mb-1">ملاحظات الزيارة:</span>
+                  <span className="font-bold text-amber-800 dark:text-amber-300 block mb-1">{t('Visit Notes:', 'ملاحظات الزيارة:')}</span>
                   <p className="text-slate-800 dark:text-zinc-200 leading-relaxed font-medium">{selectedVisitForDetails.notes}</p>
                 </div>
               )}
@@ -1018,11 +1020,11 @@ export default function VisitorDashboardView({
                 <div className="flex items-center justify-between">
                   <h4 className="text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
                     <Users className="w-5 h-5 text-[#0F766E]" />
-                    <span>المؤسسات والزوار المشاركون ({selectedVisitForDetails.visitors?.length || 0} زائر)</span>
+                    <span>{t('Participating Organizations & Visitors', 'المؤسسات والزوار المشاركون')} ({selectedVisitForDetails.visitors?.length || 0} {t('visitors', 'زائر')})</span>
                   </h4>
                   {detailsOrgGroups.length > 1 && (
                     <span className="text-xs px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 font-extrabold">
-                      {detailsOrgGroups.length} مؤسسات مشاركة
+                      {detailsOrgGroups.length} {t('participating organizations', 'مؤسسات مشاركة')}
                     </span>
                   )}
                 </div>
@@ -1037,7 +1039,7 @@ export default function VisitorDashboardView({
                         </div>
                         <div>
                           <span className="text-base font-extrabold text-[#173B63] dark:text-white">
-                            {org.organization_ar || org.organization_en || 'المؤسسة / الجهة'}
+                            {org.organization_ar || org.organization_en || t('Organization / Entity', 'المؤسسة / الجهة')}
                           </span>
                           {org.organization_ar && org.organization_en && (
                             <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium mr-2">
@@ -1047,7 +1049,7 @@ export default function VisitorDashboardView({
                         </div>
                       </div>
                       <span className="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-700 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200/60 dark:border-teal-800 shadow-sm">
-                        {org.visitors?.length || 0} زائر
+                        {org.visitors?.length || 0} {t('visitors', 'زائر')}
                       </span>
                     </div>
 
@@ -1056,15 +1058,15 @@ export default function VisitorDashboardView({
                       <thead className="bg-white dark:bg-zinc-800/60 text-slate-600 dark:text-zinc-300 font-bold border-b border-border">
                         <tr>
                           <th className="py-2.5 px-3.5 w-12 text-center">#</th>
-                          <th className="py-2.5 px-3.5">الاسم بالعربية</th>
-                          <th className="py-2.5 px-3.5">الاسم بالإنجليزية</th>
-                          <th className="py-2.5 px-3.5">رقم الهاتف</th>
+                          <th className="py-2.5 px-3.5">{t('Name (Arabic)', 'الاسم بالعربية')}</th>
+                          <th className="py-2.5 px-3.5">{t('Name (English)', 'الاسم بالإنجليزية')}</th>
+                          <th className="py-2.5 px-3.5">{t('Phone Number', 'رقم الهاتف')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border bg-white dark:bg-zinc-900">
                         {(!org.visitors || org.visitors.length === 0) ? (
                           <tr>
-                            <td colSpan={4} className="py-4 text-center text-slate-400 text-xs">لا يوجد زوار مسجلون لهذه المؤسسة</td>
+                            <td colSpan={4} className="py-4 text-center text-slate-400 text-xs">{t('No visitors registered for this organization', 'لا يوجد زوار مسجلون لهذه المؤسسة')}</td>
                           </tr>
                         ) : (
                           org.visitors.map((vis, vIdx) => (
@@ -1095,7 +1097,7 @@ export default function VisitorDashboardView({
                   onClick={() => setSelectedVisitForDetails(null)}
                   className="px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-800 dark:text-zinc-200 text-sm font-bold transition-colors"
                 >
-                  إغلاق النافذة
+                  {t('Close', 'إغلاق النافذة')}
                 </button>
               </div>
 
@@ -1113,10 +1115,10 @@ export default function VisitorDashboardView({
             </div>
 
             <h3 className="text-lg font-bold text-[#173B63] dark:text-white mb-1">
-              تسجيل وقت المغادرة (Time Out)
+              {t('Record Time Out', 'تسجيل وقت المغادرة (Time Out)')}
             </h3>
             <p className="text-xs text-slate-500 mb-4">
-              أدخل وقت انتهاء الزيارة ومغادرة الزوار
+              {t('Enter visit departure time for visitors', 'أدخل وقت انتهاء الزيارة ومغادرة الزوار')}
             </p>
 
             <input
@@ -1132,7 +1134,7 @@ export default function VisitorDashboardView({
                 onClick={() => setTimeOutModal({ isOpen: false, visitId: '', time: '' })}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-semibold text-slate-600 dark:text-zinc-300"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button
                 type="button"
@@ -1140,7 +1142,7 @@ export default function VisitorDashboardView({
                 onClick={handleSaveTimeOut}
                 className="px-6 py-2 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-xs font-bold shadow hover:opacity-95 disabled:opacity-50"
               >
-                {isUpdating ? 'جاري الحفظ...' : 'حفظ وقت الخروج'}
+                {isUpdating ? t('Saving...', 'جاري الحفظ...') : t('Save Time Out', 'حفظ وقت الخروج')}
               </button>
             </div>
           </div>
@@ -1156,10 +1158,10 @@ export default function VisitorDashboardView({
             </div>
 
             <h3 className="text-lg font-bold text-red-600 mb-1">
-              تأكيد حذف الزيارة
+              {t('Confirm Visit Deletion', 'تأكيد حذف الزيارة')}
             </h3>
             <p className="text-xs text-slate-600 dark:text-zinc-400 mb-4">
-              هل أنت متأكد من رغبتك في حذف الزيارة رقم <span className="font-mono font-bold text-slate-800 dark:text-zinc-200">{deleteConfirm.visitNumber}</span> وجميع الزوار المرتبطين بها؟ هذا الإجراء لا يمكن التراجع عنه.
+              {t('Are you sure you want to delete visit', 'هل أنت متأكد من رغبتك في حذف الزيارة رقم')} <span className="font-mono font-bold text-slate-800 dark:text-zinc-200">{deleteConfirm.visitNumber}</span> {t('and all associated visitors? This action cannot be undone.', 'وجميع الزوار المرتبطين بها؟ هذا الإجراء لا يمكن التراجع عنه.')}
             </p>
 
             <div className="flex items-center justify-center gap-2">
@@ -1168,7 +1170,7 @@ export default function VisitorDashboardView({
                 onClick={() => setDeleteConfirm({ isOpen: false, visitId: '', visitNumber: '' })}
                 className="px-4 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-semibold text-slate-600 dark:text-zinc-300"
               >
-                إلغاء
+                {t('Cancel', 'إلغاء')}
               </button>
               <button
                 type="button"
@@ -1176,7 +1178,7 @@ export default function VisitorDashboardView({
                 onClick={handleConfirmDelete}
                 className="px-6 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow disabled:opacity-50"
               >
-                {isUpdating ? 'جاري الحذف...' : 'نعم، حذف الزيارة'}
+                {isUpdating ? t('Deleting...', 'جاري الحذف...') : t('Yes, Delete Visit', 'نعم، حذف الزيارة')}
               </button>
             </div>
           </div>
@@ -1201,10 +1203,10 @@ export default function VisitorDashboardView({
               </button>
 
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#173B63] dark:text-white mb-1">
-                تعديل بيانات الزيارة ({editingVisit.visit_number})
+                {t('Edit Visit Details', 'تعديل بيانات الزيارة')} ({editingVisit.visit_number})
               </h3>
               <p className="text-sm text-slate-500 mb-6">
-                تحديث تفاصيل المؤسسات المشاركة وتوقيت الزيارة وقائمة الزوار
+                {t('Update participating organizations, timing, and visitors list', 'تحديث تفاصيل المؤسسات المشاركة وتوقيت الزيارة وقائمة الزوار')}
               </p>
 
               <form onSubmit={handleSaveEdit} className="space-y-6">
@@ -1212,7 +1214,7 @@ export default function VisitorDashboardView({
                 <div className="bg-slate-50/70 dark:bg-zinc-800/40 p-4 sm:p-5 rounded-2xl border border-border space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">تاريخ الزيارة</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Visit Date', 'تاريخ الزيارة')}</label>
                       <input
                         type="date"
                         required
@@ -1222,7 +1224,7 @@ export default function VisitorDashboardView({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">وقت الدخول</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time In', 'وقت الدخول')}</label>
                       <input
                         type="time"
                         required
@@ -1232,7 +1234,7 @@ export default function VisitorDashboardView({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">وقت الخروج</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time Out', 'وقت الخروج')}</label>
                       <input
                         type="time"
                         value={editingVisit.time_out || ''}
@@ -1244,7 +1246,7 @@ export default function VisitorDashboardView({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">الدولة (Country)</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Country', 'الدولة')}</label>
                       <input
                         type="text"
                         value={editingVisit.country || ''}
@@ -1253,7 +1255,7 @@ export default function VisitorDashboardView({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">عن طريق (Coordination by)</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Coordination by', 'عن طريق')}</label>
                       <select
                         value={
                           sisterCompaniesList.includes(editingVisit.coordination_by || 'Ectron')
@@ -1271,19 +1273,19 @@ export default function VisitorDashboardView({
                         }}
                         className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold"
                       >
-                        <option value="Ectron">إلكترون (Ectron)</option>
+                        <option value="Ectron">Ectron</option>
                         <option value="NEC">NEC</option>
                         <option value="AAMU">AAMU</option>
-                        <option value="Tadoom">تدوم (Tadoom)</option>
-                        <option value="TadoomX">تدوم إكس (TadoomX)</option>
-                        <option value="Other">أخرى (تحديد جهة التنسيق)</option>
+                        <option value="Tadoom">Tadoom</option>
+                        <option value="TadoomX">TadoomX</option>
+                        <option value="Other">{t('Other', 'أخرى (تحديد جهة التنسيق)')}</option>
                       </select>
                     </div>
                   </div>
 
                   {((editingVisit.coordination_by === 'Other') || (!sisterCompaniesList.includes(editingVisit.coordination_by || 'Ectron'))) && (
                     <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">تحديد جهة التنسيق</label>
+                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Specify Coordination Agency', 'تحديد جهة التنسيق')}</label>
                       <input
                         type="text"
                         value={editCustomCoordination || editingVisit.coordination_by || ''}
@@ -1291,14 +1293,14 @@ export default function VisitorDashboardView({
                           setEditCustomCoordination(e.target.value);
                           setEditingVisit({ ...editingVisit, coordination_by: e.target.value });
                         }}
-                        placeholder="اكتب اسم جهة التنسيق..."
+                        placeholder={t('Type coordination agency name...', 'اكتب اسم جهة التنسيق...')}
                         className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
                       />
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-xs sm:text-sm font-bold mb-1.5">سبب الزيارة (Visit Reason)</label>
+                    <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Visit Reason', 'سبب الزيارة')}</label>
                     <input
                       type="text"
                       value={editingVisit.visit_reason || ''}
@@ -1308,7 +1310,7 @@ export default function VisitorDashboardView({
                   </div>
 
                   <div>
-                    <label className="block text-xs sm:text-sm font-bold mb-1.5">ملاحظات (Notes)</label>
+                    <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Notes', 'ملاحظات')}</label>
                     <textarea
                       rows={2}
                       value={editingVisit.notes || ''}
@@ -1324,9 +1326,9 @@ export default function VisitorDashboardView({
                     <div>
                       <h4 className="text-base sm:text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
                         <Building2 className="w-5 h-5 text-[#0F766E]" />
-                        <span>المؤسسات والزوار التابعين لها</span>
+                        <span>{t('Organizations & Visitors', 'المؤسسات والزوار التابعين لها')}</span>
                       </h4>
-                      <p className="text-xs text-slate-500">يمكنك تعديل أسماء المؤسسات والزوار التابعين لكل مؤسسة</p>
+                      <p className="text-xs text-slate-500">{t('Edit names and visitors under each organization', 'يمكنك تعديل أسماء المؤسسات والزوار التابعين لكل مؤسسة')}</p>
                     </div>
 
                     <button
@@ -1335,7 +1337,7 @@ export default function VisitorDashboardView({
                       className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 text-xs sm:text-sm font-bold flex items-center gap-1.5"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>إضافة مؤسسة أخرى</span>
+                      <span>{t('Add Another Organization', 'إضافة مؤسسة أخرى')}</span>
                     </button>
                   </div>
 
@@ -1348,7 +1350,7 @@ export default function VisitorDashboardView({
                             {oIdx + 1}
                           </span>
                           <span className="text-sm sm:text-base font-extrabold text-[#173B63] dark:text-white">
-                            المؤسسة رقم {oIdx + 1}
+                            {t('Organization', 'المؤسسة رقم')} #{oIdx + 1}
                           </span>
                         </div>
 
@@ -1357,7 +1359,7 @@ export default function VisitorDashboardView({
                             type="button"
                             onClick={() => handleRemoveOrgFromEdit(oIdx)}
                             className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
-                            title="حذف هذه المؤسسة"
+                            title={t('Delete this organization', 'حذف هذه المؤسسة')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -1368,20 +1370,20 @@ export default function VisitorDashboardView({
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
                           <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
-                            اسم المؤسسة بالعربية
+                            {t('Organization Name (Arabic)', 'اسم المؤسسة بالعربية')}
                           </label>
                           <input
                             type="text"
                             value={org.organization_ar || ''}
                             onChange={e => handleUpdateOrgInEdit(oIdx, 'organization_ar', e.target.value)}
-                            placeholder="مثال: نماء لتزويد الكهرباء"
+                            placeholder={t('e.g. Nama Supply', 'مثال: نماء لتزويد الكهرباء')}
                             className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium"
                           />
                         </div>
 
                         <div>
                           <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
-                            اسم المؤسسة بالإنجليزية
+                            {t('Organization Name (English)', 'اسم المؤسسة بالإنجليزية')}
                           </label>
                           <input
                             type="text"
@@ -1397,7 +1399,7 @@ export default function VisitorDashboardView({
                       <div className="pt-2 border-t border-slate-100 dark:border-zinc-700/50 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-zinc-300">
-                            الزوار التابعين لهذه المؤسسة ({org.visitors?.length || 0})
+                            {t('Visitors for this Organization', 'الزوار التابعين لهذه المؤسسة')} ({org.visitors?.length || 0})
                           </span>
                           <button
                             type="button"
@@ -1405,7 +1407,7 @@ export default function VisitorDashboardView({
                             className="px-2.5 py-1 rounded-lg text-xs font-bold text-[#0F766E] dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 border border-teal-200/60 dark:border-teal-800 flex items-center gap-1"
                           >
                             <Plus className="w-3.5 h-3.5" />
-                            <span>إضافة زائر</span>
+                            <span>{t('Add Visitor', 'إضافة زائر')}</span>
                           </button>
                         </div>
 
@@ -1414,7 +1416,7 @@ export default function VisitorDashboardView({
                             <div className="sm:col-span-4">
                               <input
                                 type="text"
-                                placeholder="الاسم بالعربية"
+                                placeholder={t('Name in Arabic', 'الاسم بالعربية')}
                                 value={vis.full_name_ar || ''}
                                 onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_ar', e.target.value)}
                                 className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold"
@@ -1423,7 +1425,7 @@ export default function VisitorDashboardView({
                             <div className="sm:col-span-4">
                               <input
                                 type="text"
-                                placeholder="Name in English"
+                                placeholder={t('Name in English', 'Name in English')}
                                 value={vis.full_name_en || ''}
                                 onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_en', e.target.value)}
                                 className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium"
@@ -1432,7 +1434,7 @@ export default function VisitorDashboardView({
                             <div className="sm:col-span-3">
                               <input
                                 type="tel"
-                                placeholder="رقم الهاتف"
+                                placeholder={t('Phone Number', 'رقم الهاتف')}
                                 value={vis.phone_number || ''}
                                 onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'phone_number', e.target.value)}
                                 className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-mono font-medium"
@@ -1444,7 +1446,7 @@ export default function VisitorDashboardView({
                                   type="button"
                                   onClick={() => handleRemoveVisitorFromOrgInEdit(oIdx, vIdx)}
                                   className="p-1 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
-                                  title="حذف هذا الزائر"
+                                  title={t('Delete this visitor', 'حذف هذا الزائر')}
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
@@ -1463,14 +1465,14 @@ export default function VisitorDashboardView({
                     onClick={() => setEditingVisit(null)}
                     className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800"
                   >
-                    إلغاء
+                    {t('Cancel', 'إلغاء')}
                   </button>
                   <button
                     type="submit"
                     disabled={isUpdating}
                     className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50"
                   >
-                    {isUpdating ? 'جاري الحفظ...' : 'حفظ التعديلات'}
+                    {isUpdating ? t('Saving...', 'جاري الحفظ...') : t('Save Changes', 'حفظ التعديلات')}
                   </button>
                 </div>
               </form>

@@ -22,6 +22,7 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 import { loadDefaultExcelVisits, importHistoricalVisits } from '@/app/visitor/actions/visitorActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface ParsedRow {
   sn: number;
@@ -46,6 +47,7 @@ interface ParsedRow {
 }
 
 export default function VisitorExcelImportPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -250,10 +252,10 @@ export default function VisitorExcelImportPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">
-              استيراد سجلات الزيارات التاريخية (Excel Import)
+              {t('Historical Visits Excel Import', 'استيراد سجلات الزيارات التاريخية (Excel Import)')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
-              استيراد الزيارات من ملف `Ectron Visits List.xlsx` مع دعم الوفود والزوار المتعددين
+              {t('Import visits from Excel file with multi-organization and visitor support', 'استيراد الزيارات من ملف `Ectron Visits List.xlsx` مع دعم الوفود والزوار المتعددين')}
             </p>
           </div>
         </div>
@@ -264,7 +266,7 @@ export default function VisitorExcelImportPage() {
             className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>لوحة الزيارات</span>
+            <span>{t('Visits Dashboard', 'لوحة الزيارات')}</span>
           </Link>
         </div>
       </div>
@@ -274,10 +276,10 @@ export default function VisitorExcelImportPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-base font-bold text-[#173B63] dark:text-white mb-1">
-              مصدر بيانات الزيارات
+              {t('Visits Data Source', 'مصدر بيانات الزيارات')}
             </h2>
             <p className="text-xs text-slate-500 dark:text-zinc-400">
-              تم تحميل ملف `Ectron Visits List.xlsx` الخاص بالنظام تلقائياً، أو يمكنك رفع ملف إكسل مخصص.
+              {t('The default visits list was loaded automatically, or you can upload a custom file.', 'تم تحميل ملف `Ectron Visits List.xlsx` الخاص بالنظام تلقائياً، أو يمكنك رفع ملف إكسل مخصص.')}
             </p>
           </div>
 
@@ -289,12 +291,12 @@ export default function VisitorExcelImportPage() {
               className="px-4 py-2 rounded-xl bg-[#F0FDFA] dark:bg-zinc-800 text-[#0F766E] dark:text-[#00a99d] border border-[#14B8A6]/40 hover:bg-[#CCFBF1] text-xs font-bold transition-all flex items-center gap-1.5"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>إعادة قراءة ملف النظام الافتراضي</span>
+              <span>{t('Reload Default System File', 'إعادة قراءة ملف النظام الافتراضي')}</span>
             </button>
 
             <label className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5">
               <Upload className="w-4 h-4 text-[#0F766E]" />
-              <span>رفع ملف Excel آخر...</span>
+              <span>{t('Upload Custom Excel File...', 'رفع ملف Excel آخر...')}</span>
               <input
                 type="file"
                 accept=".xlsx, .xls"
@@ -308,22 +310,22 @@ export default function VisitorExcelImportPage() {
         {/* Status Indicators */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-border">
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-border text-center">
-            <span className="block text-xs text-slate-500 mb-0.5">إجمالي السجلات المقروءة</span>
+            <span className="block text-xs text-slate-500 mb-0.5">{t('Total Parsed Records', 'إجمالي السجلات المقروءة')}</span>
             <span className="text-lg font-bold text-[#173B63] dark:text-white">{rows.length}</span>
           </div>
 
           <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 text-center">
-            <span className="block text-xs text-emerald-700 dark:text-emerald-400 mb-0.5">جاهزة للاستيراد</span>
+            <span className="block text-xs text-emerald-700 dark:text-emerald-400 mb-0.5">{t('Ready for Import', 'جاهزة للاستيراد')}</span>
             <span className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{readyCount}</span>
           </div>
 
           <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-center">
-            <span className="block text-xs text-amber-700 dark:text-amber-400 mb-0.5">تتطلب مراجعة (بدون اسم)</span>
+            <span className="block text-xs text-amber-700 dark:text-amber-400 mb-0.5">{t('Requires Review', 'تتطلب مراجعة (بدون اسم)')}</span>
             <span className="text-lg font-bold text-amber-700 dark:text-amber-300">{ambiguousCount}</span>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-center">
-            <span className="block text-xs text-slate-500 mb-0.5">مكررة بالفعل (مستوردة سابقاً)</span>
+            <span className="block text-xs text-slate-500 mb-0.5">{t('Duplicates (Already Imported)', 'مكررة بالفعل (مستوردة سابقاً)')}</span>
             <span className="text-lg font-bold text-slate-600 dark:text-zinc-400">{duplicateCount}</span>
           </div>
         </div>
@@ -349,7 +351,7 @@ export default function VisitorExcelImportPage() {
               className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500"
             />
             <label htmlFor="select-all" className="text-xs sm:text-sm font-bold text-[#173B63] dark:text-white cursor-pointer">
-              معاينة السجلات قبل الاستيراد (محدد {selectedCount} من {rows.length})
+              {t('Preview Records Before Import', 'معاينة السجلات قبل الاستيراد')} ({t('Selected', 'محدد')} {selectedCount} {t('of', 'من')} {rows.length})
             </label>
           </div>
 
@@ -362,12 +364,12 @@ export default function VisitorExcelImportPage() {
             {isImporting ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>جاري استيراد الزيارات...</span>
+                <span>{t('Importing visits...', 'جاري استيراد الزيارات...')}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span>بدء استيراد السجلات المحددة ({selectedCount})</span>
+                <span>{t('Import Selected Records', 'بدء استيراد السجلات المحددة')} ({selectedCount})</span>
               </>
             )}
           </button>
@@ -378,22 +380,22 @@ export default function VisitorExcelImportPage() {
           <table className="w-full text-right text-sm border-collapse">
             <thead className="bg-slate-50 dark:bg-zinc-800/60 border-b border-border text-slate-700 dark:text-zinc-300 font-bold">
               <tr>
-                <th className="py-3.5 px-3 text-center">اختيار</th>
+                <th className="py-3.5 px-3 text-center">{t('Select', 'اختيار')}</th>
                 <th className="py-3.5 px-3">#</th>
-                <th className="py-3.5 px-4">التاريخ</th>
-                <th className="py-3.5 px-4">الدخول / الخروج</th>
-                <th className="py-3.5 px-4">المؤسسة / الشركة</th>
-                <th className="py-3.5 px-4">عن طريق</th>
-                <th className="py-3.5 px-4">الزوار المستخرجون</th>
-                <th className="py-3.5 px-4">سبب الزيارة</th>
-                <th className="py-3.5 px-4 text-center">الحالة</th>
+                <th className="py-3.5 px-4">{t('Date', 'التاريخ')}</th>
+                <th className="py-3.5 px-4">{t('Time In / Out', 'الدخول / الخروج')}</th>
+                <th className="py-3.5 px-4">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
+                <th className="py-3.5 px-4">{t('Coordination by', 'عن طريق')}</th>
+                <th className="py-3.5 px-4">{t('Extracted Visitors', 'الزوار المستخرجون')}</th>
+                <th className="py-3.5 px-4">{t('Visit Reason', 'سبب الزيارة')}</th>
+                <th className="py-3.5 px-4 text-center">{t('Status', 'الحالة')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {rows.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-12 text-center text-slate-400">
-                    جاري تحميل وقراءة بيانات الإكسل...
+                    {t('Loading and reading Excel data...', 'جاري تحميل وقراءة بيانات الإكسل...')}
                   </td>
                 </tr>
               ) : (
@@ -445,11 +447,11 @@ export default function VisitorExcelImportPage() {
                       <td className="py-3 px-4 max-w-[220px]">
                         <div className="flex items-center gap-1.5 mb-0.5">
                           <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 font-bold text-xs border border-teal-200 dark:border-teal-800">
-                            {r.visitors.length} زائر
+                            {r.visitors.length} {t('Visitors', 'زائر')}
                           </span>
                         </div>
                         <div className="text-slate-600 dark:text-zinc-300 truncate text-xs font-medium" title={visitorNames}>
-                          {visitorNames || (r.isMissingNames ? 'تم توليد ممثل افتراضي' : '—')}
+                          {visitorNames || (r.isMissingNames ? t('Default rep generated', 'تم توليد ممثل افتراضي') : '—')}
                         </div>
                       </td>
 
@@ -461,18 +463,18 @@ export default function VisitorExcelImportPage() {
                         {r.status === 'ready' && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
                             <Check className="w-3 h-3" />
-                            جاهز للاستيراد
+                            {t('Ready', 'جاهز للاستيراد')}
                           </span>
                         )}
                         {r.status === 'ambiguous' && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
                             <AlertTriangle className="w-3 h-3" />
-                            أسماء مفقودة
+                            {t('Names Missing', 'أسماء مفقودة')}
                           </span>
                         )}
                         {r.status === 'duplicate' && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-zinc-800 dark:text-zinc-400">
-                            مستورد سابقاً
+                            {t('Already Imported', 'مستورد سابقاً')}
                           </span>
                         )}
                       </td>
@@ -496,20 +498,20 @@ export default function VisitorExcelImportPage() {
             </div>
 
             <h3 className="text-xl font-bold text-[#173B63] dark:text-white mb-2">
-              اكتملت عملية الاستيراد بنجاح!
+              {t('Import Completed Successfully!', 'اكتملت عملية الاستيراد بنجاح!')}
             </h3>
 
             <p className="text-xs text-slate-600 dark:text-zinc-300 mb-6">
-              تم إدراج سجلات الزيارات التاريخية في النظام وربط الزوار بكل زيارة.
+              {t('Historical visit records have been imported into the system.', 'تم إدراج سجلات الزيارات التاريخية في النظام وربط الزوار بكل زيارة.')}
             </p>
 
             <div className="grid grid-cols-2 gap-3 mb-6 bg-slate-50 dark:bg-zinc-800 p-3 rounded-2xl border border-border text-xs">
               <div>
-                <span className="block text-slate-400">تم استيرادها بنجاح</span>
+                <span className="block text-slate-400">{t('Imported Successfully', 'تم استيرادها بنجاح')}</span>
                 <span className="text-base font-bold text-emerald-600">{importResult.importedCount}</span>
               </div>
               <div>
-                <span className="block text-slate-400">تم تخطيها (مكررة)</span>
+                <span className="block text-slate-400">{t('Skipped (Duplicates)', 'تم تخطيها (مكررة)')}</span>
                 <span className="text-base font-bold text-slate-500">{importResult.skippedCount}</span>
               </div>
             </div>
@@ -519,7 +521,7 @@ export default function VisitorExcelImportPage() {
               onClick={() => router.push('/visitor/dashboard')}
               className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-xs sm:text-sm font-bold shadow hover:opacity-95 transition-all flex items-center justify-center gap-2"
             >
-              <span>الانتقال إلى لوحة الزيارات المحدثة</span>
+              <span>{t('Go to Updated Visits Dashboard', 'الانتقال إلى لوحة الزيارات المحدثة')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

@@ -4,6 +4,7 @@ import PettyCashSummaryCards from '@/components/petty-cash/PettyCashSummaryCards
 import PettyCashBatchesSection from '@/components/petty-cash/PettyCashBatchesSection';
 import ExpenseTable from '@/components/petty-cash/ExpenseTable';
 import { getBatches, PettyCashBatch } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
+import T from '@/components/layout/T';
 
 export default async function PettyCashDashboard() {
   const supabase = await createClient();
@@ -98,8 +99,8 @@ export default async function PettyCashDashboard() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Petty Cash Dashboard</h1>
-          <p className="text-zinc-400 text-sm mt-1">Manage monthly budget, expenses, and employee settlements</p>
+          <h1 className="text-2xl font-bold text-white"><T text="Petty Cash Dashboard" /></h1>
+          <p className="text-zinc-400 text-sm mt-1"><T text="Manage monthly budget, expenses, and employee settlements" /></p>
         </div>
       </div>
       

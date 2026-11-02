@@ -2,6 +2,7 @@ import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import T from '@/components/layout/T';
 
 export default async function EmployeeSettlement() {
   const supabase = await createClient();
@@ -47,16 +48,16 @@ export default async function EmployeeSettlement() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Employee Settlement</h1>
-          <p className="text-zinc-400 text-sm mt-1">Track employee out-of-pocket expenses and reimbursements</p>
+          <h1 className="text-2xl font-bold text-white"><T text="Employee Settlement" /></h1>
+          <p className="text-zinc-400 text-sm mt-1"><T text="Track employee out-of-pocket expenses and reimbursements" /></p>
         </div>
       </div>
 
       <div className="glass rounded-2xl p-6 border border-border dark:border-zinc-800/50">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-white">Settlement Overview</h2>
+          <h2 className="text-xl font-semibold text-white"><T text="Settlement Overview" /></h2>
           <button className="btn-primary-gradient bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium text-sm transition-colors shadow-lg shadow-blue-900/20">
-            + New Reimbursement
+            <T text="+ New Reimbursement" />
           </button>
         </div>
 
@@ -64,18 +65,18 @@ export default async function EmployeeSettlement() {
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-zinc-400 bg-zinc-800/50 uppercase">
               <tr>
-                <th className="px-4 py-3 rounded-tl-lg">Employee</th>
-                <th className="px-4 py-3">Total Paid</th>
-                <th className="px-4 py-3">Total Reimbursed</th>
-                <th className="px-4 py-3">Amount Due</th>
-                <th className="px-4 py-3 rounded-tr-lg">Amount Owed</th>
+                <th className="px-4 py-3 rounded-tl-lg"><T text="Employee" /></th>
+                <th className="px-4 py-3"><T text="Total Paid" /></th>
+                <th className="px-4 py-3"><T text="Total Reimbursed" /></th>
+                <th className="px-4 py-3"><T text="Amount Due" /></th>
+                <th className="px-4 py-3 rounded-tr-lg"><T text="Amount Owed" /></th>
               </tr>
             </thead>
             <tbody>
               {settlementData.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-zinc-500 border-b border-zinc-800/50">
-                    No settlement records found.
+                    <T text="No settlement records found." />
                   </td>
                 </tr>
               ) : (

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Edit2, Check, X } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 import { useTheme } from '@/components/layout/ThemeProvider';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export function ShiftProductionChart({ data, xAxisData }: { data: number[], xAxisData?: string[] }) {
   const { theme } = useTheme();
@@ -130,6 +131,7 @@ export function TargetVsActualChart({ categories, targetData, actualData }: { ca
 
 export function AchievementGauge({ achieved, target }: { achieved: number, target: number }) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const isLight = theme === 'light';
   const [manualMax, setManualMax] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -223,7 +225,7 @@ export function AchievementGauge({ achieved, target }: { achieved: number, targe
           <button 
             onClick={() => setIsEditing(true)}
             className="p-2 text-zinc-400 hover:text-[#00a99d] hover:bg-[#00a99d]/10 rounded-lg transition-colors"
-            title="تعديل الإنجاز"
+            title={t('Edit Achievement', 'تعديل الإنجاز')}
           >
             <Edit2 className="w-4 h-4" />
           </button>

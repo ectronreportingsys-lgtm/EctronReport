@@ -43,6 +43,7 @@ import {
   exportBatchMergedPdf,
   exportBatchZipPackage
 } from '@/lib/pettyCashBatchExporter';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 const MONTH_NAMES = [
   { value: 1, en: 'January', ar: 'يناير' },
@@ -71,6 +72,7 @@ export default function PettyCashBatchesSection({
   onBatchesChange
 }: PettyCashBatchesSectionProps) {
   const router = useRouter();
+  const { lang, t } = useLanguage();
   const today = new Date();
 
   const [batches, setBatches] = useState<PettyCashBatch[]>(initialBatches || []);
@@ -86,9 +88,10 @@ export default function PettyCashBatchesSection({
     });
   };
 
-  // Filter state
-  const [filterMonth, setFilterMonth] = useState<number | 'all'>(today.getMonth() + 1);
+  // Filter state - Default to all months & all statuses
+  const [filterMonth, setFilterMonth] = useState<number | 'all'>('all');
   const [filterYear, setFilterYear] = useState<number>(today.getFullYear());
+  const [filterStatus, setFilterStatus] = useState<'all' | 'In Progress' | 'Ready' | 'Submitted'>('all');
 
   // Modals state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -147,14 +150,15 @@ export default function PettyCashBatchesSection({
     return map;
   }, [batches]);
 
-  // Filtered batches for display
+  // Filtered batches for display (supports status, month, year)
   const displayedBatches = useMemo(() => {
     return batches.filter(b => {
+      if (filterStatus !== 'all' && b.status !== filterStatus) return false;
       if (filterMonth !== 'all' && b.month !== filterMonth) return false;
       if (b.year !== filterYear) return false;
       return true;
     });
-  }, [batches, filterMonth, filterYear]);
+  }, [batches, filterStatus, filterMonth, filterYear]);
 
   const activeBatch = useMemo(
     () => batches.find(b => b.id === activeBatchId) || null,
@@ -203,7 +207,7 @@ export default function PettyCashBatchesSection({
       } else if (res.batch) {
         updateLocalBatches(prev => [...prev, res.batch!]);
         setIsCreateModalOpen(false);
-        setToast({ type: 'success', text: `تم إنشاء المجموعة "${res.batch.name}" بنجاح.` });
+        setToast({ type: 'success', text: t(`Batch "${res.batch.name}" created successfully.`, `تم إنشاء المجموعة "${res.batch.name}" بنجاح.`) });
         // Open workspace directly on Assign tab so user can pick invoices immediately
         setActiveBatchId(res.batch.id);
         setWorkspaceTab('assign');
@@ -242,7 +246,7 @@ export default function PettyCashBatchesSection({
       } else if (res.batch) {
         updateLocalBatches(prev => prev.map(b => (b.id === activeBatch.id ? res.batch! : b)));
         setIsEditingMeta(false);
-        setToast({ type: 'success', text: 'تم تحديث بيانات المجموعة.' });
+        setToast({ type: 'success', text: t('Batch details updated.', 'تم تحديث بيانات المجموعة.') });
         router.refresh();
       }
     } finally {
@@ -251,7 +255,7 @@ export default function PettyCashBatchesSection({
   };
 
   const handleDeleteBatch = async (batch: PettyCashBatch) => {
-    if (!window.confirm(`هل أنت متأكد من حذف المجموعة "${batch.name}"؟ (لن يتم حذف الفواتير الأصلية من النظام)`)) {
+    if (!window.confirm(t(`Are you sure you want to delete batch "${batch.name}"? (Original invoices will remain in the system)`, `هل أنت متأكد من حذف المجموعة "${batch.name}"؟ (لن يتم حذف الفواتير الأصلية من النظام)`))) {
       return;
     }
     setBusyAction(`delete-${batch.id}`);
@@ -259,7 +263,7 @@ export default function PettyCashBatchesSection({
       await deleteBatch(batch.id);
       updateLocalBatches(prev => prev.filter(b => b.id !== batch.id));
       if (activeBatchId === batch.id) setActiveBatchId(null);
-      setToast({ type: 'success', text: `تم حذف المجموعة "${batch.name}" مع الحفاظ على الفواتير الأصلية.` });
+      setToast({ type: 'success', text: t(`Batch "${batch.name}" deleted while preserving original invoices.`, `تم حذف المجموعة "${batch.name}" مع الحفاظ على الفواتير الأصلية.`) });
       router.refresh();
     } finally {
       setBusyAction(null);
@@ -278,7 +282,7 @@ export default function PettyCashBatchesSection({
         updateLocalBatches(prev => prev.map(b => (b.id === activeBatch.id ? res.batch! : b)));
         setToast({
           type: 'success',
-          text: `تمت إضافة ${selectedToAssign.length} فاتورة إلى "${activeBatch.name}".`
+          text: t(`Added ${selectedToAssign.length} invoices to "${activeBatch.name}".`, `تمت إضافة ${selectedToAssign.length} فاتورة إلى "${activeBatch.name}".`)
         });
         setSelectedToAssign([]);
         setWorkspaceTab('current');
@@ -298,7 +302,7 @@ export default function PettyCashBatchesSection({
       if (res.batch) {
         updateLocalBatches(prev => prev.map(b => (b.id === activeBatch.id ? res.batch! : b)));
         setSelectedInBatch(prev => prev.filter(id => !idsToRemove.includes(id)));
-        setToast({ type: 'success', text: `تمت إزالة ${idsToRemove.length} فاتورة من المجموعة.` });
+        setToast({ type: 'success', text: t(`Removed ${idsToRemove.length} invoices from the batch.`, `تمت إزالة ${idsToRemove.length} فاتورة من المجموعة.`) });
         router.refresh();
       }
     } finally {
@@ -339,7 +343,7 @@ export default function PettyCashBatchesSection({
       prev.map(b => (b.id === activeBatch.id ? { ...b, invoiceIds: sortedIds } : b))
     );
     await reorderBatchInvoices(activeBatch.id, sortedIds);
-    setToast({ type: 'success', text: 'تم إعادة ترتيب الفواتير في المجموعة.' });
+    setToast({ type: 'success', text: t('Batch invoice order updated.', 'تم إعادة ترتيب الفواتير في المجموعة.') });
   };
 
   // Transfer invoices between batches
@@ -366,7 +370,7 @@ export default function PettyCashBatchesSection({
         setTransferTargetBatchId('');
         setToast({
           type: 'success',
-          text: `تم نقل ${invoiceIds.length} فاتورة إلى "${res.targetBatch.name}".`
+          text: t(`Transferred ${invoiceIds.length} invoices to "${res.targetBatch.name}".`, `تم نقل ${invoiceIds.length} فاتورة إلى "${res.targetBatch.name}".`)
         });
         router.refresh();
       }
@@ -379,7 +383,7 @@ export default function PettyCashBatchesSection({
   const handleExportExcel = async (batch: PettyCashBatch) => {
     const invs = getBatchInvoices(batch);
     if (invs.length === 0) {
-      setToast({ type: 'error', text: 'هذه المجموعة فارغة. أضف فواتير أولاً لتصدير تقرير الحسابات.' });
+      setToast({ type: 'error', text: t('This batch is empty. Add invoices first to export accounts report.', 'هذه المجموعة فارغة. أضف فواتير أولاً لتصدير تقرير الحسابات.') });
       return;
     }
     setBusyAction(`excel-${batch.id}`);
@@ -387,10 +391,10 @@ export default function PettyCashBatchesSection({
       await exportBatchAccountsReport(batch, invs);
       setToast({
         type: 'success',
-        text: `تم تصدير تقرير الحسابات (Accounts Report) للمجموعة "${batch.name}".`
+        text: t(`Exported Accounts Report for batch "${batch.name}".`, `تم تصدير تقرير الحسابات (Accounts Report) للمجموعة "${batch.name}".`)
       });
     } catch (err: any) {
-      setToast({ type: 'error', text: err.message || 'فشل تصدير ملف الإكسل.' });
+      setToast({ type: 'error', text: err.message || t('Failed to export Excel report.', 'فشل تصدير ملف الإكسل.') });
     } finally {
       setBusyAction(null);
     }
@@ -399,7 +403,7 @@ export default function PettyCashBatchesSection({
   const handleExportPdf = async (batch: PettyCashBatch) => {
     const invs = getBatchInvoices(batch);
     if (invs.length === 0) {
-      setToast({ type: 'error', text: 'هذه المجموعة فارغة. أضف فواتير أولاً لدمج المرفقات.' });
+      setToast({ type: 'error', text: t('This batch is empty. Add invoices first to merge attachments.', 'هذه المجموعة فارغة. أضف فواتير أولاً لدمج المرفقات.') });
       return;
     }
     setBusyAction(`pdf-${batch.id}`);
@@ -407,10 +411,10 @@ export default function PettyCashBatchesSection({
       const { attachedCount } = await exportBatchMergedPdf(batch, invs);
       setToast({
         type: 'success',
-        text: `تم تصدير ملف الـ PDF المدمج (${attachedCount} مرفقات) بالترتيب المحدد.`
+        text: t(`Merged PDF exported (${attachedCount} attachments) in specified order.`, `تم تصدير ملف الـ PDF المدمج (${attachedCount} مرفقات) بالترتيب المحدد.`)
       });
     } catch (err: any) {
-      setToast({ type: 'error', text: err.message || 'فشل دمج ملف الـ PDF.' });
+      setToast({ type: 'error', text: err.message || t('Failed to merge PDF.', 'فشل دمج ملف الـ PDF.') });
     } finally {
       setBusyAction(null);
     }
@@ -419,7 +423,7 @@ export default function PettyCashBatchesSection({
   const handleExportZip = async (batch: PettyCashBatch) => {
     const invs = getBatchInvoices(batch);
     if (invs.length === 0) {
-      setToast({ type: 'error', text: 'هذه المجموعة فارغة. أضف فواتير أولاً لتصدير الحزمة.' });
+      setToast({ type: 'error', text: t('This batch is empty. Add invoices first to export package.', 'هذه المجموعة فارغة. أضف فواتير أولاً لتصدير الحزمة.') });
       return;
     }
     setBusyAction(`zip-${batch.id}`);
@@ -427,10 +431,10 @@ export default function PettyCashBatchesSection({
       await exportBatchZipPackage(batch, invs);
       setToast({
         type: 'success',
-        text: `تم تصدير حزمة ZIP (تقرير الحسابات + المرفقات المدمجة) للمجموعة "${batch.name}".`
+        text: t(`ZIP package (Accounts Report + Merged PDFs) exported for batch "${batch.name}".`, `تم تصدير حزمة ZIP (تقرير الحسابات + المرفقات المدمجة) للمجموعة "${batch.name}".`)
       });
     } catch (err: any) {
-      setToast({ type: 'error', text: err.message || 'فشل تصدير حزمة ZIP.' });
+      setToast({ type: 'error', text: err.message || t('Failed to export ZIP package.', 'فشل تصدير حزمة ZIP.') });
     } finally {
       setBusyAction(null);
     }
@@ -506,18 +510,32 @@ export default function PettyCashBatchesSection({
             <span>New Batch +</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Status Filter */}
+            <select
+              value={filterStatus}
+              onChange={e =>
+                setFilterStatus(e.target.value as 'all' | 'In Progress' | 'Ready' | 'Submitted')
+              }
+              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
+            >
+              <option value="all">{t('All Statuses', 'كل الحالات')}</option>
+              <option value="In Progress">{t('In Progress', 'قيد العمل (In Progress)')}</option>
+              <option value="Ready">{t('Ready', 'جاهز (Ready)')}</option>
+              <option value="Submitted">{t('Submitted', 'تم الرفع (Submitted)')}</option>
+            </select>
+
             <select
               value={filterMonth}
               onChange={e =>
                 setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))
               }
-              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500"
+              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
             >
-              <option value="all">كل الأشهر (All Months)</option>
+              <option value="all">{t('All Months', 'كل الأشهر')}</option>
               {MONTH_NAMES.map(m => (
                 <option key={m.value} value={m.value}>
-                  {m.en} ({m.ar})
+                  {lang === 'ar' ? m.ar : m.en}
                 </option>
               ))}
             </select>
@@ -525,7 +543,7 @@ export default function PettyCashBatchesSection({
             <select
               value={filterYear}
               onChange={e => setFilterYear(Number(e.target.value))}
-              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500"
+              className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-medium text-zinc-300 focus:outline-none focus:border-teal-500 cursor-pointer"
             >
               {[2024, 2025, 2026, 2027].map(y => (
                 <option key={y} value={y}>
@@ -541,7 +559,7 @@ export default function PettyCashBatchesSection({
             <span>Petty Cash Batches</span>
             <FolderOpen className="w-5 h-5 text-[#14B8A6]" />
           </h2>
-          <p className="text-xs text-zinc-400">{currentMonthLabel} — مجموعات تجهيز ملفات الحسابات</p>
+          <p className="text-xs text-zinc-400">{currentMonthLabel} — {t('Batches for accounting reports preparation', 'مجموعات تجهيز ملفات الحسابات')}</p>
         </div>
       </div>
 
@@ -553,10 +571,12 @@ export default function PettyCashBatchesSection({
           </div>
           <div>
             <h3 className="text-base font-bold text-white">
-              لا توجد مجموعات فواتير في {currentMonthLabel}
+              {filterStatus !== 'all'
+                ? t(`No invoice batches found with status "${filterStatus}"`, `لا توجد مجموعات فواتير بالحالة "${filterStatus}"`)
+                : t(`No invoice batches found in ${currentMonthLabel}`, `لا توجد مجموعات فواتير في ${currentMonthLabel}`)}
             </h3>
             <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
-              أنشئ مجموعات مخصصة مثل (October 1, October 2) واختر الفواتير المرفوعة مسبقاً لتصدير تقرير الحسابات الرسمي وملف الـ PDF المدمج بضغطة زر.
+              {t('Create custom batches (e.g. October 1, October 2) and select pre-uploaded invoices to export the official accounts report and merged PDF.', 'أنشئ مجموعات مخصصة مثل (October 1, October 2) واختر الفواتير المرفوعة مسبقاً لتصدير تقرير الحسابات الرسمي وملف الـ PDF المدمج بضغطة زر.')}
             </p>
           </div>
           <button
@@ -564,7 +584,7 @@ export default function PettyCashBatchesSection({
             className="mt-1 flex items-center gap-2 px-5 py-2 rounded-xl btn-primary-gradient bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>إنشاء أول مجموعة ({MONTH_NAMES.find(m => m.value === (filterMonth === 'all' ? today.getMonth() + 1 : filterMonth))?.en} 1)</span>
+            <span>{t('Create First Batch', 'إنشاء أول مجموعة')} ({MONTH_NAMES.find(m => m.value === (filterMonth === 'all' ? today.getMonth() + 1 : filterMonth))?.en} 1)</span>
           </button>
         </div>
       ) : (
@@ -576,12 +596,10 @@ export default function PettyCashBatchesSection({
               0
             );
             const attachmentsCount = batchInvoices.filter(item => Boolean(item.attachment_url)).length;
-            const progressPct =
-              batch.status === 'Ready' || batch.status === 'Submitted'
-                ? 100
-                : batchInvoices.length > 0
-                ? Math.min(90, Math.max(35, Math.round((totalAmount / (batch.advanceAmount || 1000)) * 100)))
-                : 12;
+            const advance = Number(batch.advanceAmount) || 1000;
+            const remaining = advance - totalAmount;
+            const isDeficit = remaining < 0;
+            const progressPct = Math.min(100, Math.max(0, Math.round((totalAmount / advance) * 100)));
 
             return (
               <div
@@ -627,13 +645,13 @@ export default function PettyCashBatchesSection({
                       }}
                       className="px-3 py-1 rounded-full text-xs font-bold bg-[#CCFBF1] dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6] border border-[#14B8A6] dark:border-[#14B8A6]/30 hover:bg-[#99F6E4] dark:hover:bg-[#14B8A6]/25 transition-colors cursor-pointer"
                     >
-                      إدارة الفواتير ({batchInvoices.length})
+                      {t('Manage Invoices', 'إدارة الفواتير')} ({batchInvoices.length})
                     </button>
 
                     <button
                       onClick={() => handleDeleteBatch(batch)}
                       className="p-1.5 rounded-lg text-zinc-500 hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
-                      title="حذف المجموعة"
+                      title={t('Delete Batch', 'حذف المجموعة')}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -661,24 +679,70 @@ export default function PettyCashBatchesSection({
                   </div>
                 </div>
 
-                {/* Middle row: Amount & Total Amount label */}
-                <div className="flex items-baseline justify-between">
-                  <div className="text-lg font-extrabold text-[#173B63] dark:text-white tracking-tight">
-                    OMR {totalAmount.toFixed(3)}
+                {/* Financial Summary Grid (Advance, Spent, Remaining) */}
+                <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-white/80 dark:bg-zinc-900/80 border border-[#D2E3F0] dark:border-zinc-800 shadow-xs">
+                  {/* Advance Budget */}
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-semibold text-[#475569] dark:text-zinc-400">
+                      {t('Advance Budget', 'سلفة الباتش')}
+                    </span>
+                    <span className="text-sm font-bold text-[#173B63] dark:text-zinc-200 mt-0.5">
+                      OMR {advance.toFixed(3)}
+                    </span>
                   </div>
-                  <div className="text-xs text-[#2B4C6F] dark:text-zinc-400 flex items-center gap-2 font-medium">
-                    <span className="font-mono text-[11px] text-[#4A6B8A] dark:text-zinc-500">{batch.id}</span>
-                    <span>•</span>
-                    <span>Total Amount</span>
+
+                  {/* Total Spent */}
+                  <div className="flex flex-col border-x border-[#E2E8F0] dark:border-zinc-800/80 px-2">
+                    <span className="text-[11px] font-semibold text-[#475569] dark:text-zinc-400">
+                      {t('Total Spent', 'إجمالي المصروف')}
+                    </span>
+                    <span className="text-sm font-bold text-[#0F766E] dark:text-teal-400 mt-0.5">
+                      OMR {totalAmount.toFixed(3)}
+                    </span>
+                  </div>
+
+                  {/* Remaining Petty Cash */}
+                  <div className="flex flex-col text-right">
+                    <span className="text-[11px] font-semibold text-[#475569] dark:text-zinc-400">
+                      {t('Remaining', 'المتبقي من الباتش')}
+                    </span>
+                    <span
+                      className={clsx(
+                        "text-sm font-extrabold mt-0.5",
+                        isDeficit
+                          ? "text-danger"
+                          : "text-emerald-600 dark:text-emerald-400"
+                      )}
+                    >
+                      {isDeficit ? `-OMR ${Math.abs(remaining).toFixed(3)}` : `OMR ${remaining.toFixed(3)}`}
+                    </span>
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="w-full h-2 bg-[#D2E3F0] dark:bg-zinc-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#173B63] via-[#0F766E] to-[#14B8A6] rounded-full transition-all duration-500"
-                    style={{ width: `${progressPct}%` }}
-                  />
+                {/* Progress Bar & Status Line */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-[#475569] dark:text-zinc-400 font-medium">
+                    <span>
+                      {progressPct}% {t('Consumed', 'مستهلك')}
+                      {isDeficit && (
+                        <span className="text-danger font-bold ml-1">
+                          ({t('Deficit', 'عجز')}: OMR {Math.abs(remaining).toFixed(3)})
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-mono text-[10px] text-[#4A6B8A] dark:text-zinc-500">{batch.id}</span>
+                  </div>
+                  <div className="w-full h-2 bg-[#D2E3F0] dark:bg-zinc-800 rounded-full overflow-hidden">
+                    <div
+                      className={clsx(
+                        "h-full rounded-full transition-all duration-500",
+                        isDeficit
+                          ? "bg-danger"
+                          : "bg-gradient-to-r from-[#173B63] via-[#0F766E] to-[#14B8A6]"
+                      )}
+                      style={{ width: `${Math.min(100, progressPct)}%` }}
+                    />
+                  </div>
                 </div>
 
                 {/* Bottom Export & Action Buttons */}
@@ -713,7 +777,7 @@ export default function PettyCashBatchesSection({
                     onClick={() => handleExportZip(batch)}
                     disabled={busyAction !== null}
                     className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-[#14B8A6] dark:border-[#14B8A6]/30 bg-[#CCFBF1] hover:bg-[#99F6E4] dark:bg-[#14B8A6]/10 dark:hover:bg-[#14B8A6]/20 text-xs font-bold text-[#0F766E] dark:text-[#14B8A6] transition-all cursor-pointer disabled:opacity-50 shadow-xs"
-                    title="تصدير تقرير الحسابات + ملف المرفقات المدمج معاً في ملف ZIP واحد"
+                    title={t('Export accounts report + merged attachments together in a single ZIP package', 'تصدير تقرير الحسابات + ملف المرفقات المدمج معاً في ملف ZIP واحد')}
                   >
                     {busyAction === `zip-${batch.id}` ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -757,7 +821,7 @@ export default function PettyCashBatchesSection({
             <form onSubmit={handleCreateBatch} className="space-y-3.5">
               <div>
                 <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Batch Name (اسم المجموعة) *
+                  {t('Batch Name *', 'اسم المجموعة *')}
                 </label>
                 <input
                   type="text"
@@ -771,7 +835,7 @@ export default function PettyCashBatchesSection({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Month</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Month', 'الشهر')}</label>
                   <select
                     value={newBatchMonth}
                     onChange={e => {
@@ -785,14 +849,14 @@ export default function PettyCashBatchesSection({
                   >
                     {MONTH_NAMES.map(m => (
                       <option key={m.value} value={m.value}>
-                        {m.en} ({m.ar})
+                        {lang === 'ar' ? m.ar : m.en}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Year</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">{t('Year', 'السنة')}</label>
                   <select
                     value={newBatchYear}
                     onChange={e => setNewBatchYear(Number(e.target.value))}
@@ -810,7 +874,7 @@ export default function PettyCashBatchesSection({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    PCV No (اختياري)
+                    {t('PCV No (Optional)', 'رقم PCV (اختياري)')}
                   </label>
                   <input
                     type="text"
@@ -823,7 +887,7 @@ export default function PettyCashBatchesSection({
 
                 <div>
                   <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Advance OMR (العهدة)
+                    {t('Advance OMR', 'العهدة (OMR)')}
                   </label>
                   <input
                     type="number"
@@ -900,15 +964,15 @@ export default function PettyCashBatchesSection({
                     />
                     <button
                       onClick={handleSaveMeta}
-                      className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-semibold"
+                      className="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-semibold cursor-pointer"
                     >
-                      حفظ
+                      {t('Save', 'حفظ')}
                     </button>
                     <button
                       onClick={() => setIsEditingMeta(false)}
-                      className="px-2 py-1 rounded-lg bg-zinc-800 text-zinc-400 text-xs"
+                      className="px-2 py-1 rounded-lg bg-zinc-800 text-zinc-400 text-xs cursor-pointer"
                     >
-                      إلغاء
+                      {t('Cancel', 'إلغاء')}
                     </button>
                   </div>
                 ) : (
@@ -926,22 +990,35 @@ export default function PettyCashBatchesSection({
                           setIsEditingMeta(true);
                         }}
                         className="text-zinc-400 hover:text-white p-1 rounded"
-                        title="تعديل اسم المجموعة أو رقم PCV"
+                        title={t('Edit Batch Name or PCV No', 'تعديل اسم المجموعة أو رقم PCV')}
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-xs text-zinc-400">
-                      Created: {activeBatch.createdAt} •{' '}
-                      {MONTH_NAMES.find(m => m.value === activeBatch.month)?.en} {activeBatch.year} •
-                      Total:{' '}
-                      <strong className="text-[#14B8A6]">
-                        OMR{' '}
-                        {getBatchInvoices(activeBatch)
-                          .reduce((s, i) => s + Number(i.amount || 0), 0)
-                          .toFixed(3)}
-                      </strong>
-                    </p>
+                    {(() => {
+                      const invs = getBatchInvoices(activeBatch);
+                      const total = invs.reduce((s, i) => s + Number(i.amount || 0), 0);
+                      const adv = Number(activeBatch.advanceAmount) || 1000;
+                      const rem = adv - total;
+                      return (
+                        <div className="flex items-center gap-2 text-xs text-zinc-400 mt-1 flex-wrap">
+                          <span>Created: {activeBatch.createdAt}</span>
+                          <span>•</span>
+                          <span>{MONTH_NAMES.find(m => m.value === activeBatch.month)?.en} {activeBatch.year}</span>
+                          <span>•</span>
+                          <span>Advance: <strong className="text-zinc-200">OMR {adv.toFixed(3)}</strong></span>
+                          <span>•</span>
+                          <span>Spent: <strong className="text-[#14B8A6]">OMR {total.toFixed(3)}</strong></span>
+                          <span>•</span>
+                          <span>
+                            Remaining:{' '}
+                            <strong className={rem < 0 ? 'text-danger font-bold' : 'text-emerald-400 font-bold'}>
+                              {rem < 0 ? `-OMR ${Math.abs(rem).toFixed(3)}` : `OMR ${rem.toFixed(3)}`}
+                            </strong>
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
@@ -989,7 +1066,7 @@ export default function PettyCashBatchesSection({
                       : 'border-transparent text-zinc-400 hover:text-white'
                   )}
                 >
-                  فواتير المجموعة وترتيب التصدير ({getBatchInvoices(activeBatch).length})
+                  {t('Batch Invoices & Export Order', 'فواتير المجموعة وترتيب التصدير')} ({getBatchInvoices(activeBatch).length})
                 </button>
                 <button
                   onClick={() => setWorkspaceTab('assign')}
@@ -1001,7 +1078,7 @@ export default function PettyCashBatchesSection({
                   )}
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Assign Invoices to {activeBatch.name} (إضافة فواتير)</span>
+                  <span>{t(`Assign Invoices to ${activeBatch.name}`, `إضافة فواتير إلى ${activeBatch.name}`)}</span>
                 </button>
               </div>
 
@@ -1012,14 +1089,14 @@ export default function PettyCashBatchesSection({
                     className="text-[11px] px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center gap-1 cursor-pointer"
                   >
                     <ArrowUpDown className="w-3 h-3" />
-                    <span>ترتيب بالتاريخ</span>
+                    <span>{t('Sort by Date', 'ترتيب بالتاريخ')}</span>
                   </button>
                   <button
                     onClick={() => handleSortBatchInvoices('expense_no')}
                     className="text-[11px] px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center gap-1 cursor-pointer"
                   >
                     <ArrowUpDown className="w-3 h-3" />
-                    <span>ترتيب برقم الفاتورة</span>
+                    <span>{t('Sort by Expense No', 'ترتيب برقم الفاتورة')}</span>
                   </button>
                 </div>
               )}
@@ -1036,7 +1113,7 @@ export default function PettyCashBatchesSection({
                   {selectedInBatch.length > 0 && (
                     <div className="p-3 rounded-xl bg-zinc-800/80 border border-zinc-700 flex flex-wrap items-center justify-between gap-3">
                       <span className="text-xs font-semibold text-white">
-                        تم تحديد {selectedInBatch.length} فاتورة من المجموعة
+                        {t(`Selected ${selectedInBatch.length} invoices from batch`, `تم تحديد ${selectedInBatch.length} فاتورة من المجموعة`)}
                       </span>
                       <div className="flex items-center gap-2 flex-wrap">
                         {batches.filter(b => b.id !== activeBatch.id).length > 0 && (
@@ -1046,11 +1123,11 @@ export default function PettyCashBatchesSection({
                               onChange={e => setTransferTargetBatchId(e.target.value)}
                               className="bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-white"
                             >
-                              <option value="">نقل إلى مجموعة أخرى...</option>
+                              <option value="">{t('Transfer to another batch...', 'نقل إلى مجموعة أخرى...')}</option>
                               {batches
                                 .filter(b => b.id !== activeBatch.id)
                                 .map(b => (
-                                  <option key={b.id} value={b.id}>
+                                   <option key={b.id} value={b.id}>
                                     {b.name}
                                   </option>
                                 ))}
@@ -1067,7 +1144,7 @@ export default function PettyCashBatchesSection({
                               className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
                             >
                               <ArrowRightLeft className="w-3 h-3" />
-                              <span>نقل</span>
+                              <span>{t('Transfer', 'نقل')}</span>
                             </button>
                           </div>
                         )}
@@ -1077,7 +1154,7 @@ export default function PettyCashBatchesSection({
                           className="px-3 py-1 rounded-lg bg-danger/20 hover:bg-danger/30 text-danger border border-danger/30 text-xs font-semibold flex items-center gap-1 cursor-pointer"
                         >
                           <Trash2 className="w-3 h-3" />
-                          <span>إزالة من المجموعة</span>
+                          <span>{t('Remove from Batch', 'إزالة من المجموعة')}</span>
                         </button>
                       </div>
                     </div>
@@ -1086,13 +1163,13 @@ export default function PettyCashBatchesSection({
                   {getBatchInvoices(activeBatch).length === 0 ? (
                     <div className="py-12 text-center flex flex-col items-center gap-3">
                       <p className="text-sm text-zinc-400">
-                        لا توجد فواتير مضافة في مجموعة <strong>{activeBatch.name}</strong> حالياً.
+                        {t(`No invoices added to batch ${activeBatch.name} currently.`, `لا توجد فواتير مضافة في مجموعة ${activeBatch.name} حالياً.`)}
                       </p>
                       <button
                         onClick={() => setWorkspaceTab('assign')}
                         className="px-4 py-2 rounded-xl btn-primary-gradient bg-blue-600 text-white text-xs font-semibold cursor-pointer"
                       >
-                        + اختيار فواتير لإضافتها للمجموعة
+                        {t('+ Select Invoices to Add to Batch', '+ اختيار فواتير لإضافتها للمجموعة')}
                       </button>
                     </div>
                   ) : (
@@ -1158,7 +1235,7 @@ export default function PettyCashBatchesSection({
                                       disabled={idx === 0}
                                       onClick={() => handleMoveInvoice(idx, 'up')}
                                       className="text-zinc-400 hover:text-white disabled:opacity-20 cursor-pointer"
-                                      title="تحريك لأعلى"
+                                      title={t('Move Up', 'تحريك لأعلى')}
                                     >
                                       <ArrowUp className="w-3 h-3" />
                                     </button>
@@ -1166,7 +1243,7 @@ export default function PettyCashBatchesSection({
                                       disabled={idx === arr.length - 1}
                                       onClick={() => handleMoveInvoice(idx, 'down')}
                                       className="text-zinc-400 hover:text-white disabled:opacity-20 cursor-pointer"
-                                      title="تحريك لأسفل"
+                                      title={t('Move Down', 'تحريك لأسفل')}
                                     >
                                       <ArrowDown className="w-3 h-3" />
                                     </button>
@@ -1195,8 +1272,8 @@ export default function PettyCashBatchesSection({
                                 {exp.attachment_url ? (
                                   <button
                                     onClick={() => window.open(exp.attachment_url, '_blank')}
-                                    className="text-[#14B8A6] hover:underline"
-                                    title="عرض المرفق"
+                                    className="text-[#14B8A6] hover:underline cursor-pointer"
+                                    title={t('View Attachment', 'عرض المرفق')}
                                   >
                                     <Paperclip className="w-3.5 h-3.5 inline" />
                                   </button>
@@ -1208,7 +1285,7 @@ export default function PettyCashBatchesSection({
                                 <button
                                   onClick={() => handleRemoveFromBatch([exp.id])}
                                   className="text-zinc-400 hover:text-danger p-1 rounded cursor-pointer"
-                                  title="إزالة من المجموعة"
+                                  title={t('Remove from Batch', 'إزالة من المجموعة')}
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
@@ -1243,7 +1320,7 @@ export default function PettyCashBatchesSection({
                         }}
                         className="text-xs text-[#14B8A6] hover:underline cursor-pointer"
                       >
-                        تحديد كل الفواتير المتاحة ({selectableUnassignedIds.length})
+                        {t('Select All Available Invoices', 'تحديد كل الفواتير المتاحة')} ({selectableUnassignedIds.length})
                       </button>
                     </div>
 
@@ -1254,7 +1331,7 @@ export default function PettyCashBatchesSection({
                           type="text"
                           value={assignSearch}
                           onChange={e => setAssignSearch(e.target.value)}
-                          placeholder="بحث برقم الفاتورة، الوصف، المشروع..."
+                          placeholder={t('Search by expense no, description, project...', 'بحث برقم الفاتورة، الوصف، المشروع...')}
                           className="w-full bg-zinc-800 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#14B8A6]"
                         />
                       </div>
@@ -1266,10 +1343,9 @@ export default function PettyCashBatchesSection({
                         className="bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-xs text-zinc-300"
                       >
                         <option value="batch-month">
-                          فواتير شهر المجموعة (
-                          {MONTH_NAMES.find(m => m.value === activeBatch.month)?.en})
+                          {t(`Invoices of Batch Month (${MONTH_NAMES.find(m => m.value === activeBatch.month)?.en})`, `فواتير شهر المجموعة (${MONTH_NAMES.find(m => m.value === activeBatch.month)?.ar})`)}
                         </option>
-                        <option value="all">كل الفواتير المرفوعة</option>
+                        <option value="all">{t('All Uploaded Invoices', 'كل الفواتير المرفوعة')}</option>
                       </select>
                     </div>
                   </div>
@@ -1290,7 +1366,7 @@ export default function PettyCashBatchesSection({
                         {candidateInvoices.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="p-8 text-center text-zinc-500">
-                              لا توجد فواتير مطابقة. يمكنك التبديل إلى &quot;كل الفواتير المرفوعة&quot;.
+                              {t('No matching invoices found. You can switch to "All Uploaded Invoices".', 'لا توجد فواتير مطابقة. يمكنك التبديل إلى "كل الفواتير المرفوعة".')}
                             </td>
                           </tr>
                         ) : (
@@ -1344,12 +1420,12 @@ export default function PettyCashBatchesSection({
                                 >
                                   {isAssignedHere ? (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                      <Check className="w-3 h-3" /> مضافة هنا
+                                      <Check className="w-3 h-3" /> {t('Assigned Here', 'مضافة هنا')}
                                     </span>
                                   ) : isAssignedOther ? (
                                     <div className="inline-flex items-center gap-2">
                                       <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                                        في: {assignedInfo.batchName}
+                                        {t('In:', 'في:')} {assignedInfo.batchName}
                                       </span>
                                       <button
                                         onClick={() =>
@@ -1360,9 +1436,9 @@ export default function PettyCashBatchesSection({
                                           )
                                         }
                                         className="text-[11px] text-purple-400 hover:underline font-semibold cursor-pointer"
-                                        title="نقل هذه الفاتورة إلى هذه المجموعة"
+                                        title={t('Transfer this invoice to this batch', 'نقل هذه الفاتورة إلى هذه المجموعة')}
                                       >
-                                        نقل لهنا
+                                        {t('Transfer Here', 'نقل لهنا')}
                                       </button>
                                     </div>
                                   ) : (

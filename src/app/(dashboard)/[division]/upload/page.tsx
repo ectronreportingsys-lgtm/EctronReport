@@ -6,8 +6,10 @@ import { useParams } from 'next/navigation';
 import clsx from 'clsx';
 import * as XLSX from 'xlsx';
 import { createClient } from '@/lib/supabase';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function UploadPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const division = params.division;
   
@@ -242,7 +244,7 @@ export default function UploadPage() {
               uploadMode === 'daily' ? "btn-primary-gradient bg-blue-600 text-white shadow-lg" : "text-[#475569] dark:text-zinc-400 hover:text-[#0F766E] hover:bg-[#F0FDFA] dark:hover:text-zinc-200 dark:hover:bg-transparent"
             )}
           >
-            تقرير شفتات (Daily Report)
+            {t('Daily Shifts Report', 'تقرير شفتات')}
           </button>
           <button
             onClick={() => setUploadMode('yearly')}
@@ -251,7 +253,7 @@ export default function UploadPage() {
               uploadMode === 'yearly' ? "btn-primary-gradient bg-blue-600 text-white shadow-lg" : "text-[#475569] dark:text-zinc-400 hover:text-[#0F766E] hover:bg-[#F0FDFA] dark:hover:text-zinc-200 dark:hover:bg-transparent"
             )}
           >
-            تقرير تراكمي/سنوي (Yearly Report)
+            {t('Yearly / Cumulative Report', 'تقرير تراكمي/سنوي')}
           </button>
         </div>
 
@@ -259,7 +261,7 @@ export default function UploadPage() {
           <>
             {/* Date Selection */}
             <div>
-              <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">Select Date</label>
+              <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">{t('Select Date', 'تحديد التاريخ')}</label>
               <input 
                 type="date" 
                 value={date}
@@ -285,7 +287,7 @@ export default function UploadPage() {
 
             {/* Shift Type Selection */}
             <div>
-              <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">Working Hours Type</label>
+              <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">{t('Working Hours Type', 'نوع الدوام')}</label>
               <div className="grid grid-cols-2 gap-4 mb-4">
                  <label 
                     className={clsx(
@@ -296,7 +298,7 @@ export default function UploadPage() {
                     )}
                     onClick={() => setShiftType('shift')}
                   >
-                    <span>شفتات (Shifts)</span>
+                    <span>{t('Shifts', 'شفتات')}</span>
                   </label>
                   <label 
                     className={clsx(
@@ -307,17 +309,17 @@ export default function UploadPage() {
                     )}
                     onClick={() => setShiftType('official')}
                   >
-                    <span>دوام رسمي (Official)</span>
+                    <span>{t('Official Hours', 'دوام رسمي')}</span>
                   </label>
               </div>
 
               {shiftType === 'shift' && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2">
                   {[
-                    { id: 'shift1', label: 'Shift 1' },
-                    { id: 'shift2', label: 'Shift 2' },
-                    { id: 'shift3', label: 'Shift 3' },
-                    { id: 'all', label: 'All Shifts' }
+                    { id: 'shift1', label: t('Shift 1', 'الوردية 1') },
+                    { id: 'shift2', label: t('Shift 2', 'الوردية 2') },
+                    { id: 'shift3', label: t('Shift 3', 'الوردية 3') },
+                    { id: 'all', label: t('All Shifts', 'كل الورديات') }
                   ].map(s => (
                     <label 
                       key={s.id} 
@@ -347,14 +349,14 @@ export default function UploadPage() {
         {/* Uploader Name & Target */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">Uploader Name (اسم رافع التقرير)</label>
+            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">{t('Uploader Name', 'اسم رافع التقرير')}</label>
             <div className="w-full bg-[#F8FAFC] dark:bg-zinc-900/30 border border-border dark:border-zinc-800/80 text-[#475569] dark:text-zinc-400 rounded-xl p-4 cursor-not-allowed flex items-center gap-3">
                <User className="w-5 h-5 text-[#0F766E] dark:text-zinc-500" />
-               {uploaderName ? <span className="text-[#173B63] dark:text-zinc-300 font-medium">{uploaderName}</span> : <span className="opacity-50">جاري جلب الاسم...</span>}
+               {uploaderName ? <span className="text-[#173B63] dark:text-zinc-300 font-medium">{uploaderName}</span> : <span className="opacity-50">{t('Fetching name...', 'جاري جلب الاسم...')}</span>}
             </div>
           </div>
           <div>
-            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">Daily Target (الهدف اليومي)</label>
+            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">{t('Daily Target', 'الهدف اليومي')}</label>
             <input 
               type="number" 
               placeholder="e.g. 640"
@@ -368,9 +370,9 @@ export default function UploadPage() {
         {/* Note / Remark */}
         {uploadMode === 'daily' && (
           <div>
-            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">Note / Remark (ملاحظة)</label>
+            <label className="text-sm font-semibold text-[#173B63] dark:text-zinc-300 mb-3 block">{t('Note / Remark', 'ملاحظات')}</label>
             <textarea 
-              placeholder="Enter any notes or remarks for this day..."
+              placeholder={t('Enter any notes or remarks for this day...', 'أدخل أي ملاحظات لهذا اليوم...')}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full bg-[#F8FAFC] dark:bg-zinc-900/50 border border-border dark:border-zinc-800 text-[#173B63] dark:text-zinc-200 rounded-xl p-4 focus:outline-none focus:border-[#14B8A6] dark:focus:border-blue-500/50 transition-colors min-h-[100px] resize-y"
@@ -445,13 +447,13 @@ export default function UploadPage() {
       <div className="mt-8">
         <h2 className="text-xl font-bold text-[#173B63] dark:text-white mb-6 flex items-center gap-2">
           <Download className="w-5 h-5 text-[#0F766E] dark:text-blue-400" />
-          سجل الملفات المرفوعة (Downloads)
+          {t('Uploaded Files History', 'سجل الملفات المرفوعة (Downloads)')}
         </h2>
         
         <div className="flex flex-col gap-4">
           {history.length === 0 ? (
             <div className="text-[#64748B] dark:text-zinc-500 text-center py-8 glass rounded-2xl border border-border dark:border-zinc-800/50">
-              No files uploaded yet.
+              {t('No files uploaded yet.', 'لا توجد ملفات مرفوعة بعد.')}
             </div>
           ) : (
             history.map((item) => (
@@ -474,7 +476,7 @@ export default function UploadPage() {
                       <span className="px-2 py-0.5 rounded bg-[#F0FDFA] dark:bg-zinc-800 border border-[#CCFBF1] dark:border-transparent text-xs text-[#0F766E] dark:text-zinc-300 capitalize">{item.shift}</span>
                     </div>
                     {item.uploaderName && item.uploaderName !== 'Unknown' && (
-                      <div className="text-xs text-[#64748B] dark:text-zinc-500 mt-1">Uploaded by: <span className="text-[#173B63] dark:text-zinc-300">{item.uploaderName}</span></div>
+                      <div className="text-xs text-[#64748B] dark:text-zinc-500 mt-1">{t('Uploaded by:', 'تم الرفع بواسطة:')} <span className="text-[#173B63] dark:text-zinc-300">{item.uploaderName}</span></div>
                     )}
                   </div>
                 </div>
@@ -484,7 +486,7 @@ export default function UploadPage() {
                     onClick={() => setSelectedHistory(item)}
                     className="text-sm font-medium text-[#0F766E] dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer px-3 py-1 hover:bg-[#CCFBF1]/50 dark:hover:bg-blue-500/10 rounded-lg"
                   >
-                    View Data
+                    {t('View Data', 'عرض البيانات')}
                   </div>
                   <button
                     onClick={(e) => {
@@ -492,7 +494,7 @@ export default function UploadPage() {
                       setDeletingId(item.id);
                     }}
                     className="p-2 text-[#64748B] dark:text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer"
-                    title="Delete Report"
+                    title={t('Delete Report', 'حذف التقرير')}
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -510,9 +512,9 @@ export default function UploadPage() {
             <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-[#173B63] dark:text-white mb-2">تم رفع التقرير بنجاح!</h3>
+            <h3 className="text-xl font-bold text-[#173B63] dark:text-white mb-2">{t('Report Uploaded Successfully!', 'تم رفع التقرير بنجاح!')}</h3>
             <p className="text-[#475569] dark:text-zinc-400 mb-6 text-sm">
-              التقرير جاهز الآن في قاعدة البيانات.
+              {t('The report is now available in the database.', 'التقرير جاهز الآن في قاعدة البيانات.')}
             </p>
             <div className="flex flex-col gap-3 w-full">
               <button
@@ -523,13 +525,13 @@ export default function UploadPage() {
                 }}
                 className="w-full py-2.5 rounded-xl btn-primary-gradient bg-blue-600 text-white font-medium hover:bg-blue-500 transition-colors cursor-pointer"
               >
-                رفع تقرير آخر
+                {t('Upload Another Report', 'رفع تقرير آخر')}
               </button>
               <button
                 onClick={() => setShowSuccessModal(false)}
                 className="w-full py-2.5 rounded-xl border border-border dark:border-zinc-700 text-[#475569] dark:text-zinc-300 font-medium hover:bg-[#F8FAFC] dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
-                إلغاء / إغلاق
+                {t('Close', 'إلغاء / إغلاق')}
               </button>
             </div>
           </div>
@@ -604,6 +606,7 @@ export default function UploadPage() {
 }
 
 const FormattedDataTable = ({ rows }: { rows: any[] }) => {
+  const { t } = useLanguage();
   if (!rows || rows.length === 0) return null;
 
   const formattedRows = rows.map((row, idx) => {
@@ -682,20 +685,20 @@ const FormattedDataTable = ({ rows }: { rows: any[] }) => {
     <div className="w-full bg-card rounded-xl overflow-hidden text-[#475569] dark:text-slate-300 shadow-xs border border-border">
       <div className="bg-card border-b border-border p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-           <span className="bg-[#CCFBF1] text-[#0F766E] dark:bg-[#14B8A6]/15 dark:text-[#2DD4BF] px-3 py-1 rounded-full text-xs font-bold">{formattedRows.length} محطات</span>
+           <span className="bg-[#CCFBF1] text-[#0F766E] dark:bg-[#14B8A6]/15 dark:text-[#2DD4BF] px-3 py-1 rounded-full text-xs font-bold">{formattedRows.length} {t('Stations', 'محطات')}</span>
         </div>
-        <h3 className="font-bold text-[#173B63] dark:text-white text-lg">تفاصيل المحطات (التدفق والإنتاجية)</h3>
+        <h3 className="font-bold text-[#173B63] dark:text-white text-lg">{t('Stations Details (Throughput & Yield)', 'تفاصيل المحطات (التدفق والإنتاجية)')}</h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-center" dir="rtl">
+        <table className="w-full text-sm text-center">
           <thead className="bg-[#F8FAFC] dark:bg-slate-900 border-b border-border text-[#475569] dark:text-slate-400 font-bold text-[13px]">
             <tr>
-              <th className="px-4 py-4 text-right whitespace-nowrap w-[200px]">المحطة</th>
-              <th className="px-4 py-4 whitespace-nowrap">مرات الفحص</th>
-              <th className="px-4 py-4 whitespace-nowrap">اللي دخل</th>
-              <th className="px-4 py-4 whitespace-nowrap">كم طلع ناجح</th>
-              <th className="px-4 py-4 whitespace-nowrap">كم رسب</th>
-              <th className="px-4 py-4 whitespace-nowrap">نسبة النجاح من أول مرة</th>
+              <th className="px-4 py-4 text-left whitespace-nowrap w-[200px]">{t('Station', 'المحطة')}</th>
+              <th className="px-4 py-4 whitespace-nowrap">{t('Tests', 'مرات الفحص')}</th>
+              <th className="px-4 py-4 whitespace-nowrap">{t('Input', 'المدخلات')}</th>
+              <th className="px-4 py-4 whitespace-nowrap">{t('Passed (OK)', 'الناجح')}</th>
+              <th className="px-4 py-4 whitespace-nowrap">{t('Failed (KO)', 'الراسب')}</th>
+              <th className="px-4 py-4 whitespace-nowrap">{t('First Pass Yield (FPY %)', 'نسبة النجاح من أول مرة')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">

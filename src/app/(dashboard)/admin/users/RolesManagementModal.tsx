@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Plus, Trash2, Edit2, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface RolesManagementModalProps {
   initialRoles: any[];
@@ -11,6 +12,7 @@ interface RolesManagementModalProps {
 }
 
 export default function RolesManagementModal({ initialRoles, onClose, onRolesUpdated }: RolesManagementModalProps) {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [roles, setRoles] = useState(initialRoles);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +58,7 @@ export default function RolesManagementModal({ initialRoles, onClose, onRolesUpd
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا النوع؟')) return;
+    if (!confirm(t('Are you sure you want to delete this role?', 'هل أنت متأكد من حذف هذا النوع؟'))) return;
     
     try {
       const res = await fetch(`/api/admin/roles?id=${id}`, { method: 'DELETE' });
@@ -76,11 +78,11 @@ export default function RolesManagementModal({ initialRoles, onClose, onRolesUpd
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center p-6 border-b border-zinc-800">
-          <h2 className="text-xl font-bold text-white">إدارة أنواع المستخدمين (Roles)</h2>
+          <h2 className="text-xl font-bold text-white">{t('Roles Management', 'إدارة أنواع المستخدمين (Roles)')}</h2>
           <div className="flex items-center gap-4">
             <a href="/admin/roles" className="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors border border-emerald-500/20">
               <Edit2 className="w-4 h-4" />
-              إدارة الصلاحيات
+              {t('Manage Permissions', 'إدارة الصلاحيات')}
             </a>
             <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors">
               <X className="w-5 h-5" />
@@ -92,32 +94,32 @@ export default function RolesManagementModal({ initialRoles, onClose, onRolesUpd
           {/* Add / Edit Form */}
           <form onSubmit={handleSave} className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 mb-6 flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex-1 w-full">
-              <label className="block text-sm font-medium text-zinc-400 mb-1">النوع (Role Name)</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-1">{t('Role Name', 'النوع (Role Name)')}</label>
               <input
                 required
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="مثال: Supervisor"
+                placeholder="e.g. Supervisor"
                 className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
               />
             </div>
             <div className="flex-1 w-full">
-              <label className="block text-sm font-medium text-zinc-400 mb-1">الوصف (Description)</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-1">{t('Description', 'الوصف (Description)')}</label>
               <input
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
-                placeholder="مثال: مشرف النظام"
+                placeholder={t('e.g. System Supervisor', 'مثال: مشرف النظام')}
                 className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white text-sm"
               />
             </div>
             <div className="flex gap-2">
               {editingRole && (
                 <button type="button" onClick={() => { setEditingRole(null); setFormData({name:'', description:''}); }} className="px-4 py-2 rounded-lg bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700">
-                  إلغاء
+                  {t('Cancel', 'إلغاء')}
                 </button>
               )}
               <button disabled={isLoading} type="submit" className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-500 flex items-center gap-2">
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingRole ? 'تحديث' : 'إضافة')}
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingRole ? t('Update', 'تحديث') : t('Add', 'إضافة'))}
               </button>
             </div>
           </form>
@@ -127,9 +129,9 @@ export default function RolesManagementModal({ initialRoles, onClose, onRolesUpd
             <table className="w-full text-left border-collapse text-sm">
               <thead className="bg-zinc-950">
                 <tr>
-                  <th className="py-3 px-4 font-semibold text-zinc-400">النوع</th>
-                  <th className="py-3 px-4 font-semibold text-zinc-400">الوصف</th>
-                  <th className="py-3 px-4 font-semibold text-zinc-400 text-right">إجراءات</th>
+                  <th className="py-3 px-4 font-semibold text-zinc-400">{t('Role', 'النوع')}</th>
+                  <th className="py-3 px-4 font-semibold text-zinc-400">{t('Description', 'الوصف')}</th>
+                  <th className="py-3 px-4 font-semibold text-zinc-400 text-right">{t('Actions', 'إجراءات')}</th>
                 </tr>
               </thead>
               <tbody>

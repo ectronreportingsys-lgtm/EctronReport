@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, AlertTriangle, Loader2, Plus, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
-import { getFormData, createExpense } from '@/app/(dashboard)/petty-cash/actions/pettyCashActions';
+import { getFormData, createExpense, getNextExpenseNoAction } from '@/app/(dashboard)/petty-cash/actions/pettyCashActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ModalProps {
 }
 
 export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const [formDataOptions, setFormDataOptions] = useState<any>(null);
@@ -80,7 +82,9 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
       setDataLoading(true);
       setError(null);
       setDuplicateWarning(false);
-      getFormData().then((data) => {
+      const todayDate = new Date().toISOString().split('T')[0];
+      setDate(todayDate);
+      getFormData(todayDate).then((data) => {
         setFormDataOptions(data);
         setExpenseNo(data.nextExpenseNo);
         // Reset form
@@ -101,6 +105,18 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
     }
   }, [isOpen]);
 
+  const handleDateChange = async (newDate: string) => {
+    setDate(newDate);
+    try {
+      const nextNo = await getNextExpenseNoAction(newDate);
+      if (nextNo) {
+        setExpenseNo(nextNo);
+      }
+    } catch (e) {
+      console.error('Error updating expense number on date change:', e);
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent, confirmDuplicate = false) => {
@@ -112,7 +128,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
     if (activeAllocations.length > 0) {
       const sum = activeAllocations.reduce((s, p) => s + (Number(p.percentage) || 0), 0);
       if (sum !== 100) {
-        setError(`مجموع نسب المشاريع يجب أن يكون 100% (المجموع الحالي: ${sum}%)`);
+        setError(t(`Project allocation percentages must equal 100% (Current total: ${sum}%)`, `مجموع نسب المشاريع يجب أن يكون 100% (المجموع الحالي: ${sum}%)`));
         return;
       }
     }
@@ -137,7 +153,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
     const input = document.getElementById('file-upload') as HTMLInputElement;
     let fileToUpload = null;
     let originalFile = null;
-    let successMessage = 'تم حفظ البيانات بنجاح.';
+    let successMessage = t('Expense recorded successfully.', 'تم حفظ البيانات بنجاح.');
 
     if (input && input.files && input.files.length > 0) {
       originalFile = input.files[0];
@@ -151,7 +167,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
           if (fileToUpload.size < originalFile.size) {
             const origSize = (originalFile.size / 1024 / 1024).toFixed(2);
             const compSize = (fileToUpload.size / 1024 / 1024).toFixed(2);
-            successMessage = `تم تقليل حجم الملف المرفق من ${origSize}MB إلى ${compSize}MB وتم حفظ البيانات بنجاح.`;
+            successMessage = t(`Attachment compressed from ${origSize}MB to ${compSize}MB and saved successfully.`, `تم تقليل حجم الملف المرفق من ${origSize}MB إلى ${compSize}MB وتم حفظ البيانات بنجاح.`);
           }
         } catch (error) {
           console.error("Error compressing image", error);
@@ -160,7 +176,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
       } else {
         fileToUpload = originalFile;
         if (originalFile.type === 'application/pdf') {
-          successMessage = `تم حفظ البيانات بنجاح. (ملاحظة: تم حفظ ملف الـ PDF بحجمه الأصلي ${(originalFile.size / 1024 / 1024).toFixed(2)}MB)`;
+          successMessage = t(`Expense recorded successfully. (Note: PDF saved at original size ${(originalFile.size / 1024 / 1024).toFixed(2)}MB)`, `تم حفظ البيانات بنجاح. (ملاحظة: تم حفظ ملف الـ PDF بحجمه الأصلي ${(originalFile.size / 1024 / 1024).toFixed(2)}MB)`);
         }
       }
       
@@ -246,7 +262,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                     type="date" 
                     required
                     value={date}
-                    onChange={e => setDate(e.target.value)}
+                    onChange={e => handleDateChange(e.target.value)}
                     className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -266,7 +282,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                       defaultValue=""
                       className="text-xs bg-zinc-900 hover:bg-zinc-800 text-blue-400 border border-blue-500/30 rounded-lg px-2.5 py-1 focus:outline-none cursor-pointer"
                     >
-                      <option value="" disabled>⚡ اختيار من الأوصاف المتكررة...</option>
+                      <option value="" disabled>{t('⚡ Select from recurring descriptions...', '⚡ اختيار من الأوصاف المتكررة...')}</option>
                       {formDataOptions.recurringDescriptions.map((item: any) => (
                         <option key={item.id} value={item.text} className="bg-zinc-800 text-white">
                           {item.text}
@@ -279,7 +295,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                   required
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  placeholder="اكتب وصف المصروف هنا (أو اختر من الأوصاف المتكررة أعلاه)..."
+                  placeholder={t('Write expense description here (or select from recurring above)...', 'اكتب وصف المصروف هنا (أو اختر من الأوصاف المتكررة أعلاه)...')}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-blue-500 min-h-[60px] resize-y text-sm"
                 />
               </div>
@@ -334,10 +350,10 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
                     <label className="block text-sm font-semibold text-white">
-                      Project Allocation (المشاريع والنسب المئوية)
+                      {t('Project Allocation', 'المشاريع والنسب المئوية')}
                     </label>
                     <p className="text-xs text-zinc-400 mt-0.5">
-                      اختر مشروعاً بنسبة 100% افتراضياً أو أضف أكثر من مشروع لتوزيع النسب
+                      {t('Select 100% for a single project or add multiple projects to split.', 'اختر مشروعاً بنسبة 100% افتراضياً أو أضف أكثر من مشروع لتوزيع النسب')}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -370,9 +386,9 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                             onChange={e => handleProjectChange(idx, e.target.value)}
                             className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
                           >
-                            <option value="">None / Select Project (اختياري)</option>
+                            <option value="">{t('None / Select Project (Optional)', 'None / Select Project (اختياري)')}</option>
                             {baseProjects.length > 0 && (
-                              <optgroup label="Projects (المشاريع الأساسية)">
+                              <optgroup label={t('Projects', 'Projects (المشاريع الأساسية)')}>
                                 {baseProjects.map((p: any) => (
                                   <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
@@ -405,7 +421,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
 
                         {/* Calculated Share Preview in OMR */}
                         {shareAmount && alloc.projectId && (
-                          <div className="text-xs text-zinc-400 font-mono whitespace-nowrap bg-zinc-900/80 px-2.5 py-2 rounded-xl border border-zinc-800 flex-shrink-0" title="الحصة التقديرية بالريال">
+                          <div className="text-xs text-zinc-400 font-mono whitespace-nowrap bg-zinc-900/80 px-2.5 py-2 rounded-xl border border-zinc-800 flex-shrink-0" title={t('Calculated share in OMR', 'الحصة التقديرية بالريال')}>
                             OMR {shareAmount}
                           </div>
                         )}
@@ -416,7 +432,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                             type="button"
                             onClick={() => handleRemoveProjectRow(idx)}
                             className="p-2 rounded-xl text-zinc-400 hover:text-danger hover:bg-danger/10 transition-colors flex-shrink-0 cursor-pointer"
-                            title="حذف هذا المشروع"
+                            title={t('Delete project row', 'حذف هذا المشروع')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -433,12 +449,12 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                     className="flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-lg transition-colors border border-blue-500/20 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>+ إضافة مشروع آخر (Add Project)</span>
+                    <span>{t('+ Add Another Project', '+ إضافة مشروع آخر (Add Project)')}</span>
                   </button>
 
                   {totalPercentage !== 100 && totalPercentage > 0 && (
                     <span className="text-xs text-amber-400/90 font-medium">
-                      ⚠️ مجموع النسب يجب أن يساوي 100%
+                      {t('⚠️ Total percentages must equal 100%', '⚠️ مجموع النسب يجب أن يساوي 100%')}
                     </span>
                   )}
                 </div>
@@ -447,7 +463,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                 <div className="pt-2 border-t border-zinc-800 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <label className="block text-xs font-medium text-zinc-400">
-                      النص المجمّع للمشروع (Combined Project Text):
+                      {t('Combined Project Text:', 'النص المجمّع للمشروع (Combined Project Text):')}
                     </label>
                     {isCustomText && (
                       <button
@@ -455,7 +471,7 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                         onClick={() => setIsCustomText(false)}
                         className="text-xs text-blue-400 hover:underline cursor-pointer"
                       >
-                        إعادة التوليد التلقائي
+                        {t('Reset Auto-generation', 'إعادة التوليد التلقائي')}
                       </button>
                     )}
                   </div>
@@ -466,11 +482,11 @@ export default function NewExpenseModal({ isOpen, onClose, onSuccess }: ModalPro
                       setIsCustomText(true);
                       setCombinedProjectText(e.target.value);
                     }}
-                    placeholder="e.g. Ectron 80%, AAMU 20% أو Head Office"
+                    placeholder={t('e.g. Ectron 80%, AAMU 20% or Head Office', 'e.g. Ectron 80%, AAMU 20% أو Head Office')}
                     className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-blue-400 font-medium focus:outline-none focus:border-blue-500"
                   />
                   <p className="text-[11px] text-zinc-500">
-                    هذا النص هو ما سيتم حفظه في قاعدة البيانات ويظهر في الماستر شيت وفي نافذة التعديل كسطر واحد.
+                    {t('This combined text will be saved to the database and appears in the master sheet and edit dialog as a single line.', 'هذا النص هو ما سيتم حفظه في قاعدة البيانات ويظهر في الماستر شيت وفي نافذة التعديل كسطر واحد.')}
                   </p>
                 </div>
               </div>

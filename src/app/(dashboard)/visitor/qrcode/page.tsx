@@ -14,8 +14,10 @@ import {
   Building2,
   Smartphone
 } from 'lucide-react';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 export default function VisitorQRCodePage() {
+  const { t } = useLanguage();
   const [publicUrl, setPublicUrl] = useState('');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [highResQrUrl, setHighResQrUrl] = useState('');
@@ -115,10 +117,10 @@ export default function VisitorQRCodePage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">
-              رمز الاستجابة السريعة (QR Code Management)
+              {t('QR Code Management', 'رمز الاستجابة السريعة (QR Code Management)')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
-              توليد وطباعة رمز التسجيل الذاتي للزوار عند بوابة الاستقبال
+              {t('Generate and print self-registration QR code for the reception gate', 'توليد وطباعة رمز التسجيل الذاتي للزوار عند بوابة الاستقبال')}
             </p>
           </div>
         </div>
@@ -130,7 +132,7 @@ export default function VisitorQRCodePage() {
             className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
             <Download className="w-4 h-4 text-[#0F766E]" />
-            <span>تحميل الرمز (PNG)</span>
+            <span>{t('Download QR (PNG)', 'تحميل الرمز (PNG)')}</span>
           </button>
 
           <button
@@ -139,7 +141,7 @@ export default function VisitorQRCodePage() {
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-xs font-bold shadow flex items-center gap-1.5 hover:opacity-95 transition-all"
           >
             <Printer className="w-4 h-4" />
-            <span>طباعة ملصق الاستقبال (A4 Poster)</span>
+            <span>{t('Print Reception Poster (A4)', 'طباعة ملصق الاستقبال (A4 Poster)')}</span>
           </button>
         </div>
       </div>
@@ -147,7 +149,7 @@ export default function VisitorQRCodePage() {
       {/* URL Link Bar */}
       <div className="bg-white dark:bg-zinc-900/60 p-5 rounded-3xl border border-border shadow-sm glass print:hidden">
         <label className="block text-xs font-bold text-[#173B63] dark:text-zinc-300 mb-2">
-          رابط التسجيل العام للزوار (Public Registration Link)
+          {t('Public Visitor Registration Link', 'رابط التسجيل العام للزوار (Public Registration Link)')}
         </label>
         <div className="flex items-center gap-2">
           <input
@@ -165,12 +167,12 @@ export default function VisitorQRCodePage() {
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-emerald-600" />
-                <span>تم النسخ!</span>
+                <span>{t('Copied!', 'تم النسخ!')}</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4 text-[#0F766E]" />
-                <span>نسخ الرابط</span>
+                <span>{t('Copy Link', 'نسخ الرابط')}</span>
               </>
             )}
           </button>
@@ -180,7 +182,7 @@ export default function VisitorQRCodePage() {
             target="_blank"
             rel="noopener noreferrer"
             className="p-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 transition-colors"
-            title="تجربة فتح صفحة التسجيل"
+            title={t('Open registration page in new tab', 'تجربة فتح صفحة التسجيل')}
           >
             <ExternalLink className="w-4 h-4" />
           </a>

@@ -1,18 +1,24 @@
 import React from 'react';
+import PettyCashAnalyticsDashboard from '@/components/petty-cash/PettyCashAnalyticsDashboard';
+import { getPettyCashAnalyticsData } from '../actions/analyticsActions';
 
-export default function PettyCashAnalysis() {
+export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: 'Petty Cash Analytics | ECTRON Reporting System',
+  description: 'Executive analytics and KPI dashboard for Petty Cash expenses and budget monitoring',
+};
+
+export default async function PettyCashAnalysisPage() {
+  const data = await getPettyCashAnalyticsData();
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Petty Cash Analysis</h1>
-          <p className="text-zinc-400 text-sm mt-1">Detailed breakdown of monthly budget and category spending</p>
-        </div>
-      </div>
-      <div className="glass rounded-2xl p-6 border border-border">
-        <h2 className="text-xl font-semibold text-white mb-4">قريباً (Coming Soon)</h2>
-        <p className="text-zinc-400">واجهة التحليل والمخططات البيانية للبتي كاش قيد التطوير.</p>
-      </div>
-    </div>
+    <PettyCashAnalyticsDashboard
+      initialExpenses={data.expenses}
+      allProjects={data.allProjects}
+      baseProjects={data.baseProjects}
+      availableYears={data.availableYears}
+      initialBudgets={data.budgets}
+    />
   );
 }

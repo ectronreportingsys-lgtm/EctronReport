@@ -20,6 +20,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { submitInternalRegistration } from '@/app/visitor/actions/visitorActions';
+import { useLanguage } from '@/components/layout/LanguageProvider';
 
 interface VisitorItemForm {
   id: string;
@@ -36,6 +37,7 @@ interface OrganizationFormItem {
 }
 
 export default function InternalVisitorNewPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -209,13 +211,13 @@ export default function InternalVisitorNewPage() {
     }).filter(org => (org.organization_en || org.organization_ar) && org.visitors.length > 0);
 
     if (validOrganizations.length === 0) {
-      setErrorMsg('يرجى إدخال اسم مؤسسة واحدة على الأقل وزائر واحد تابع لها.');
+      setErrorMsg(t('Please enter at least one organization and one visitor.', 'يرجى إدخال اسم مؤسسة واحدة على الأقل وزائر واحد تابع لها.'));
       return;
     }
 
     const effectiveReason = visitReason === 'Other' ? customReason.trim() : visitReason;
     if (!effectiveReason) {
-      setErrorMsg('يرجى تحديد سبب الزيارة');
+      setErrorMsg(t('Please specify the visit reason.', 'يرجى تحديد سبب الزيارة'));
       return;
     }
 
@@ -243,10 +245,10 @@ export default function InternalVisitorNewPage() {
           visitId: res.visit?.id || ''
         });
       } else {
-        setErrorMsg(res.error || 'فشل في حفظ بيانات الزيارة');
+        setErrorMsg(res.error || t('Failed to save visit data.', 'فشل في حفظ بيانات الزيارة'));
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || 'حدث خطأ في الاتصال بالنظام');
+      setErrorMsg(err?.message || t('A connection error occurred.', 'حدث خطأ في الاتصال بالنظام'));
     } finally {
       setIsSubmitting(false);
     }
@@ -263,12 +265,12 @@ export default function InternalVisitorNewPage() {
   ];
 
   const coordinationOptions = [
-    { value: 'Ectron', label: 'إلكترون (Ectron)' },
+    { value: 'Ectron', label: 'Ectron' },
     { value: 'NEC', label: 'NEC' },
     { value: 'AAMU', label: 'AAMU' },
-    { value: 'Tadoom', label: 'تدوم (Tadoom)' },
-    { value: 'TadoomX', label: 'تدوم إكس (TadoomX)' },
-    { value: 'Other', label: 'أخرى (تحديد جهة التنسيق)' },
+    { value: 'Tadoom', label: 'Tadoom' },
+    { value: 'TadoomX', label: 'TadoomX' },
+    { value: 'Other', label: t('Other (Specify)', 'أخرى (تحديد جهة التنسيق)') },
   ];
 
   const countries = [
@@ -294,9 +296,9 @@ export default function InternalVisitorNewPage() {
             <UserCheck className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">تسجيل زيارة جديدة (داخلية)</h1>
+            <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">{t('Register New Visit (Internal)', 'تسجيل زيارة جديدة (داخلية)')}</h1>
             <p className="text-sm text-slate-500 dark:text-zinc-400">
-              تسجيل الزيارات الميدانية بواسطة موظفي الاستقبال والأمن بإلكترون
+              {t('On-site visit registration by Ectron reception and security staff', 'تسجيل الزيارات الميدانية بواسطة موظفي الاستقبال والأمن بإلكترون')}
             </p>
           </div>
         </div>
@@ -307,14 +309,14 @@ export default function InternalVisitorNewPage() {
             className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-1.5"
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>لوحة التحكم</span>
+            <span>{t('Dashboard', 'لوحة التحكم')}</span>
           </Link>
           <Link
             href="/visitor/list"
             className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-1.5"
           >
             <ListFilter className="w-4 h-4" />
-            <span>سجل الزيارات</span>
+            <span>{t('Visits Log', 'سجل الزيارات')}</span>
           </Link>
         </div>
       </div>
@@ -334,14 +336,14 @@ export default function InternalVisitorNewPage() {
         <div className="bg-white dark:bg-zinc-900/60 p-6 sm:p-8 rounded-3xl border border-border shadow-sm glass">
           <h2 className="text-lg sm:text-xl font-bold text-[#173B63] dark:text-white mb-5 pb-3 border-b border-border flex items-center gap-2.5">
             <Clock className="w-5 h-5 text-[#0F766E] dark:text-teal-400" />
-            <span>تاريخ وتوقيت الزيارة</span>
-            <span className="text-xs sm:text-sm font-medium text-slate-500 mr-2">(يمكن إدخال تواريخ سابقة للزيارات التاريخية)</span>
+            <span>{t('Visit Date & Time', 'تاريخ وتوقيت الزيارة')}</span>
+            <span className="text-xs sm:text-sm font-medium text-slate-500 mr-2">{t('(Past dates can be recorded for historical visits)', '(يمكن إدخال تواريخ سابقة للزيارات التاريخية)')}</span>
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
               <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                تاريخ الزيارة (Visit Date)
+                {t('Visit Date', 'تاريخ الزيارة (Visit Date)')}
               </label>
               <input
                 type="date"
@@ -354,7 +356,7 @@ export default function InternalVisitorNewPage() {
 
             <div>
               <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                وقت الدخول (Time In)
+                {t('Time In', 'وقت الدخول (Time In)')}
               </label>
               <input
                 type="time"
@@ -367,7 +369,7 @@ export default function InternalVisitorNewPage() {
 
             <div>
               <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                وقت الخروج (Time Out) - اختياري
+                {t('Time Out (Optional)', 'وقت الخروج (Time Out) - اختياري')}
               </label>
               <input
                 type="time"
@@ -383,13 +385,13 @@ export default function InternalVisitorNewPage() {
         <div className="bg-white dark:bg-zinc-900/60 p-6 sm:p-8 rounded-3xl border border-border shadow-sm glass">
           <h2 className="text-lg sm:text-xl font-bold text-[#173B63] dark:text-white mb-5 pb-3 border-b border-border flex items-center gap-2.5">
             <Calendar className="w-5 h-5 text-[#0F766E] dark:text-teal-400" />
-            <span>بيانات وتفاصيل الزيارة</span>
+            <span>{t('Visit Details & Purpose', 'بيانات وتفاصيل الزيارة')}</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                الدولة (Country)
+                {t('Country', 'الدولة (Country)')}
               </label>
               <select
                 value={country}
@@ -397,14 +399,14 @@ export default function InternalVisitorNewPage() {
                 className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
               >
                 {countries.map(c => (
-                  <option key={c.en} value={c.en}>{c.ar} ({c.en})</option>
+                  <option key={c.en} value={c.en}>{t(c.en, `${c.ar} (${c.en})`)}</option>
                 ))}
               </select>
             </div>
 
             <div>
               <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                عن طريق (Coordination by)
+                {t('Coordination by', 'عن طريق (Coordination by)')}
               </label>
               <select
                 value={coordinationBy}
@@ -420,7 +422,7 @@ export default function InternalVisitorNewPage() {
             {coordinationBy === 'Other' && (
               <div className="md:col-span-2">
                 <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  تحديد جهة التنسيق (Specify Coordination Party)
+                  {t('Specify Coordination Party', 'تحديد جهة التنسيق (Specify Coordination Party)')}
                   <span className="text-red-500 mr-1">*</span>
                 </label>
                 <input
@@ -428,7 +430,7 @@ export default function InternalVisitorNewPage() {
                   required
                   value={customCoordination}
                   onChange={e => setCustomCoordination(e.target.value)}
-                  placeholder="مثال: بالتنسيق مع شركة كذا أو شخص محدد..."
+                  placeholder={t('e.g. In coordination with company or specific person...', 'مثال: بالتنسيق مع شركة كذا أو شخص محدد...')}
                   className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                 />
               </div>
@@ -436,7 +438,7 @@ export default function InternalVisitorNewPage() {
 
             <div className={coordinationBy === 'Other' ? 'md:col-span-2' : ''}>
               <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                سبب الزيارة (Visit Reason)
+                {t('Visit Reason', 'سبب الزيارة (Visit Reason)')}
               </label>
               <select
                 value={visitReason}
@@ -444,7 +446,7 @@ export default function InternalVisitorNewPage() {
                 className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
               >
                 {visitReasons.map(r => (
-                  <option key={r.en} value={r.en}>{r.ar} - {r.en}</option>
+                  <option key={r.en} value={r.en}>{t(r.en, `${r.ar} - ${r.en}`)}</option>
                 ))}
               </select>
             </div>
@@ -452,14 +454,14 @@ export default function InternalVisitorNewPage() {
             {visitReason === 'Other' && (
               <div className="md:col-span-2">
                 <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  تحديد سبب الزيارة
+                  {t('Specify Visit Reason', 'تحديد سبب الزيارة')}
                 </label>
                 <input
                   type="text"
                   required
                   value={customReason}
                   onChange={e => setCustomReason(e.target.value)}
-                  placeholder="سبب الزيارة بالتفصيل..."
+                  placeholder={t('Detailed visit reason...', 'سبب الزيارة بالتفصيل...')}
                   className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                 />
               </div>
@@ -467,13 +469,13 @@ export default function InternalVisitorNewPage() {
 
             <div className="md:col-span-2">
               <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                ملاحظات (Notes)
+                {t('Notes', 'ملاحظات (Notes)')}
               </label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                placeholder="أي ملاحظات إضافية..."
+                placeholder={t('Any additional notes...', 'أي ملاحظات إضافية...')}
                 className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
               />
             </div>
@@ -485,15 +487,15 @@ export default function InternalVisitorNewPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-border">
             <h2 className="text-lg sm:text-xl font-bold text-[#173B63] dark:text-white flex items-center gap-2.5">
               <Building2 className="w-5 h-5 text-[#0F766E] dark:text-teal-400" />
-              <span>المؤسسات والزوار المشاركون</span>
+              <span>{t('Participating Organizations & Visitors', 'المؤسسات والزوار المشاركون')}</span>
             </h2>
 
             <div className="flex items-center gap-2">
               <span className="text-sm font-extrabold px-3.5 py-1 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-800">
-                المؤسسات: {organizations.length}
+                {t('Organizations:', 'المؤسسات:')} {organizations.length}
               </span>
               <span className="text-sm font-extrabold px-3.5 py-1 bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 rounded-full border border-teal-200 dark:border-teal-800">
-                إجمالي الزوار: {totalVisitorsCount}
+                {t('Total Visitors:', 'إجمالي الزوار:')} {totalVisitorsCount}
               </span>
             </div>
           </div>
@@ -512,11 +514,11 @@ export default function InternalVisitorNewPage() {
                     </span>
                     <div>
                       <h3 className="text-lg sm:text-xl font-extrabold text-[#173B63] dark:text-white">
-                        المؤسسة #{orgIndex + 1}
+                        {t('Organization', 'المؤسسة')} #{orgIndex + 1}
                         {org.organization_ar || org.organization_en ? ` (${org.organization_ar || org.organization_en})` : ''}
                       </h3>
                       <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium">
-                        عدد الزوار في هذه المؤسسة: {org.visitors.length}
+                        {t('Number of visitors in this organization:', 'عدد الزوار في هذه المؤسسة:')} {org.visitors.length}
                       </span>
                     </div>
                   </div>
@@ -526,10 +528,10 @@ export default function InternalVisitorNewPage() {
                       type="button"
                       onClick={() => removeOrganization(org.id)}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-xs sm:text-sm font-bold transition-colors"
-                      title="حذف المؤسسة"
+                      title={t('Delete Organization', 'حذف المؤسسة')}
                     >
                       <Trash2 className="w-4 h-4" />
-                      <span>حذف المؤسسة</span>
+                      <span>{t('Delete Organization', 'حذف المؤسسة')}</span>
                     </button>
                   )}
                 </div>
@@ -538,7 +540,7 @@ export default function InternalVisitorNewPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                   <div>
                     <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                      اسم المؤسسة / الشركة (بالإنجليزية)
+                      {t('Organization / Company Name (English)', 'اسم المؤسسة / الشركة (بالإنجليزية)')}
                     </label>
                     <input
                       type="text"
@@ -552,13 +554,13 @@ export default function InternalVisitorNewPage() {
 
                   <div>
                     <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                      اسم المؤسسة / الشركة (بالعربية)
+                      {t('Organization / Company Name (Arabic)', 'اسم المؤسسة / الشركة (بالعربية)')}
                     </label>
                     <input
                       type="text"
                       value={org.organization_ar}
                       onChange={e => updateOrganizationName(org.id, 'organization_ar', e.target.value)}
-                      placeholder="مثال: شركة نماء، وزارة العمل..."
+                      placeholder={t('e.g. Nama Supply, Ministry of Labour...', 'مثال: شركة نماء، وزارة العمل...')}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                     />
                   </div>
@@ -569,10 +571,10 @@ export default function InternalVisitorNewPage() {
                   <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-zinc-800">
                     <span className="text-sm sm:text-base font-bold text-[#0F766E] dark:text-teal-400 flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      <span>الزوار التابعون لهذه المؤسسة</span>
+                      <span>{t('Visitors of this Organization', 'الزوار التابعون لهذه المؤسسة')}</span>
                     </span>
                     <span className="text-xs px-2.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-bold border border-teal-200 dark:border-teal-800">
-                      {org.visitors.length} زوار
+                      {org.visitors.length} {t('visitors', 'زوار')}
                     </span>
                   </div>
 
@@ -584,7 +586,7 @@ export default function InternalVisitorNewPage() {
                       >
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-zinc-700 text-[#173B63] dark:text-zinc-200">
-                            الزائر #{vIndex + 1}
+                            {t('Visitor', 'الزائر')} #{vIndex + 1}
                           </span>
 
                           {org.visitors.length > 1 && (
@@ -594,7 +596,7 @@ export default function InternalVisitorNewPage() {
                               className="text-red-500 hover:text-red-700 p-1 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                              <span>حذف الزائر</span>
+                              <span>{t('Delete Visitor', 'حذف الزائر')}</span>
                             </button>
                           )}
                         </div>
@@ -602,7 +604,7 @@ export default function InternalVisitorNewPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
-                              الاسم الكامل (بالإنجليزية)
+                              {t('Full Name (English)', 'الاسم الكامل (بالإنجليزية)')}
                             </label>
                             <input
                               type="text"
@@ -615,20 +617,20 @@ export default function InternalVisitorNewPage() {
 
                           <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
-                              الاسم الكامل (بالعربية)
+                              {t('Full Name (Arabic)', 'الاسم الكامل (بالعربية)')}
                             </label>
                             <input
                               type="text"
                               value={visitor.full_name_ar}
                               onChange={e => updateVisitorInOrg(org.id, visitor.id, 'full_name_ar', e.target.value)}
-                              placeholder="مثال: سالم بن خلفان المعمري"
+                              placeholder={t('e.g. Salim Khalfan', 'مثال: سالم بن خلفان المعمري')}
                               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                             />
                           </div>
 
                           <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">
-                              رقم الهاتف
+                              {t('Phone Number', 'رقم الهاتف')}
                             </label>
                             <input
                               type="tel"
@@ -650,7 +652,7 @@ export default function InternalVisitorNewPage() {
                       className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-[#0F766E] dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 border border-teal-200 dark:border-teal-800 transition-all"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>+ إضافة زائر لهذه المؤسسة</span>
+                      <span>{t('+ Add Visitor to this Organization', '+ إضافة زائر لهذه المؤسسة')}</span>
                     </button>
                   </div>
                 </div>
@@ -667,7 +669,7 @@ export default function InternalVisitorNewPage() {
               className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl border-2 border-dashed border-[#173B63] dark:border-teal-500 text-[#173B63] dark:text-teal-300 bg-blue-50/70 dark:bg-zinc-800/80 hover:bg-blue-100/70 dark:hover:bg-zinc-800 text-base font-extrabold transition-all shadow-sm"
             >
               <Plus className="w-5 h-5 text-[#0F766E] dark:text-teal-400" />
-              <span>+ إضافة مؤسسة أخرى في نفس الزيارة</span>
+              <span>{t('+ Add Another Organization to Same Visit', '+ إضافة مؤسسة أخرى في نفس الزيارة')}</span>
             </button>
           </div>
         </div>
@@ -679,7 +681,7 @@ export default function InternalVisitorNewPage() {
             onClick={resetForm}
             className="px-6 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 text-base font-bold transition-colors"
           >
-            إلغاء وتفريغ
+            {t('Clear & Reset', 'إلغاء وتفريغ')}
           </button>
 
           <button
@@ -690,12 +692,12 @@ export default function InternalVisitorNewPage() {
             {isSubmitting ? (
               <>
                 <RefreshCw className="w-5 h-5 animate-spin" />
-                <span>جاري الحفظ...</span>
+                <span>{t('Saving...', 'جاري الحفظ...')}</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-5 h-5" />
-                <span>حفظ وتأكيد الزيارة</span>
+                <span>{t('Confirm & Save Visit', 'حفظ وتأكيد الزيارة')}</span>
               </>
             )}
           </button>
@@ -714,10 +716,10 @@ export default function InternalVisitorNewPage() {
             </div>
 
             <h3 className="text-xl font-bold text-[#173B63] dark:text-white mb-2">
-              تم تسجيل الزيارة بنجاح!
+              {t('Visit Registered Successfully!', 'تم تسجيل الزيارة بنجاح!')}
             </h3>
             <p className="text-sm text-slate-600 dark:text-zinc-300 mb-4">
-              تم حفظ بيانات الزيارة والزوار بنجاح تحت المعرف:
+              {t('Visit and visitor details were saved successfully under ID:', 'تم حفظ بيانات الزيارة والزوار بنجاح تحت المعرف:')}
             </p>
 
             <div className="py-2 px-4 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 font-mono font-bold text-lg mb-6 border border-teal-200 dark:border-teal-800">
@@ -725,7 +727,7 @@ export default function InternalVisitorNewPage() {
             </div>
 
             <p className="text-xs text-slate-500 dark:text-zinc-400 mb-6 font-medium">
-              هل ترغب في تسجيل زيارة أخرى؟
+              {t('Would you like to register another visit?', 'هل ترغب في تسجيل زيارة أخرى؟')}
             </p>
 
             <div className="flex flex-col gap-2">
@@ -735,7 +737,7 @@ export default function InternalVisitorNewPage() {
                 className="w-full py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 text-sm font-semibold transition-colors flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                <span>تسجيل زيارة أخرى</span>
+                <span>{t('Register Another Visit', 'تسجيل زيارة أخرى')}</span>
               </button>
 
               <button
@@ -744,7 +746,7 @@ export default function InternalVisitorNewPage() {
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 transition-all flex items-center justify-center gap-2"
               >
                 <LayoutDashboard className="w-4 h-4" />
-                <span>الانتقال للوحة الزيارات (Dashboard)</span>
+                <span>{t('Go to Visits Dashboard', 'الانتقال للوحة الزيارات (Dashboard)')}</span>
               </button>
             </div>
           </div>
