@@ -827,6 +827,7 @@ export const arabicTranslations: Record<string, string> = {
   "Comprehensive view of all batches across all months and statuses": "عرض شامل لجميع مجموعات المصروفات النثرية عبر كافة الأشهر والحالات",
   "View All Batches": "عرض كافة الباتشات",
   "View All": "عرض الكل",
+  "Expense Master List": "قائمة المصروفات الرئيسية (Expense Master List)",
   "Petty Cash Dashboard": "Petty Cash Dashboard",
   "Petty Cash Module": "Petty Cash Module",
   "Print Report": "Print Report",

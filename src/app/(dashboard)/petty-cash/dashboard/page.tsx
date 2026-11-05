@@ -2,8 +2,7 @@ import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import PettyCashSummaryCards from '@/components/petty-cash/PettyCashSummaryCards';
 import PettyCashBatchesSection from '@/components/petty-cash/PettyCashBatchesSection';
-import PettyCashActionButtons from '@/components/petty-cash/PettyCashActionButtons';
-import ExpenseTable from '@/components/petty-cash/ExpenseTable';
+import ExpenseMasterSection from '@/components/petty-cash/ExpenseMasterSection';
 import { getBatches, PettyCashBatch } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
 import T from '@/components/layout/T';
 
@@ -116,29 +115,17 @@ export default async function PettyCashDashboard() {
         expensesData={expensesData} 
       />
 
-      {/* 3. Action Buttons for Expenses Master Sheet (under Batches section) */}
-      <PettyCashActionButtons 
+      {/* 3. Expense Master List Section (Collapsible with Action Buttons inside above table) */}
+      <ExpenseMasterSection 
+        expensesData={expensesData} 
         batches={batchesData}
         options={{ 
           categories: categoriesResp.data || [], 
           profiles: profilesResp.data || [], 
-          projects: projectsResp.data || []
-        }}
+          projects: projectsResp.data || [],
+          recurringDescriptions: recurringResp || []
+        }} 
       />
-
-      {/* 4. Expenses Master Sheet Table */}
-      <div className="glass rounded-2xl p-6 border border-border">
-        <ExpenseTable 
-          expensesData={expensesData} 
-          batches={batchesData}
-          options={{ 
-            categories: categoriesResp.data || [], 
-            profiles: profilesResp.data || [], 
-            projects: projectsResp.data || [],
-            recurringDescriptions: recurringResp || []
-          }} 
-        />
-      </div>
     </div>
   );
 }

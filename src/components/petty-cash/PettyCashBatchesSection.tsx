@@ -956,11 +956,36 @@ export default function PettyCashBatchesSection({
                 key={batch.id}
                 className="rounded-2xl border-2 border-[#B5CDE2] dark:border dark:border-zinc-800 bg-gradient-to-br from-[#F4F9FC] to-[#E6F4F1] dark:bg-none dark:bg-zinc-950/60 p-5 flex flex-col gap-4 hover:border-[#14B8A6] transition-all shadow-sm"
               >
-                {/* Top row: Status pill + Batch Title & Edit Pencil (Left) & Actions & Counts (Right) */}
+                {/* Top row: Batch Title & Edit Pencil + Status (Left) & Actions & Counts (Right) */}
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  {/* Left: Status Selector + Batch Title + Edit Pencil */}
+                  {/* Left: Batch Title + Edit Pencil, THEN Status Selector */}
                   <div className="flex items-center gap-2 flex-wrap min-w-0">
-                    {/* Status Selector Pill */}
+                    {/* 1. Batch Title directly first */}
+                    <div
+                      onClick={() => openEditBatchModal(batch)}
+                      className="flex items-center gap-1.5 cursor-pointer group/title min-w-0 py-0.5"
+                      title={t('Click to edit batch details', 'اضغط لتعديل بيانات الباتش')}
+                    >
+                      <FolderOpen className="w-4 h-4 text-[#14B8A6] shrink-0 group-hover/title:scale-110 transition-transform" />
+                      <h3 className="text-base font-bold text-[#173B63] dark:text-white group-hover/title:text-[#0F766E] dark:group-hover/title:text-[#14B8A6] transition-colors truncate max-w-[180px] sm:max-w-[240px]">
+                        {batch.name}
+                      </h3>
+                    </div>
+
+                    {/* 2. Edit Pencil Icon Button next to title */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditBatchModal(batch);
+                      }}
+                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer shrink-0"
+                      title={t('Edit Batch Details', 'تعديل بيانات الباتش')}
+                    >
+                      <Edit3 className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    </button>
+
+                    {/* 3. Status Selector Pill after title and pencil */}
                     <select
                       value={batch.status}
                       onChange={e =>
@@ -985,31 +1010,6 @@ export default function PettyCashBatchesSection({
                         Submitted
                       </option>
                     </select>
-
-                    {/* Batch Title directly next to status, starting from left */}
-                    <div
-                      onClick={() => openEditBatchModal(batch)}
-                      className="flex items-center gap-1.5 cursor-pointer group/title min-w-0 py-0.5"
-                      title={t('Click to edit batch details', 'اضغط لتعديل بيانات الباتش')}
-                    >
-                      <FolderOpen className="w-4 h-4 text-[#14B8A6] shrink-0 group-hover/title:scale-110 transition-transform" />
-                      <h3 className="text-base font-bold text-[#173B63] dark:text-white group-hover/title:text-[#0F766E] dark:group-hover/title:text-[#14B8A6] transition-colors truncate max-w-[180px] sm:max-w-[240px]">
-                        {batch.name}
-                      </h3>
-                    </div>
-
-                    {/* Edit Pencil Icon Button next to title */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEditBatchModal(batch);
-                      }}
-                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer shrink-0"
-                      title={t('Edit Batch Details', 'تعديل بيانات الباتش')}
-                    >
-                      <Edit3 className="w-3.5 h-3.5 text-[#14B8A6]" />
-                    </button>
                   </div>
 
                   {/* Right: Invoices count info + Manage Invoices button + Delete */}
