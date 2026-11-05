@@ -210,11 +210,27 @@ export default function PettyCashBatchesSection({
   const [newBatchAdvance, setNewBatchAdvance] = useState('1000');
   const [newBatchStatus, setNewBatchStatus] = useState<'In Progress' | 'Ready' | 'Submitted'>('In Progress');
 
-  // Edit Batch Meta inside Workspace
+  // Edit Batch Meta / Edit Batch Modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingBatch, setEditingBatch] = useState<PettyCashBatch | null>(null);
   const [isEditingMeta, setIsEditingMeta] = useState(false);
   const [editName, setEditName] = useState('');
+  const [editMonth, setEditMonth] = useState<number>(today.getMonth() + 1);
+  const [editYear, setEditYear] = useState<number>(today.getFullYear());
   const [editPcvNo, setEditPcvNo] = useState('');
   const [editAdvance, setEditAdvance] = useState('1000');
+  const [editStatus, setEditStatus] = useState<'In Progress' | 'Ready' | 'Submitted'>('In Progress');
+
+  const openEditBatchModal = (batch: PettyCashBatch) => {
+    setEditingBatch(batch);
+    setEditName(batch.name);
+    setEditMonth(batch.month);
+    setEditYear(batch.year);
+    setEditPcvNo(batch.pcvNo || '');
+    setEditAdvance(String(batch.advanceAmount ?? 1000));
+    setEditStatus(batch.status);
+    setIsEditModalOpen(true);
+  };
 
   // Assign tab state
   const [assignSearch, setAssignSearch] = useState('');
@@ -411,8 +427,62 @@ export default function PettyCashBatchesSection({
         updateLocalBatches(prev => prev.map(b => (b.id === activeBatch.id ? res.batch! : b)));
         setIsEditingMeta(false);
         setToast({ type: 'success', text: t('Batch details updated.', 'تم تحديث بيانات المجموعة.') });
-        router.refresh();
       }
+    } finally {
+      setBusyAction(null);
+    }
+  };
+
+  const handleSaveBatchDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBatch) return;
+
+    const trimmedName = editName.trim();
+    if (!trimmedName) {
+      setToast({ type: 'error', text: t('Batch name cannot be empty.', 'اسم المجموعة لا يمكن أن يكون فارغاً.') });
+      return;
+    }
+
+    const updates = {
+      name: trimmedName,
+      month: editMonth,
+      year: editYear,
+      pcvNo: editPcvNo.trim(),
+      advanceAmount: parseFloat(editAdvance) || 1000,
+      status: editStatus
+    };
+
+    // 1. Optimistic update
+    updateLocalBatches(prev =>
+      prev.map(b => (b.id === editingBatch.id ? { ...b, ...updates } : b))
+    );
+
+    setIsEditModalOpen(false);
+    setToast({
+      type: 'success',
+      text: t('Batch details updated successfully.', 'تم تحديث بيانات الباتش بنجاح.')
+    });
+
+    // 2. Persist to server
+    setBusyAction(`edit-${editingBatch.id}`);
+    try {
+      const res = await updateBatchMeta(editingBatch.id, updates);
+      if (res.error) {
+        // Rollback on server error
+        updateLocalBatches(prev =>
+          prev.map(b => (b.id === editingBatch.id ? editingBatch : b))
+        );
+        setToast({ type: 'error', text: res.error });
+      } else if (res.batch) {
+        updateLocalBatches(prev =>
+          prev.map(b => (b.id === editingBatch.id ? { ...b, ...res.batch! } : b))
+        );
+      }
+    } catch (err: any) {
+      updateLocalBatches(prev =>
+        prev.map(b => (b.id === editingBatch.id ? editingBatch : b))
+      );
+      setToast({ type: 'error', text: err?.message || 'Failed to update batch' });
     } finally {
       setBusyAction(null);
     }
@@ -886,9 +956,10 @@ export default function PettyCashBatchesSection({
                 key={batch.id}
                 className="rounded-2xl border-2 border-[#B5CDE2] dark:border dark:border-zinc-800 bg-gradient-to-br from-[#F4F9FC] to-[#E6F4F1] dark:bg-none dark:bg-zinc-950/60 p-5 flex flex-col gap-4 hover:border-[#14B8A6] transition-all shadow-sm"
               >
-                {/* Top row: Status pill + Actions (Left) & Batch Title + Invoice Count (Right) */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2 flex-wrap">
+                {/* Top row: Status pill + Batch Title & Edit Pencil (Left) & Actions & Counts (Right) */}
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  {/* Left: Status Selector + Batch Title + Edit Pencil */}
+                  <div className="flex items-center gap-2 flex-wrap min-w-0">
                     {/* Status Selector Pill */}
                     <select
                       value={batch.status}
@@ -896,7 +967,7 @@ export default function PettyCashBatchesSection({
                         handleStatusChange(batch, e.target.value as 'In Progress' | 'Ready' | 'Submitted')
                       }
                       className={clsx(
-                        'text-xs font-bold px-3 py-1 rounded-full border cursor-pointer focus:outline-none transition-colors',
+                        'text-xs font-bold px-3 py-1 rounded-full border cursor-pointer focus:outline-none transition-colors shrink-0',
                         batch.status === 'Ready'
                           ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/40'
                           : batch.status === 'Submitted'
@@ -914,6 +985,38 @@ export default function PettyCashBatchesSection({
                         Submitted
                       </option>
                     </select>
+
+                    {/* Batch Title directly next to status, starting from left */}
+                    <div
+                      onClick={() => openEditBatchModal(batch)}
+                      className="flex items-center gap-1.5 cursor-pointer group/title min-w-0 py-0.5"
+                      title={t('Click to edit batch details', 'اضغط لتعديل بيانات الباتش')}
+                    >
+                      <FolderOpen className="w-4 h-4 text-[#14B8A6] shrink-0 group-hover/title:scale-110 transition-transform" />
+                      <h3 className="text-base font-bold text-[#173B63] dark:text-white group-hover/title:text-[#0F766E] dark:group-hover/title:text-[#14B8A6] transition-colors truncate max-w-[180px] sm:max-w-[240px]">
+                        {batch.name}
+                      </h3>
+                    </div>
+
+                    {/* Edit Pencil Icon Button next to title */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditBatchModal(batch);
+                      }}
+                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer shrink-0"
+                      title={t('Edit Batch Details', 'تعديل بيانات الباتش')}
+                    >
+                      <Edit3 className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    </button>
+                  </div>
+
+                  {/* Right: Invoices count info + Manage Invoices button + Delete */}
+                  <div className="flex items-center gap-2 flex-wrap sm:justify-end">
+                    <span className="text-xs text-[#2B4C6F] dark:text-zinc-400 font-medium hidden sm:inline-block">
+                      Invoices {batchInvoices.length} • Attachments {attachmentsCount}
+                    </span>
 
                     <button
                       onClick={() => {
@@ -935,27 +1038,6 @@ export default function PettyCashBatchesSection({
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                  </div>
-
-                  <div
-                    className="text-right cursor-pointer group"
-                    onClick={() => {
-                      setActiveBatchId(batch.id);
-                      setWorkspaceTab(batchInvoices.length === 0 ? 'assign' : 'current');
-                      setSelectedInBatch([]);
-                      setSelectedToAssign([]);
-                      setIsEditingMeta(false);
-                    }}
-                  >
-                    <div className="flex items-center justify-end gap-2">
-                      <h3 className="text-base font-bold text-[#173B63] dark:text-white group-hover:text-[#0F766E] dark:group-hover:text-[#14B8A6] transition-colors">
-                        {batch.name}
-                      </h3>
-                      <FolderOpen className="w-4 h-4 text-[#0F766E] dark:text-zinc-400 group-hover:text-[#14B8A6] transition-colors" />
-                    </div>
-                    <p className="text-xs text-[#2B4C6F] dark:text-zinc-400 mt-0.5 font-medium">
-                      Invoices {batchInvoices.length} • Attachments {attachmentsCount}
-                    </p>
                   </div>
                 </div>
 
@@ -1197,6 +1279,196 @@ export default function PettyCashBatchesSection({
                 >
                   {busyAction === 'create' && <Loader2 className="w-4 h-4 animate-spin" />}
                   <span>Create & Assign Invoices</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: EDIT BATCH DETAILS                                                 */}
+      {/* ========================================================================= */}
+      {isEditModalOpen && editingBatch && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsEditModalOpen(false)}
+        >
+          <div
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md shadow-2xl p-5 flex flex-col gap-4 animate-in fade-in duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#14B8A6]/15 border border-[#14B8A6]/30 flex items-center justify-center text-[#14B8A6]">
+                  <Edit3 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    {t('Edit Batch Details', 'تعديل بيانات الباتش')}
+                  </h3>
+                  <span className="text-[11px] font-mono text-zinc-400">
+                    {editingBatch.id}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSaveBatchDetails} className="space-y-3.5">
+              {/* Batch Name */}
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  {t('Batch Name *', 'اسم المجموعة / الباتش *')}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={e => setEditName(e.target.value)}
+                  placeholder="e.g. October 1, September Project..."
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6]"
+                />
+              </div>
+
+              {/* Month & Year */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    {t('Month', 'الشهر')}
+                  </label>
+                  <select
+                    value={editMonth}
+                    onChange={e => setEditMonth(Number(e.target.value))}
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6] cursor-pointer"
+                  >
+                    {MONTH_NAMES.map(m => (
+                      <option key={m.value} value={m.value}>
+                        {lang === 'ar' ? m.ar : m.en}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    {t('Year', 'السنة')}
+                  </label>
+                  <select
+                    value={editYear}
+                    onChange={e => setEditYear(Number(e.target.value))}
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6] cursor-pointer"
+                  >
+                    {[2024, 2025, 2026, 2027].map(y => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* PCV No & Advance Budget */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    {t('PCV Voucher No', 'رقم سند الصرف PCV')}
+                  </label>
+                  <input
+                    type="text"
+                    value={editPcvNo}
+                    onChange={e => setEditPcvNo(e.target.value)}
+                    placeholder="e.g. PCV-2026-10"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                    {t('Advance Budget (OMR)', 'سلفة الباتش (ر.ع)')}
+                  </label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={editAdvance}
+                    onChange={e => setEditAdvance(e.target.value)}
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6]"
+                  />
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  {t('Batch Status', 'حالة الباتش')}
+                </label>
+                <select
+                  value={editStatus}
+                  onChange={e =>
+                    setEditStatus(e.target.value as 'In Progress' | 'Ready' | 'Submitted')
+                  }
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[#14B8A6] cursor-pointer"
+                >
+                  <option value="In Progress">In Progress (قيد العمل)</option>
+                  <option value="Ready">Ready (جاهز للرفع)</option>
+                  <option value="Submitted">Submitted (تم الرفع)</option>
+                </select>
+              </div>
+
+              {/* Invoices Shortcut */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = editingBatch;
+                    setIsEditModalOpen(false);
+                    if (target) {
+                      setActiveBatchId(target.id);
+                      const invs = getBatchInvoices(target);
+                      setWorkspaceTab(invs.length === 0 ? 'assign' : 'current');
+                      setSelectedInBatch([]);
+                      setSelectedToAssign([]);
+                      setIsEditingMeta(false);
+                    }
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-zinc-800/80 hover:bg-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition-colors cursor-pointer border border-zinc-700/60"
+                >
+                  <FolderOpen className="w-4 h-4 text-[#14B8A6]" />
+                  <span>
+                    {t('Manage Assigned Invoices', 'إدارة وتخصيص الفواتير للباتش')} ({editingBatch ? getBatchInvoices(editingBatch).length : 0})
+                  </span>
+                </button>
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  {t('Cancel', 'إلغاء')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={busyAction !== null}
+                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                >
+                  {busyAction?.startsWith('edit-') ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Check className="w-4 h-4" />
+                  )}
+                  <span>{t('Save Changes', 'حفظ التعديلات')}</span>
                 </button>
               </div>
             </form>
