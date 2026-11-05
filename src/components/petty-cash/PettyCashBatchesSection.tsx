@@ -146,7 +146,19 @@ export default function PettyCashBatchesSection({
 
   const [batches, setBatches] = useState<PettyCashBatch[]>(initialBatches || []);
   useEffect(() => {
-    setBatches(initialBatches || []);
+    if (!initialBatches) return;
+    setBatches(prev => {
+      if (prev.length === 0) return initialBatches;
+      const prevMap = new Map(prev.map(b => [b.id, b]));
+      return initialBatches.map(ib => {
+        const local = prevMap.get(ib.id);
+        if (!local) return ib;
+        return {
+          ...ib,
+          status: local.status ?? ib.status
+        };
+      });
+    });
   }, [initialBatches]);
 
   const updateLocalBatches = (updater: (prev: PettyCashBatch[]) => PettyCashBatch[]) => {
@@ -343,13 +355,42 @@ export default function PettyCashBatchesSection({
   };
 
   const handleStatusChange = async (batch: PettyCashBatch, newStatus: 'In Progress' | 'Ready' | 'Submitted') => {
+    const oldStatus = batch.status;
+    if (oldStatus === newStatus) return;
+
+    // 1. Immediately update local state optimistically so the UI changes instantly
+    updateLocalBatches(prev =>
+      prev.map(b => (b.id === batch.id ? { ...b, status: newStatus } : b))
+    );
+
+    // 2. Ensure newStatus is in selectedStatuses so the card remains visible
+    setSelectedStatuses(prev => {
+      if (prev.length === ALL_STATUS_KEYS.length) return prev;
+      return prev.includes(newStatus) ? prev : [...prev, newStatus];
+    });
+
+    // 3. Persist to server in background
     setBusyAction(`status-${batch.id}`);
     try {
       const res = await updateBatchMeta(batch.id, { status: newStatus });
-      if (res.batch) {
-        updateLocalBatches(prev => prev.map(b => (b.id === batch.id ? res.batch! : b)));
-        router.refresh();
+      if (res.error) {
+        // Rollback on error
+        updateLocalBatches(prev =>
+          prev.map(b => (b.id === batch.id ? { ...b, status: oldStatus } : b))
+        );
+        setToast({ type: 'error', text: res.error });
+      } else if (res.batch) {
+        // Confirm server batch state
+        updateLocalBatches(prev =>
+          prev.map(b => (b.id === batch.id ? { ...b, ...res.batch! } : b))
+        );
       }
+    } catch (err: any) {
+      // Rollback on network failure
+      updateLocalBatches(prev =>
+        prev.map(b => (b.id === batch.id ? { ...b, status: oldStatus } : b))
+      );
+      setToast({ type: 'error', text: err?.message || 'Failed to update status' });
     } finally {
       setBusyAction(null);
     }
