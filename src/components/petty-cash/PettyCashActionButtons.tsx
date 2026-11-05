@@ -7,14 +7,11 @@ import {
   Plus, 
   Users, 
   Settings2, 
-  BarChart3, 
-  Upload, 
-  FileText 
+  BarChart3 
 } from 'lucide-react';
 import { useLanguage } from '@/components/layout/LanguageProvider';
 import { PettyCashBatch } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
 import NewExpenseModal from './NewExpenseModal';
-import ImportPettyCashModal from './ImportPettyCashModal';
 
 interface PettyCashActionButtonsProps {
   batches?: PettyCashBatch[];
@@ -29,7 +26,6 @@ export default function PettyCashActionButtons({ batches = [], options }: PettyC
   const router = useRouter();
   const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   return (
     <>
@@ -69,26 +65,6 @@ export default function PettyCashActionButtons({ batches = [], options }: PettyC
           <BarChart3 className="w-5 h-5 text-[#CCFBF1] dark:text-purple-400" />
           {t('Analytics', 'التحليلات')}
         </Link>
-
-        {/* Upload Excel Sheet Modal Trigger */}
-        <button 
-          onClick={() => setIsImportModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-5 py-2.5 rounded-xl font-bold transition-colors border border-blue-500/30 cursor-pointer shadow-xs ml-auto"
-        >
-          <Upload className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-          {t('Upload Excel Sheet', 'رفع ملف إكسل')}
-        </button>
-
-        {/* Executive User Guide Word Document */}
-        <a 
-          href="/Ectron_Petty_Cash_User_Guide.docx"
-          download="Ectron_Petty_Cash_User_Guide.docx"
-          className="flex items-center gap-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 px-5 py-2.5 rounded-xl font-bold transition-colors border border-purple-500/30 cursor-pointer shadow-xs"
-          title={t('Download Executive User Guide (Word)', 'تحميل دليل المستخدم التنفيذي بصيغة Word للإدارة')}
-        >
-          <FileText className="w-5 h-5 text-purple-500 dark:text-purple-400" />
-          <span>{t('Download User Guide (Word)', 'تحميل دليل المستخدم (Word)')}</span>
-        </a>
       </div>
 
       {/* New Expense Modal */}
@@ -99,18 +75,6 @@ export default function PettyCashActionButtons({ batches = [], options }: PettyC
           setIsModalOpen(false);
           router.refresh();
         }} 
-      />
-
-      {/* Import Petty Cash Modal */}
-      <ImportPettyCashModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onSuccess={() => {
-          setIsImportModalOpen(false);
-          router.refresh();
-        }}
-        batches={batches}
-        options={options}
       />
     </>
   );
