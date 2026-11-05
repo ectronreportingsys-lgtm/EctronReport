@@ -5,7 +5,7 @@ import path from 'path';
 import { revalidatePath } from 'next/cache';
 
 function revalidateBatchPaths() {
-  revalidateBatchPaths();
+  revalidatePath('/petty-cash/dashboard');
   revalidatePath('/petty-cash/batches');
 }
 

@@ -175,7 +175,7 @@
       "month": 10,
       "year": 2026,
       "createdAt": "2026-10-21",
-      "status": "Submitted",
+      "status": "In Progress",
       "invoiceIds": [
         "2533eaf5-251f-473d-848f-5e0adb48ae1f",
         "68314c73-1509-46f8-b89c-ede84004c84e",
@@ -236,8 +236,12 @@
       "month": 11,
       "year": 2026,
       "createdAt": "2026-11-05",
-      "status": "In Progress",
-      "invoiceIds": [],
+      "status": "Submitted",
+      "invoiceIds": [
+        "736105bc-bf31-47e5-980e-09efa0ed1684",
+        "655ce5c3-f3f7-46a3-aa7a-d3a0f07e2476",
+        "886d8c7f-b58e-4466-ba3f-6dee8a6f48ad"
+      ],
       "pcvNo": "",
       "advanceAmount": 2000
     }
