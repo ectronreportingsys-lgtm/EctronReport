@@ -34,14 +34,11 @@ export default function VisitorThankYouPage() {
         
         {/* ECTRON Brand Mark */}
         <div className="flex justify-center mb-6">
-          <div className="flex items-baseline select-none tracking-tight">
-            <span className="text-4xl font-extrabold text-[#173B63] dark:text-blue-400">ectr</span>
-            <span className="relative inline-flex items-center justify-center mx-0.5">
-              <span className="w-4 h-4 rounded-full bg-[#14B8A6] dark:bg-[#00a99d] inline-block" />
-              <span className="w-2 h-2 rounded-full bg-[#173B63] dark:bg-blue-400 absolute -top-3 -right-0.5" />
-            </span>
-            <span className="text-4xl font-extrabold text-[#173B63] dark:text-blue-400">n</span>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="ECTRON" 
+            className="h-12 w-auto max-w-[200px] object-contain" 
+          />
         </div>
 
         {/* Animated Success Badge */}

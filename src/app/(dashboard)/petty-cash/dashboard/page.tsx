@@ -2,6 +2,7 @@ import React from 'react';
 import { createClient } from '@/lib/supabase-server';
 import PettyCashSummaryCards from '@/components/petty-cash/PettyCashSummaryCards';
 import PettyCashBatchesSection from '@/components/petty-cash/PettyCashBatchesSection';
+import PettyCashActionButtons from '@/components/petty-cash/PettyCashActionButtons';
 import ExpenseTable from '@/components/petty-cash/ExpenseTable';
 import { getBatches, PettyCashBatch } from '@/app/(dashboard)/petty-cash/actions/batchesActions';
 import T from '@/components/layout/T';
@@ -9,10 +10,11 @@ import T from '@/components/layout/T';
 export default async function PettyCashDashboard() {
   const supabase = await createClient();
   
-  // Calculate current month's dates
+  // Calculate last month's dates
   const today = new Date();
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const startOfLastMonth = new Date(lastMonthDate.getFullYear(), lastMonthDate.getMonth(), 1).toISOString().split('T')[0];
+  const endOfLastMonth = new Date(lastMonthDate.getFullYear(), lastMonthDate.getMonth() + 1, 0).toISOString().split('T')[0];
 
   let spent = 0;
   let expenseCount = 0;
@@ -73,11 +75,11 @@ export default async function PettyCashDashboard() {
 
     if (!error && expenses) {
       expensesData = expenses;
-      const currentMonthExpenses = expenses.filter(exp => 
-        exp.expense_date && exp.expense_date >= startOfMonth && exp.expense_date <= endOfMonth
+      const lastMonthExpenses = expenses.filter(exp => 
+        exp.expense_date && exp.expense_date >= startOfLastMonth && exp.expense_date <= endOfLastMonth
       );
-      spent = currentMonthExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
-      expenseCount = currentMonthExpenses.length;
+      spent = lastMonthExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
+      expenseCount = lastMonthExpenses.length;
     }
   } catch (e) {
     console.error('Error fetching petty cash expenses:', e);
@@ -100,12 +102,22 @@ export default async function PettyCashDashboard() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white"><T text="Petty Cash Dashboard" /></h1>
-          <p className="text-zinc-400 text-sm mt-1"><T text="Manage monthly budget, expenses, and employee settlements" /></p>
         </div>
       </div>
       
+      {/* 1. Summary Cards */}
       <PettyCashSummaryCards 
         summary={summary} 
+      />
+
+      {/* 2. Batches Section */}
+      <PettyCashBatchesSection 
+        initialBatches={batchesData} 
+        expensesData={expensesData} 
+      />
+
+      {/* 3. Action Buttons for Expenses Master Sheet (under Batches section) */}
+      <PettyCashActionButtons 
         batches={batchesData}
         options={{ 
           categories: categoriesResp.data || [], 
@@ -114,12 +126,8 @@ export default async function PettyCashDashboard() {
         }}
       />
 
-      <PettyCashBatchesSection 
-        initialBatches={batchesData} 
-        expensesData={expensesData} 
-      />
-
-      <div className="glass rounded-2xl p-6 border border-border mt-2">
+      {/* 4. Expenses Master Sheet Table */}
+      <div className="glass rounded-2xl p-6 border border-border">
         <ExpenseTable 
           expensesData={expensesData} 
           batches={batchesData}

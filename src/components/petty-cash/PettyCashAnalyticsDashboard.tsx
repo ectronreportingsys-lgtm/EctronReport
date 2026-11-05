@@ -373,10 +373,10 @@ export default function PettyCashAnalyticsDashboard({
     });
   };
 
-  // Format currency in OMR with 3 decimals
+  // Format currency in OMR (omit decimals if whole number, up to 3 decimals otherwise)
   const formatOMR = (amount: number) => {
-    return amount.toLocaleString('en-US', {
-      minimumFractionDigits: 3,
+    return Number(amount || 0).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
       maximumFractionDigits: 3
     });
   };

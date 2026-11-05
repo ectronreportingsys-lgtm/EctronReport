@@ -4,6 +4,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import { revalidatePath } from 'next/cache';
 
+function revalidateBatchPaths() {
+  revalidateBatchPaths();
+  revalidatePath('/petty-cash/batches');
+}
+
 export interface PettyCashBatch {
   id: string;
   name: string;
@@ -92,7 +97,7 @@ export async function createBatch(payload: {
 
   batches.push(newBatch);
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, batch: newBatch };
 }
 
@@ -123,7 +128,7 @@ export async function updateBatchMeta(
   if (updates.advanceAmount !== undefined) batches[idx].advanceAmount = updates.advanceAmount;
 
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, batch: batches[idx] };
 }
 
@@ -131,7 +136,7 @@ export async function deleteBatch(batchId: string) {
   const batches = await readBatches();
   const filtered = batches.filter(b => b.id !== batchId);
   await saveBatches(filtered);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true };
 }
 
@@ -173,7 +178,7 @@ export async function assignInvoicesToBatch(batchId: string, invoiceIdsToAdd: st
   });
 
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, batch: targetBatch };
 }
 
@@ -186,7 +191,7 @@ export async function removeInvoicesFromBatch(batchId: string, invoiceIdsToRemov
   targetBatch.invoiceIds = targetBatch.invoiceIds.filter(id => !removeSet.has(id));
 
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, batch: targetBatch };
 }
 
@@ -197,7 +202,7 @@ export async function reorderBatchInvoices(batchId: string, orderedInvoiceIds: s
 
   targetBatch.invoiceIds = orderedInvoiceIds;
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, batch: targetBatch };
 }
 
@@ -229,6 +234,6 @@ export async function transferInvoicesBetweenBatches(
   });
 
   await saveBatches(batches);
-  revalidatePath('/petty-cash/dashboard');
+  revalidateBatchPaths();
   return { success: true, sourceBatch, targetBatch };
 }

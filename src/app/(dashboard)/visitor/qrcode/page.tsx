@@ -200,14 +200,11 @@ export default function VisitorQRCodePage() {
 
         {/* ECTRON Official Logo */}
         <div className="flex justify-center mb-6">
-          <div className="flex items-baseline select-none tracking-tight">
-            <span className="text-5xl font-extrabold text-[#173B63]">ectr</span>
-            <span className="relative inline-flex items-center justify-center mx-1">
-              <span className="w-5 h-5 rounded-full bg-[#14B8A6] inline-block" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#173B63] absolute -top-3.5 -right-0.5" />
-            </span>
-            <span className="text-5xl font-extrabold text-[#173B63]">n</span>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="ECTRON" 
+            className="h-16 w-auto max-w-[240px] object-contain" 
+          />
         </div>
 
         <div className="text-xs font-bold tracking-widest text-[#0F766E] uppercase mb-1">

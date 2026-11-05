@@ -309,14 +309,11 @@ export default function PublicVisitorRegisterPage() {
             
             {/* ECTRON Brand */}
             <div className="flex items-center gap-3">
-              <div className="flex items-baseline select-none tracking-tight">
-                <span className="text-3xl font-extrabold text-[#173B63] dark:text-blue-400">ectr</span>
-                <span className="relative inline-flex items-center justify-center mx-0.5">
-                  <span className="w-4 h-4 rounded-full bg-[#14B8A6] dark:bg-[#00a99d] inline-block" />
-                  <span className="w-2 h-2 rounded-full bg-[#173B63] dark:bg-blue-400 absolute -top-2.5 -right-0.5" />
-                </span>
-                <span className="text-3xl font-extrabold text-[#173B63] dark:text-blue-400">n</span>
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="ECTRON" 
+                className="h-10 w-auto max-w-[160px] object-contain" 
+              />
               <div className="h-8 w-px bg-slate-300 dark:bg-zinc-700 hidden sm:block mx-1" />
               <div>
                 <span className="block text-xs uppercase tracking-widest text-[#0F766E] dark:text-[#00a99d] font-bold">

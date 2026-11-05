@@ -102,27 +102,28 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
       <div className={clsx("h-16 flex items-center border-b border-border relative transition-all duration-300", isCollapsed ? "justify-center px-0" : "px-6")}>
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            {/* Ectron Brand Mark */}
-            <div className="flex items-baseline select-none tracking-tight">
-              <span className="text-2xl font-extrabold text-[#173B63] dark:text-blue-400">ectr</span>
-              <span className="relative inline-flex items-center justify-center mx-0.5">
-                <span className="w-3.5 h-3.5 rounded-full bg-[#14B8A6] dark:bg-[#00a99d] inline-block" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#173B63] dark:bg-blue-400 absolute -top-2 -right-0.5" />
-              </span>
-              <span className="text-2xl font-extrabold text-[#173B63] dark:text-blue-400">n</span>
-            </div>
+            <Link href="/home" className="flex items-center">
+              <img 
+                src="/logo.png" 
+                alt="ECTRON" 
+                className="h-8 w-auto max-w-[130px] object-contain" 
+              />
+            </Link>
             {!isHome && !pathname.startsWith('/admin') && (
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#14B8A6]/30 dark:bg-[#00a99d]/15 dark:text-[#00a99d] dark:border-[#00a99d]/30 capitalize">
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#14B8A6]/30 dark:bg-[#00a99d]/15 dark:text-[#00a99d] dark:border-[#00a99d]/30 capitalize shrink-0">
                 {division === 'water' ? 'Siconia' : division === 'electricity-ecs1100' ? 'ECS1100' : division === 'petty-cash' ? 'Petty Cash' : (division === 'visits' || division === 'visitor') ? 'Visitor Mgmt' : 'M212'}
               </span>
             )}
           </div>
         )}
         {isCollapsed && (
-          <div className="flex items-center justify-center select-none">
-            <span className="text-xl font-extrabold text-[#173B63] dark:text-blue-400">e</span>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] dark:bg-[#00a99d] inline-block ml-0.5" />
-          </div>
+          <Link href="/home" className="flex items-center justify-center px-2">
+            <img 
+              src="/logo.png" 
+              alt="ECTRON" 
+              className="h-5 w-auto max-w-[56px] object-contain" 
+            />
+          </Link>
         )}
         <button 
           onClick={() => setIsCollapsed?.(!isCollapsed)}

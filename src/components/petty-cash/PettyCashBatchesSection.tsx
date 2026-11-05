@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   FolderPlus,
@@ -26,7 +27,9 @@ import {
   Calendar,
   ArrowUpDown,
   Sparkles,
-  Filter
+  Filter,
+  ChevronDown,
+  ArrowUpRight
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -60,6 +63,13 @@ const MONTH_NAMES = [
   { value: 11, en: 'November', ar: 'نوفمبر' },
   { value: 12, en: 'December', ar: 'ديسمبر' }
 ];
+
+const formatOMR = (val: number) => {
+  return Number(val || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 3
+  });
+};
 
 const ALL_STATUS_KEYS: Array<'In Progress' | 'Ready' | 'Submitted'> = ['In Progress', 'Ready', 'Submitted'];
 
@@ -97,16 +107,42 @@ interface PettyCashBatchesSectionProps {
   initialBatches: PettyCashBatch[];
   expensesData: any[];
   onBatchesChange?: (batches: PettyCashBatch[]) => void;
+  maxDisplay?: number;
+  isFullPage?: boolean;
 }
 
 export default function PettyCashBatchesSection({
   initialBatches,
   expensesData,
-  onBatchesChange
+  onBatchesChange,
+  maxDisplay = 4,
+  isFullPage = false
 }: PettyCashBatchesSectionProps) {
   const router = useRouter();
   const { lang, t } = useLanguage();
   const today = new Date();
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (isFullPage) return;
+    try {
+      const saved = localStorage.getItem('ectron_petty_cash_batches_collapsed');
+      if (saved !== null) {
+        setIsCollapsed(saved === 'true');
+      }
+    } catch (e) {}
+  }, [isFullPage]);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('ectron_petty_cash_batches_collapsed', String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
 
   const [batches, setBatches] = useState<PettyCashBatch[]>(initialBatches || []);
   useEffect(() => {
@@ -235,6 +271,17 @@ export default function PettyCashBatchesSection({
       return true;
     });
   }, [batches, selectedStatuses, filterMonth, filterYear]);
+
+  const maxBatches = isFullPage ? undefined : (maxDisplay ?? 4);
+
+  const visibleBatches = useMemo(() => {
+    if (maxBatches && maxBatches > 0) {
+      return displayedBatches.slice(0, maxBatches);
+    }
+    return displayedBatches;
+  }, [displayedBatches, maxBatches]);
+
+  const hasMoreBatches = batches.length > 4 || displayedBatches.length > 4;
 
   const activeBatch = useMemo(
     () => batches.find(b => b.id === activeBatchId) || null,
@@ -550,7 +597,12 @@ export default function PettyCashBatchesSection({
       : `${MONTH_NAMES.find(m => m.value === filterMonth)?.en || ''} ${filterYear}`;
 
   return (
-    <div className="glass rounded-2xl p-6 border border-border dark:border-zinc-800/60 flex flex-col gap-5">
+    <div
+      className={clsx(
+        'glass rounded-2xl border border-border dark:border-zinc-800/60 transition-all duration-200',
+        isCollapsed ? 'p-4' : 'p-6 flex flex-col gap-5'
+      )}
+    >
       {/* Toast Notification */}
       {toast && (
         <div
@@ -576,9 +628,62 @@ export default function PettyCashBatchesSection({
       )}
 
       {/* Header Bar */}
-      <div className="flex flex-col gap-3.5 border-b border-zinc-800 pb-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className={clsx('flex flex-col gap-3.5', !isCollapsed && 'border-b border-zinc-800 pb-4')}>
+        {/* Row 1: Left has Collapse Arrow + Title; Right has "View All" text sentence */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Top Left: Arrow toggle + Petty Cash Batches title */}
           <div className="flex items-center gap-3 flex-wrap">
+            {/* Collapse/Expand Arrow button */}
+            <button
+              type="button"
+              onClick={toggleCollapse}
+              className="p-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all cursor-pointer border border-zinc-700/60 flex items-center justify-center shrink-0 shadow-xs"
+              title={isCollapsed ? t('Expand Batches', 'إظهار الباتشات') : t('Collapse Batches', 'طوي الباتشات')}
+              aria-label={isCollapsed ? 'Expand Batches' : 'Collapse Batches'}
+            >
+              <ChevronDown
+                className={clsx(
+                  'w-5 h-5 transition-transform duration-200 text-zinc-200',
+                  isCollapsed && '-rotate-90 rtl:rotate-90'
+                )}
+              />
+            </button>
+
+            {/* Title: Petty Cash Batches (Always displayed on top left) */}
+            <div
+              onClick={isCollapsed ? toggleCollapse : undefined}
+              className={clsx(
+                'flex items-center gap-2.5',
+                isCollapsed && 'cursor-pointer select-none'
+              )}
+            >
+              <FolderOpen className="w-5 h-5 text-[#14B8A6] shrink-0" />
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Petty Cash Batches</span>
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-800/90 text-zinc-300 border border-zinc-700/60">
+                {batches.length}
+              </span>
+            </div>
+          </div>
+
+          {/* Top Right: View All as a sentence/phrase, styled in white */}
+          {!isCollapsed && hasMoreBatches && !isFullPage && (
+            <Link
+              href="/petty-cash/batches"
+              className="text-white hover:underline font-bold text-sm flex items-center gap-1.5 transition-colors cursor-pointer group"
+              title={t('View all batches', 'عرض كافة الباتشات')}
+            >
+              <span>{t('View All', 'عرض الكل')}</span>
+              <span className="text-xs text-zinc-400 font-medium group-hover:text-zinc-200">({batches.length})</span>
+              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+          )}
+        </div>
+
+        {/* Row 2: New Batch + Button & Month/Year Selectors under the title on a new line */}
+        {!isCollapsed && (
+          <div className="flex items-center gap-3 flex-wrap pt-0.5">
             <button
               onClick={openCreateBatchModal}
               className="flex items-center gap-2 px-4 py-2 rounded-full btn-primary-gradient bg-zinc-100 hover:bg-white text-zinc-900 font-semibold text-sm transition-all shadow-sm cursor-pointer"
@@ -617,17 +722,10 @@ export default function PettyCashBatchesSection({
               </select>
             </div>
           </div>
-
-          <div className="text-right">
-            <h2 className="text-lg font-bold text-white flex items-center sm:justify-end gap-2">
-              <span>Petty Cash Batches</span>
-              <FolderOpen className="w-5 h-5 text-[#14B8A6]" />
-            </h2>
-            <p className="text-xs text-zinc-400">{currentMonthLabel} — {t('Batches for accounting reports preparation', 'مجموعات تجهيز ملفات الحسابات')}</p>
-          </div>
-        </div>
+        )}
 
         {/* Status Multi-Select Filter Bar (Allows selecting 1, multiple, or all statuses) */}
+        {!isCollapsed && (
         <div className="flex items-center justify-between gap-3 flex-wrap pt-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-bold text-[#173B63] dark:text-zinc-400 flex items-center gap-1.5">
@@ -696,10 +794,13 @@ export default function PettyCashBatchesSection({
             )}
           </div>
         </div>
+        )}
       </div>
 
       {/* Batches Grid */}
-      {displayedBatches.length === 0 ? (
+      {!isCollapsed && (
+        <>
+          {displayedBatches.length === 0 ? (
         <div className="py-10 px-4 text-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/30 flex flex-col items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-[#14B8A6]/10 border border-[#14B8A6]/20 flex items-center justify-center text-[#14B8A6]">
             <FolderPlus className="w-6 h-6" />
@@ -725,8 +826,9 @@ export default function PettyCashBatchesSection({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {displayedBatches.map(batch => {
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {visibleBatches.map(batch => {
             const batchInvoices = getBatchInvoices(batch);
             const totalAmount = batchInvoices.reduce(
               (sum, item) => sum + Number(item.amount || 0),
@@ -824,7 +926,7 @@ export default function PettyCashBatchesSection({
                       {t('Advance Budget', 'سلفة الباتش')}
                     </span>
                     <span className="text-sm font-bold text-[#173B63] dark:text-zinc-200 mt-0.5">
-                      OMR {advance.toFixed(3)}
+                      OMR {formatOMR(advance)}
                     </span>
                   </div>
 
@@ -834,7 +936,7 @@ export default function PettyCashBatchesSection({
                       {t('Total Spent', 'إجمالي المصروف')}
                     </span>
                     <span className="text-sm font-bold text-[#0F766E] dark:text-teal-400 mt-0.5">
-                      OMR {totalAmount.toFixed(3)}
+                      OMR {formatOMR(totalAmount)}
                     </span>
                   </div>
 
@@ -851,7 +953,7 @@ export default function PettyCashBatchesSection({
                           : "text-emerald-600 dark:text-emerald-400"
                       )}
                     >
-                      {isDeficit ? `-OMR ${Math.abs(remaining).toFixed(3)}` : `OMR ${remaining.toFixed(3)}`}
+                      {isDeficit ? `-OMR ${formatOMR(Math.abs(remaining))}` : `OMR ${formatOMR(remaining)}`}
                     </span>
                   </div>
                 </div>
@@ -863,7 +965,7 @@ export default function PettyCashBatchesSection({
                       {progressPct}% {t('Consumed', 'مستهلك')}
                       {isDeficit && (
                         <span className="text-danger font-bold ml-1">
-                          ({t('Deficit', 'عجز')}: OMR {Math.abs(remaining).toFixed(3)})
+                          ({t('Deficit', 'عجز')}: OMR {formatOMR(Math.abs(remaining))})
                         </span>
                       )}
                     </span>
@@ -928,7 +1030,10 @@ export default function PettyCashBatchesSection({
             );
           })}
         </div>
-      )}
+      </>
+    )}
+  </>
+)}
 
       {/* ========================================================================= */}
       {/* MODAL 1: CREATE NEW BATCH                                                 */}
@@ -1143,14 +1248,14 @@ export default function PettyCashBatchesSection({
                           <span>•</span>
                           <span>{MONTH_NAMES.find(m => m.value === activeBatch.month)?.en} {activeBatch.year}</span>
                           <span>•</span>
-                          <span>Advance: <strong className="text-zinc-200">OMR {adv.toFixed(3)}</strong></span>
+                          <span>Advance: <strong className="text-zinc-200">OMR {formatOMR(adv)}</strong></span>
                           <span>•</span>
-                          <span>Spent: <strong className="text-[#14B8A6]">OMR {total.toFixed(3)}</strong></span>
+                          <span>Spent: <strong className="text-[#14B8A6]">OMR {formatOMR(total)}</strong></span>
                           <span>•</span>
                           <span>
                             Remaining:{' '}
                             <strong className={rem < 0 ? 'text-danger font-bold' : 'text-emerald-400 font-bold'}>
-                              {rem < 0 ? `-OMR ${Math.abs(rem).toFixed(3)}` : `OMR ${rem.toFixed(3)}`}
+                              {rem < 0 ? `-OMR ${formatOMR(Math.abs(rem))}` : `OMR ${formatOMR(rem)}`}
                             </strong>
                           </span>
                         </div>
