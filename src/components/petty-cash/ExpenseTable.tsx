@@ -90,11 +90,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
     setDataList(expensesData || []);
   }, [expensesData]);
 
-  // View state: 'monthly' or 'master' - Defaults to master (All Records) as requested
+  // Filter state (Master Data view)
   const today = new Date();
-  const [viewMode, setViewMode] = useState<'monthly' | 'master'>('master');
-  const [selectedYear, setSelectedYear] = useState<number>(today.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState<number | 'all'>('all');
+  const [selectedMonth, setSelectedMonth] = useState<number | 'all'>('all');
+  const [batchFilter, setBatchFilter] = useState<string>('all');
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -171,26 +171,46 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
   // Compute filtered data for current view
   const filteredData = useMemo(() => {
     return dataList.filter(item => {
-      // 1. Month / Master filter
-      if (viewMode === 'monthly') {
+      // 1. Year filter
+      if (selectedYear !== 'all') {
         if (!item.expense_date) return false;
-        const [y, m] = item.expense_date.split('-');
-        if (parseInt(y, 10) !== selectedYear || parseInt(m, 10) !== selectedMonth) {
-          return false;
+        const y = parseInt(item.expense_date.split('-')[0], 10);
+        if (y !== selectedYear) return false;
+      }
+
+      // 2. Month filter
+      if (selectedMonth !== 'all') {
+        if (!item.expense_date) return false;
+        const parts = item.expense_date.split('-');
+        if (parts.length < 2) return false;
+        const m = parseInt(parts[1], 10);
+        if (m !== selectedMonth) return false;
+      }
+
+      // 3. Batch filter (Assign to Batch)
+      if (batchFilter !== 'all') {
+        const assignedBatch = invoiceBatchMap.get(item.id);
+        if (batchFilter === 'unassigned') {
+          if (assignedBatch) return false;
+        } else if (batchFilter === 'assigned') {
+          if (!assignedBatch) return false;
+        } else {
+          // specific batch ID
+          if (assignedBatch?.id !== batchFilter) return false;
         }
       }
 
-      // 2. Category filter
+      // 4. Category filter
       if (categoryFilter !== 'all' && item.category_id !== categoryFilter) {
         return false;
       }
 
-      // 3. Employee filter
+      // 5. Employee filter
       if (employeeFilter !== 'all' && item.employee_id !== employeeFilter) {
         return false;
       }
 
-      // 4. Search query
+      // 6. Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const no = (item.expense_no || '').toLowerCase();
@@ -198,18 +218,26 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         const cat = (item.petty_cash_categories?.name || '').toLowerCase();
         const emp = (item.profiles?.full_name || item.profiles?.username || '').toLowerCase();
         const proj = (item.projects?.name || '').toLowerCase();
+        const batchName = (invoiceBatchMap.get(item.id)?.name || '').toLowerCase();
 
-        return no.includes(q) || desc.includes(q) || cat.includes(q) || emp.includes(q) || proj.includes(q);
+        return (
+          no.includes(q) ||
+          desc.includes(q) ||
+          cat.includes(q) ||
+          emp.includes(q) ||
+          proj.includes(q) ||
+          batchName.includes(q)
+        );
       }
 
       return true;
     });
-  }, [dataList, viewMode, selectedYear, selectedMonth, categoryFilter, employeeFilter, searchQuery]);
+  }, [dataList, selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, invoiceBatchMap]);
 
-  // Reset pagination on filter or view mode change
+  // Reset pagination on filter change
   useEffect(() => {
     setCurrentPage(1);
-  }, [viewMode, selectedYear, selectedMonth, categoryFilter, employeeFilter, searchQuery, pageSize]);
+  }, [selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, pageSize]);
 
   // Escape key listener for direct attachment preview
   useEffect(() => {
@@ -289,27 +317,6 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
-
-  // Month navigation
-  const handlePrevMonth = () => {
-    if (selectedMonth === 1) {
-      setSelectedMonth(12);
-      setSelectedYear(prev => prev - 1);
-    } else {
-      setSelectedMonth(prev => prev - 1);
-    }
-    setSelectedIds([]);
-  };
-
-  const handleNextMonth = () => {
-    if (selectedMonth === 12) {
-      setSelectedMonth(1);
-      setSelectedYear(prev => prev + 1);
-    } else {
-      setSelectedMonth(prev => prev + 1);
-    }
-    setSelectedIds([]);
-  };
 
   // Row double click -> view details
   const handleRowDoubleClick = (exp: any) => {
@@ -558,23 +565,21 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       'Category': item.petty_cash_categories?.name || 'N/A',
       'Employee': item.profiles?.full_name || item.profiles?.username || 'N/A',
       'Project': item.projects?.name || '-',
+      'Batch Assignment': invoiceBatchMap.get(item.id)?.name || 'Unassigned',
       'Amount (OMR)': Number(item.amount || 0).toFixed(3),
       'Attachment': item.attachment_url ? 'Attached' : 'None'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportRows);
     const workbook = XLSX.utils.book_new();
-    const sheetName = viewMode === 'master' ? 'Master Data' : `${MONTH_NAMES.find(m => m.value === selectedMonth)?.en || selectedMonth}_${selectedYear}`;
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Petty Cash');
-    XLSX.writeFile(workbook, `petty_cash_${sheetName.toLowerCase()}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Petty Cash Master');
+    XLSX.writeFile(workbook, `petty_cash_master_data.xlsx`);
   };
 
   // Totals for current view
   const currentTotalAmount = useMemo(() => {
     return filteredData.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   }, [filteredData]);
-
-  const currentMonthObj = MONTH_NAMES.find(m => m.value === selectedMonth);
 
   return (
     <div className="flex flex-col gap-5">
@@ -596,97 +601,37 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         </div>
       )}
 
-      {/* Top Header: View Tabs & Month Navigator */}
+      {/* Top Header: Master Data Badge & Actions */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-2 border-b border-zinc-800">
-        {/* Left: View Mode Tabs */}
-        <div className="flex items-center gap-2 bg-zinc-900 p-1 rounded-xl border border-zinc-800">
-          <button
-            onClick={() => {
-              setViewMode('monthly');
-              setSelectedIds([]);
-            }}
-            className={clsx(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
-              viewMode === 'monthly'
-                ? "btn-primary-gradient bg-blue-600 text-white shadow-md"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
-            )}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>{t('Monthly Files', 'ملفات الأشهر')}</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setViewMode('master');
-              setSelectedIds([]);
-            }}
-            className={clsx(
-              "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer",
-              viewMode === 'master'
-                ? "bg-purple-600 text-white shadow-md"
-                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
-            )}
-          >
-            <FolderArchive className="w-4 h-4" />
-            <span>{t('Master Data (All Records)', 'البيانات الرئيسية (جميع السجلات)')}</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-200">
+        {/* Left: Master Data Indicator & Reset */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-sm">
+            <FolderArchive className="w-4 h-4 text-purple-400" />
+            <span className="font-semibold text-white">{t('Master Data (All Records)', 'البيانات الرئيسية (جميع السجلات)')}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-200 font-bold">
               {dataList.length}
             </span>
-          </button>
+          </div>
+
+          {(selectedYear !== 'all' || selectedMonth !== 'all' || batchFilter !== 'all' || categoryFilter !== 'all' || employeeFilter !== 'all' || searchQuery) && (
+            <button
+              onClick={() => {
+                setSelectedYear('all');
+                setSelectedMonth('all');
+                setBatchFilter('all');
+                setCategoryFilter('all');
+                setEmployeeFilter('all');
+                setSearchQuery('');
+                setSelectedIds([]);
+              }}
+              className="text-xs text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-800 border border-zinc-700 transition-colors cursor-pointer"
+            >
+              {t('Reset Filters', 'إعادة تعيين الفلاتر')}
+            </button>
+          )}
         </div>
 
-        {/* Middle/Right: Month Selector (if in monthly view) */}
-        {viewMode === 'monthly' && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrevMonth}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700 cursor-pointer"
-              title={t('Previous Month', 'الشهر السابق')}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-
-            {/* Month & Year Dropdowns */}
-            <select
-              value={selectedMonth}
-              onChange={e => {
-                setSelectedMonth(Number(e.target.value));
-                setSelectedIds([]);
-              }}
-              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer"
-            >
-              {MONTH_NAMES.map(m => (
-                <option key={m.value} value={m.value}>
-                  {lang === 'ar' ? m.ar : m.en}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedYear}
-              onChange={e => {
-                setSelectedYear(Number(e.target.value));
-                setSelectedIds([]);
-              }}
-              className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-medium cursor-pointer"
-            >
-              {availableYears.map(y => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-
-            <button
-              onClick={handleNextMonth}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors border border-zinc-700 cursor-pointer"
-              title={t('Next Month', 'الشهر التالي')}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        {/* Right: Summary Badges & Export */}
+        {/* Right: Summary Badges & Export / Upload */}
         <div className="flex items-center gap-3 ml-auto flex-wrap">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-zinc-800/80 border border-zinc-700 text-xs">
             <span className="text-zinc-400">{t('Records:', 'السجلات:')}</span>
@@ -709,7 +654,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs font-medium transition-colors border border-blue-500/30 cursor-pointer shadow-xs"
           >
             <Upload className="w-4 h-4" />
-            <span>{t('Import Excel', 'رفع / استيراد Excel')}</span>
+            <span>{t('Upload Excel Sheet', 'رفع ملف إكسل')}</span>
           </button>
 
           <a
@@ -725,24 +670,84 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {/* Search */}
         <div className="relative">
           <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder={t('Search description, expense no, employee, project...', 'بحث في الوصف، رقم المصروف، الموظف، المشروع...')}
+            placeholder={t('Search...', 'بحث في الوصف، الرقم...')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
           />
         </div>
+
+        {/* Year Filter */}
+        <select
+          value={selectedYear}
+          onChange={e => {
+            const val = e.target.value;
+            setSelectedYear(val === 'all' ? 'all' : Number(val));
+            setSelectedIds([]);
+          }}
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="all">{t('All Years', 'كل السنوات')}</option>
+          {availableYears.map(y => (
+            <option key={y} value={y}>{y}</option>
+          ))}
+        </select>
+
+        {/* Month Filter */}
+        <select
+          value={selectedMonth}
+          onChange={e => {
+            const val = e.target.value;
+            setSelectedMonth(val === 'all' ? 'all' : Number(val));
+            setSelectedIds([]);
+          }}
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="all">{t('All Months', 'كل الأشهر')}</option>
+          {MONTH_NAMES.map(m => (
+            <option key={m.value} value={m.value}>
+              {lang === 'ar' ? m.ar : m.en}
+            </option>
+          ))}
+        </select>
+
+        {/* Assign to Batch Filter */}
+        <select
+          value={batchFilter}
+          onChange={e => {
+            setBatchFilter(e.target.value);
+            setSelectedIds([]);
+          }}
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
+        >
+          <option value="all">{t('All (Batches & Unassigned)', 'الكل (المعين وغير المعين)')}</option>
+          <option value="unassigned">{t('Unassigned to Batch', 'غير مخصص لباتش (Unassigned)')}</option>
+          <option value="assigned">{t('Assigned to any Batch', 'مخصص لباتش (Assigned)')}</option>
+          {batches.length > 0 && (
+            <optgroup label={t('Specific Batches', 'باتشات محددة')}>
+              {batches.map(b => (
+                <option key={b.id} value={b.id}>
+                  {b.name} ({b.invoiceIds?.length || 0})
+                </option>
+              ))}
+            </optgroup>
+          )}
+        </select>
 
         {/* Category Filter */}
         <select
           value={categoryFilter}
-          onChange={e => setCategoryFilter(e.target.value)}
-          className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500"
+          onChange={e => {
+            setCategoryFilter(e.target.value);
+            setSelectedIds([]);
+          }}
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
         >
           <option value="all">{t('All Categories', 'كل التصنيفات')}</option>
           {options?.categories?.map(c => (
@@ -753,8 +758,11 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
         {/* Employee Filter */}
         <select
           value={employeeFilter}
-          onChange={e => setEmployeeFilter(e.target.value)}
-          className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500"
+          onChange={e => {
+            setEmployeeFilter(e.target.value);
+            setSelectedIds([]);
+          }}
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-zinc-300 focus:outline-none focus:border-blue-500 cursor-pointer"
         >
           <option value="all">{t('All Employees', 'كل الموظفين')}</option>
           {options?.profiles?.map(p => (
@@ -850,8 +858,10 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
             {/* Transfer to Month Button */}
             <button
               onClick={() => {
-                setTransferTargetYear(selectedYear);
-                setTransferTargetMonth(selectedMonth === 12 ? 1 : selectedMonth + 1);
+                const currentYearNum = typeof selectedYear === 'number' ? selectedYear : today.getFullYear();
+                const currentMonthNum = typeof selectedMonth === 'number' ? selectedMonth : today.getMonth() + 1;
+                setTransferTargetYear(currentYearNum);
+                setTransferTargetMonth(currentMonthNum === 12 ? 1 : currentMonthNum + 1);
                 setTransferMode('keep-day');
                 setTransferCustomDate('');
                 setIsTransferModalOpen(true);
@@ -919,7 +929,7 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                     <FolderArchive className="w-8 h-8 text-zinc-600" />
                     <p className="font-medium">{t('No matching records found in this view.', 'لا توجد سجلات مطابقة في هذا العرض.')}</p>
                     <p className="text-xs text-zinc-600">
-                      {viewMode === 'monthly' ? t(`Month file for ${currentMonthObj?.en || selectedMonth} ${selectedYear} is empty or records were moved.`, `ملف شهر ${currentMonthObj?.ar} ${selectedYear} فارغ أو تم نقل السجلات منه.`) : t('No records found in Master Data.', 'لا توجد سجلات في الماستر داتا.')}
+                      {t('Try adjusting your search filters or month/year/batch selection.', 'جرب تغيير شروط الفلترة أو الشهر والسنة أو تحديد الباتش.')}
                     </p>
                   </div>
                 </td>

@@ -70,13 +70,13 @@ export default function PettyCashActionButtons({ batches = [], options }: PettyC
           {t('Analytics', 'التحليلات')}
         </Link>
 
-        {/* Import Excel Modal Trigger */}
+        {/* Upload Excel Sheet Modal Trigger */}
         <button 
           onClick={() => setIsImportModalOpen(true)}
           className="flex items-center gap-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-5 py-2.5 rounded-xl font-bold transition-colors border border-blue-500/30 cursor-pointer shadow-xs ml-auto"
         >
           <Upload className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-          {t('Import Excel', 'استيراد إكسل')}
+          {t('Upload Excel Sheet', 'رفع ملف إكسل')}
         </button>
 
         {/* Executive User Guide Word Document */}
