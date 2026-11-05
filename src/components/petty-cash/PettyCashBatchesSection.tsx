@@ -956,11 +956,11 @@ export default function PettyCashBatchesSection({
                 key={batch.id}
                 className="rounded-2xl border-2 border-[#B5CDE2] dark:border dark:border-zinc-800 bg-gradient-to-br from-[#F4F9FC] to-[#E6F4F1] dark:bg-none dark:bg-zinc-950/60 p-5 flex flex-col gap-4 hover:border-[#14B8A6] transition-all shadow-sm"
               >
-                {/* Top row: Batch Title & Edit Pencil + Status (Left) & Actions & Counts (Right) */}
+                {/* Top row: Batch Title -> Status -> Manage Invoices -> Counts (Left) & Delete (Right) */}
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  {/* Left: Batch Title + Edit Pencil, THEN Status Selector */}
-                  <div className="flex items-center gap-2 flex-wrap min-w-0">
-                    {/* 1. Batch Title directly first */}
+                  {/* Left: Batch Title, Status, Manage Invoices, Counts */}
+                  <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+                    {/* 1. Batch Title (Click to Edit Batch Details) */}
                     <div
                       onClick={() => openEditBatchModal(batch)}
                       className="flex items-center gap-1.5 cursor-pointer group/title min-w-0 py-0.5"
@@ -972,20 +972,7 @@ export default function PettyCashBatchesSection({
                       </h3>
                     </div>
 
-                    {/* 2. Edit Pencil Icon Button next to title */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEditBatchModal(batch);
-                      }}
-                      className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-colors cursor-pointer shrink-0"
-                      title={t('Edit Batch Details', 'تعديل بيانات الباتش')}
-                    >
-                      <Edit3 className="w-3.5 h-3.5 text-[#14B8A6]" />
-                    </button>
-
-                    {/* 3. Status Selector Pill after title and pencil */}
+                    {/* 2. Status Selector Pill */}
                     <select
                       value={batch.status}
                       onChange={e =>
@@ -1010,14 +997,8 @@ export default function PettyCashBatchesSection({
                         Submitted
                       </option>
                     </select>
-                  </div>
 
-                  {/* Right: Invoices count info + Manage Invoices button + Delete */}
-                  <div className="flex items-center gap-2 flex-wrap sm:justify-end">
-                    <span className="text-xs text-[#2B4C6F] dark:text-zinc-400 font-medium hidden sm:inline-block">
-                      Invoices {batchInvoices.length} • Attachments {attachmentsCount}
-                    </span>
-
+                    {/* 3. Manage Invoices button directly after status */}
                     <button
                       onClick={() => {
                         setActiveBatchId(batch.id);
@@ -1026,11 +1007,19 @@ export default function PettyCashBatchesSection({
                         setSelectedToAssign([]);
                         setIsEditingMeta(false);
                       }}
-                      className="px-3 py-1 rounded-full text-xs font-bold bg-[#CCFBF1] dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6] border border-[#14B8A6] dark:border-[#14B8A6]/30 hover:bg-[#99F6E4] dark:hover:bg-[#14B8A6]/25 transition-colors cursor-pointer"
+                      className="px-3 py-1 rounded-full text-xs font-bold bg-[#CCFBF1] dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6] border border-[#14B8A6] dark:border-[#14B8A6]/30 hover:bg-[#99F6E4] dark:hover:bg-[#14B8A6]/25 transition-colors cursor-pointer shrink-0"
                     >
-                      {t('Manage Invoices', 'إدارة الفواتير')} ({batchInvoices.length})
+                      {t('Manage Invoices', 'إدارة الفواتير')}
                     </button>
 
+                    {/* 4. Invoices & Attachments count right next to Manage Invoices */}
+                    <span className="text-xs text-[#2B4C6F] dark:text-zinc-400 font-medium">
+                      Invoices {batchInvoices.length} • Attachments {attachmentsCount}
+                    </span>
+                  </div>
+
+                  {/* Right: Delete button */}
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() => handleDeleteBatch(batch)}
                       className="p-1.5 rounded-lg text-zinc-500 hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
