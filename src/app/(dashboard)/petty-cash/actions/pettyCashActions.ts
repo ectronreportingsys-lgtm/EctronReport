@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 
 import { getRecurringDescriptions } from './resourcesActions';
+import { assignInvoicesToBatch } from './batchesActions';
 
 export async function getFormData(expenseDate?: string) {
   const supabase = await createClient();
@@ -749,19 +750,7 @@ export async function importPettyCashExpenses(payload: ImportExpensesPayload) {
     // 4. Optionally assign to batch
     if (targetBatchId && insertedIds.length > 0) {
       try {
-        const fs = await import('fs/promises');
-        const path = await import('path');
-        const batchesPath = path.join(process.cwd(), 'src', 'data', 'petty-cash-batches.json');
-        const content = await fs.readFile(batchesPath, 'utf-8');
-        const parsed = JSON.parse(content);
-        const batches: any[] = parsed.batches || [];
-        const batch = batches.find((b: any) => b.id === targetBatchId);
-        if (batch) {
-          const idSet = new Set(batch.invoiceIds || []);
-          insertedIds.forEach((id: string) => idSet.add(id));
-          batch.invoiceIds = Array.from(idSet);
-          await fs.writeFile(batchesPath, JSON.stringify({ batches }, null, 2), 'utf-8');
-        }
+        await assignInvoicesToBatch(targetBatchId, insertedIds);
       } catch (bErr) {
         console.error('Error assigning imported expenses to batch:', bErr);
       }

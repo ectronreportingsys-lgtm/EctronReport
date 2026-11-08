@@ -1,0 +1,115 @@
+-- ==============================================================================
+-- ECTRON Reporting System – Petty Cash Batches Schema & Migration
+-- Run this script in the Supabase SQL Editor:
+-- https://supabase.com/dashboard/project/zpjnwpiyhlsehaahhapk/sql
+-- ==============================================================================
+
+-- 1. Create Petty Cash Batches Table
+CREATE TABLE IF NOT EXISTS public.petty_cash_batches (
+  id text PRIMARY KEY,
+  name text NOT NULL,
+  month integer NOT NULL,
+  year integer NOT NULL,
+  status text NOT NULL DEFAULT 'In Progress' CHECK (status IN ('In Progress', 'Ready', 'Submitted')),
+  invoice_ids jsonb DEFAULT '[]'::jsonb NOT NULL,
+  pcv_no text DEFAULT '',
+  advance_amount numeric DEFAULT 1000,
+  created_at date DEFAULT CURRENT_DATE NOT NULL,
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Add batch_id to petty_cash_expenses if not exists
+ALTER TABLE public.petty_cash_expenses 
+ADD COLUMN IF NOT EXISTS batch_id text;
+
+CREATE INDEX IF NOT EXISTS idx_petty_cash_expenses_batch_id 
+  ON public.petty_cash_expenses (batch_id);
+
+-- 3. Enable Row Level Security (RLS)
+ALTER TABLE public.petty_cash_batches ENABLE ROW LEVEL SECURITY;
+
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE tablename = 'petty_cash_batches' 
+    AND policyname = 'Allow all operations for petty_cash_batches'
+  ) THEN
+    CREATE POLICY "Allow all operations for petty_cash_batches" 
+      ON public.petty_cash_batches FOR ALL USING (true);
+  END IF;
+END $$;
+
+-- 4. Initial Migration of Existing Batches (including November 1 with the 5 invoices)
+INSERT INTO public.petty_cash_batches (id, name, month, year, created_at, status, invoice_ids, pcv_no, advance_amount)
+VALUES 
+(
+  'BATCH-202610-ECT-6984',
+  'Ectron Project- Sep-Oct',
+  10,
+  2026,
+  '2026-10-01',
+  'In Progress',
+  '["a4b3bd57-a91b-40bf-a3ed-59baafb30775","b5d2d56d-a6d9-4eb9-a7fc-d63dce170f2b","1bea081a-74a3-4a9d-ae03-3c39a259c431","a9fb4210-799e-4bc6-9f3f-502ee176ec5c","9df0ee57-df80-4490-833b-7df8d907b854","caf3c587-fc3e-43c9-b055-fe31825b621c","e8d406d0-3508-4ee0-84a0-b4b516206bd9","73d0fc5c-1f30-4120-881e-24288c1d563c","cc577617-0688-4435-ad14-aed31ca610e8","9d73b666-fd89-4fb5-97c9-afa27dedcd91","0a93dbc7-748f-4d8c-a388-2d32e25908c7","ed943009-e354-4fd0-984d-11baab0b3996","db572a89-c353-40a2-9fff-33227b93a84b","80116196-48ba-40c2-ae53-c11e535c5dd3","af84b5ec-4264-4277-afe6-26d74f84c4c3","58911e27-dfec-46e3-8203-c5e2bac1fa2b","9dbbd352-725f-4a2c-bffb-126e827e4b59","58b06a4f-f5f7-4b32-9f8e-d4fe01d3c4fd","2dcec860-f296-486d-80e9-c36f3dcf813e","cedefdbf-a655-406e-a50e-ffa4efb0ddd4","eba56d53-c619-46f0-8edd-6c20d9390ef2","98ba888f-5317-4846-8ea4-8ef2fce77678","0d2b42f9-f416-4065-87cc-5f789499c0eb","a230b9eb-9184-44dd-ae61-0f36eb09b94b","67de0c4e-37fb-4c8f-bde9-1da35108d6a0","1f7c14d7-2dc3-45de-b2a9-6ad068084ca6","c61b05c9-4048-4a40-9eaf-651add223a16","d9d9e245-7819-4024-8cb8-85a9a77db2cc","f9e6c1d5-7be4-4b6e-9419-48080b69e9fc","c50a7b07-9dfc-4fb7-a5ed-6c5efb6c3c84","65d3f7b8-56d0-49e5-8c0c-0b5e611d1e47","8d479d31-ce4e-49ef-b4c6-02c94dce6f13","16f34884-bbea-491e-b4e2-340c0e609f09","bcf88f19-2f12-40e9-9a11-695ddf42439a","66f95356-ead3-49ff-b57e-86f447850f38","05970c2d-2257-4a1a-9893-b10dd39b3bce","b6593bf5-69f6-4502-8c99-5bc97ebb2dcf","0eb0e4ab-2a5c-4364-a079-d8ddc1393416","b9899fa5-17c7-4b99-9266-447b5a99d0cd","87c7920e-8eb4-40d1-b38a-b45a19b0ecc0","0a8d62c8-7688-420e-93c5-c7be08379a7f","22916d43-65a7-4673-9f40-3a43e3de7ed2","fc2a962f-be40-43f0-9b68-94bf107b98cf"]'::jsonb,
+  'PCV-ECT-SEP-OCT-2026',
+  3200
+),
+(
+  'BATCH-202609-001',
+  'September (Aug-Sep Voucher)',
+  9,
+  2026,
+  '2026-09-21',
+  'Submitted',
+  '["b3fce647-b322-4ffa-a4f5-6ac721937e30","682b0bf1-36f6-4631-8df2-163ff59957c6","3ec42370-f3a0-42aa-a14c-257faf7264c9","2f6c1f99-1905-4c9a-9edf-29b3b114c3e0","9ec000f9-d91a-4cc7-aee0-dd47d685a072","0c626138-32f7-4537-ba69-d26d94cdc345","3908d6c9-f9cf-4635-a27d-9a9196574b8e","bc7cc5cc-01f5-43ad-a1a3-23f9363b049f","d7614f6d-7461-4112-8e09-b9aeaaf228b2","600fb64b-4046-41fa-b700-5b7e95854aad","22634950-df61-4000-9ead-3e022c1505a5","4331197b-a683-4cac-b761-6de25d827833","cc163b3c-c2f6-4b89-8788-c3b486bee3f1","8bcff04a-202c-4f93-ac63-9fd0523313fe","08880a6d-5bd1-432f-8981-1c3ce28ad789","3195741c-a94f-435e-ac15-0c051f02c0fb","48abb5d3-7658-47a4-86c2-51c67c443656","b2bb0aba-1d1b-4727-882c-971d4a93f209","41117bed-7a5f-46b2-882e-ce629f99a897","f5e1d794-6a67-45c1-a810-38ab4eefe214","55ab670d-6c7f-48ad-8e4a-8d0e8dc7a4ff","736b37cd-e753-43d9-b895-7e12118c7ef6","a877d36f-c189-4de8-9088-d82ce0ffbc88","ef2a1a79-7b8c-4435-b044-d16e55bbf24f","4371cf6f-3c08-4a4e-94d4-3c6b1067a89d","10435290-dae9-4d34-ada0-eb95d6e63ae0","46f79cbd-b8a2-4a72-ab2f-f378a3b10a24","25b36c34-e627-4133-af37-496937bbcfbd","113fe607-b069-428a-8111-df4cf800f6b4","36501d2f-3ebe-4dd8-9ed1-ceda84a5e1b1","668adc96-b907-4a3f-8146-d959c1dd845c","b9000de3-77c9-4eb5-b389-c3c26a40a084","e4103053-0795-4f0b-9b05-fdb8bc59ed70","64f92188-e95f-43f6-9499-7df40bdc9f48","580c8e70-cc44-405f-b22f-e7aa0ddd544a","34b95715-c0c7-4b4e-82d5-4ba48819fd81","946a029c-17e3-4d9f-b091-374cf1e92a48","89b37d01-e059-4a32-852c-93ff21d81c58","704684a8-4b11-4beb-852b-d962cd83f650","1b7ff2d0-728b-4045-86cf-93ef82f57783","2262d87e-67ad-40e3-92e8-40dffffd28d2","c72d9777-cdc7-4049-9cb2-92190d1e97db","ba55b3aa-766e-4db6-b8b4-30ddd1411c2b","69b8a018-f7f3-4f36-bba7-e3de8f5fba8d","8cfec619-bfa4-434f-abc6-7f35124f6700"]'::jsonb,
+  'PCV-AUG-SEP-2026',
+  1000
+),
+(
+  'BATCH-202610-1241992',
+  'October 1',
+  10,
+  2026,
+  '2026-10-21',
+  'Submitted',
+  '["af187724-42e6-4934-b862-cf1d1e0cf513","cbb1b921-0565-4cd7-bfe7-851abc9e6d15","e4dc268f-44a7-49a2-8849-971bbc81d267","1c30d6c2-f8c3-4967-b1ed-0862c0203819","356c7a92-962b-4af0-83df-748245469992","8de18cbe-fb2d-41f5-8b15-c03d588a795a","bcfba9eb-ab2a-43e2-8dcf-66f9c384d50f","9c8c8b1e-f9ec-40e0-be94-47506ad95095","097f1a7f-8d5e-467a-85af-47d52085cc2d","4be6be4f-2687-4001-953e-c4d2a6c95a08","1248e3aa-ef3b-49e9-b0e0-2405a60e5dc4","7e20baf3-cd25-4230-be7a-afc3951a17a5","40fbf184-d6d3-47af-ba99-5c78cdc33dde","3f35cc17-ffea-4efc-bb9e-4204d9ec0078","ed04586f-1f91-49e6-bd02-ef15ac6d40a9","050361c6-0764-4cbc-8337-3374b130ec98","d6711d6c-4ac7-4e6b-aa24-1e439727b684","2c1ce39b-8d39-4394-9b7e-ff96e95cf94e","0d45533d-fdbd-4edf-adfb-5ba78c145c99","bb190d2a-2bff-4b6d-868b-9af7829e97a5","c4258083-360c-4294-8a66-a5cf54b045f5","1ebdf1b0-3584-4015-b49d-6c44ecbdeb45","99eca35e-0478-4926-9d40-ad1dfaa3c5c6","2bc5cbda-1606-4b84-967f-9810b189b590","3ca72edb-8253-485b-95d8-3307aecb586e","f8e1d8c5-1781-4c6d-ba98-39f75a6ae595","6d3610e7-0e9c-482f-8ba4-569900d08857","7c791db6-7e04-46d1-a6fd-db6c082eb384","46817489-ca65-4c72-a70e-25fe15dd6a7b","cb6afd0a-da42-429c-8afa-5b8034275099","b449ebe6-8264-4fe0-92c8-e001fdfb14e1","3e1ab353-3a7b-4601-97c4-5e1fb8e6fa52","b0936744-d556-429b-883a-b436eb551bc3","23e57730-50f6-4041-b9c6-552589b41188","002700aa-5792-426d-b498-6de389f0978a","6298775d-05f2-4f4e-99ea-c9f4bf5c7145","e007f791-caf5-4ab0-a60a-8d0c2a32c968","20530b76-e460-4cd8-a63c-d0c95be2e534","f67c55fb-d8f9-4db2-abac-6e1063903f40","1a7cec47-4607-4535-a3e0-13dec43cdaa9","4fa6562c-1192-46d7-b43d-d929b258fb41","ea59ed07-8cc9-41a6-baa3-fc33b6f6d1a7","cc8a2cfe-8b42-42cf-8b39-82e7700c22ee","7f74023a-9cc4-4bd9-90cd-93c638bdd053","2e75a08b-fb20-48b2-9965-59f3dc2174d9"]'::jsonb,
+  '',
+  1500
+),
+(
+  'BATCH-202610-3843547',
+  'October 2',
+  10,
+  2026,
+  '2026-10-21',
+  'Ready',
+  '["2533eaf5-251f-473d-848f-5e0adb48ae1f","68314c73-1509-46f8-b89c-ede84004c84e","6ccb9854-aeb6-4a83-ab70-3f737e662cc2","fe788559-86d1-4660-bd8e-5639a9a8becd","09332439-f363-42ec-a3dd-d043d68f4c93","3adb8d30-8853-4b9a-8204-0a4821b2a58c","2b1414ea-9990-44a8-94b8-7d526859cad4","b4ebda1b-5a51-4819-960f-a2127e605fb8","b481e976-3ba1-4a48-97ac-aef38758c4d6","b90752f5-3393-40b7-bf30-c3f36fd00caf","47f66c15-113f-4525-945e-fd147a947cb3","52b864a1-1583-424c-af9b-fe362fd959bb","794b7c73-23d5-4b48-89fa-0f48ab85ce42","d4daf12d-606d-4c04-98db-7f50d1b1fd7b","c74bf2f5-967d-4c08-9792-421d033d01a5","d5d295f5-0794-462c-aaa9-b1c29256fc26","c3255c2a-0260-462b-a02d-ba2ae261dd08","446a1f32-18e4-4c40-8927-3bd163d4ebe2","6118d392-ae10-4177-ab20-6b1abbbe169a","c8925587-ddb3-42aa-8a70-76853b89a558","bab3a844-1a61-4df8-8e09-5dbd9b0cf4bb","76945689-4592-444d-91bd-411c880ff832","8143c6cc-8d1a-4900-a5ba-d693faa6c3e3","5a64e98f-417d-4e04-bfcc-c295f9393a9d","13b24f80-d0d7-4160-95d4-eb44dde4b8a3","bd32819c-7165-4fa9-ab30-5edd06a468ac","28670d32-3503-40ae-ad84-b75107e1d811","66b89e36-0626-4ee2-95e5-73d00b2fd59f","42d8595b-5b16-4cc8-98f0-4e32d8889e33","e125c52a-7d7f-45d1-aa02-7558785cc9c9","4c5317e9-9d04-4634-b5df-5b32006da814","8a7a0a31-dae9-447e-b196-1463dbd977dc","61fe7837-57c7-462a-85f2-c74105aa95bc","da1f8eea-c2ec-48e1-8441-d2cb24359f35","b74f6466-4e6e-48bb-808f-07d87c04c963","e0dded4e-b440-4777-aaf2-3ef9efa2c927","202c994f-7995-421c-a951-abcb95d1eb34","2cbf8e47-648a-4092-bc93-c201995dc663","ed83274e-9d5f-477e-a38d-a44262bff36b","de4691ae-edc7-4530-8659-931d431dc8db","a13e8c9a-d087-4963-a7ac-f37f93a88310","e815259e-0d17-4525-8968-d62d671c3215","97367138-8eb6-4086-bb9c-d36d3bf8ac24","564e7e1a-2455-4873-8e6c-d9a354ba467b","3b8d1c18-78c1-4122-b635-d4e3b2705df7","772f107c-45b9-4acc-a353-5dae7ac09cc3","97fd602f-1efa-4323-b72c-c8838668cca6","65f68847-de9d-494d-8f70-761581e1e4de","15392b0d-ee89-4b56-900a-de85ba27ed1d"]'::jsonb,
+  'PCV-OCT2-2026',
+  2000
+),
+(
+  'BATCH-202611-2824301',
+  'November 1',
+  11,
+  2026,
+  '2026-11-05',
+  'In Progress',
+  '["736105bc-bf31-47e5-980e-09efa0ed1684","655ce5c3-f3f7-46a3-aa7a-d3a0f07e2476","886d8c7f-b58e-4466-ba3f-6dee8a6f48ad","115167ff-32a8-4624-8928-d759ab3f031c","c2452d8e-c414-4599-a694-e41abc14fb6a"]'::jsonb,
+  '',
+  2000
+)
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  month = EXCLUDED.month,
+  year = EXCLUDED.year,
+  status = EXCLUDED.status,
+  invoice_ids = EXCLUDED.invoice_ids,
+  pcv_no = EXCLUDED.pcv_no,
+  advance_amount = EXCLUDED.advance_amount,
+  updated_at = timezone('utc'::text, now());
+
+-- 5. Sync batch_id onto petty_cash_expenses rows
+UPDATE public.petty_cash_expenses e
+SET batch_id = b.id
+FROM public.petty_cash_batches b
+WHERE b.invoice_ids ? e.id::text;
