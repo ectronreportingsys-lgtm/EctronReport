@@ -12,6 +12,9 @@ import {
   XCircle, 
   Trash2, 
   ArrowRightLeft, 
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   FolderArchive, 
   Calendar, 
   Check, 
@@ -100,6 +103,22 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [employeeFilter, setEmployeeFilter] = useState('all');
+
+  // Sorting state (default: newest expense first)
+  type SortField = 'expense_no' | 'expense_date' | 'request_description' | 'category' | 'employee' | 'project' | 'amount';
+  type SortDirection = 'asc' | 'desc';
+  const [sortField, setSortField] = useState<SortField>('expense_date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Toggle direction: desc (Newest first) <-> asc (Oldest first)
+      setSortDirection(prev => (prev === 'desc' ? 'asc' : 'desc'));
+    } else {
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -232,20 +251,47 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
 
       return true;
     }).sort((a, b) => {
-      // Default: Newest expense first (date descending, then expense_no descending)
-      const dateA = a.expense_date || '';
-      const dateB = b.expense_date || '';
-      if (dateA !== dateB) {
-        return dateB.localeCompare(dateA);
-      }
-      return (b.expense_no || '').localeCompare(a.expense_no || '');
-    });
-  }, [dataList, selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, invoiceBatchMap]);
+      let comparison = 0;
 
-  // Reset pagination on filter change
+      if (sortField === 'expense_no') {
+        const noA = a.expense_no || '';
+        const noB = b.expense_no || '';
+        comparison = noA.localeCompare(noB, undefined, { numeric: true, sensitivity: 'base' });
+      } else if (sortField === 'expense_date') {
+        const dateA = a.expense_date || '';
+        const dateB = b.expense_date || '';
+        comparison = dateA.localeCompare(dateB);
+        if (comparison === 0) {
+          const noA = a.expense_no || '';
+          const noB = b.expense_no || '';
+          comparison = noA.localeCompare(noB, undefined, { numeric: true, sensitivity: 'base' });
+        }
+      } else if (sortField === 'request_description') {
+        comparison = (a.request_description || '').localeCompare(b.request_description || '', lang === 'ar' ? 'ar' : 'en');
+      } else if (sortField === 'category') {
+        const catA = a.petty_cash_categories?.name || '';
+        const catB = b.petty_cash_categories?.name || '';
+        comparison = catA.localeCompare(catB, lang === 'ar' ? 'ar' : 'en');
+      } else if (sortField === 'employee') {
+        const empA = a.profiles?.full_name || a.profiles?.username || '';
+        const empB = b.profiles?.full_name || b.profiles?.username || '';
+        comparison = empA.localeCompare(empB, lang === 'ar' ? 'ar' : 'en');
+      } else if (sortField === 'project') {
+        const projA = a.projects?.name || '';
+        const projB = b.projects?.name || '';
+        comparison = projA.localeCompare(projB, lang === 'ar' ? 'ar' : 'en');
+      } else if (sortField === 'amount') {
+        comparison = Number(a.amount || 0) - Number(b.amount || 0);
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [dataList, selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, invoiceBatchMap, sortField, sortDirection, lang]);
+
+  // Reset pagination on filter or sort change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, pageSize]);
+  }, [selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, pageSize, sortField, sortDirection]);
 
   // Escape key listener for direct attachment preview
   useEffect(() => {
@@ -919,14 +965,164 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
                   title={t('Select all on this page', 'تحديد الكل في هذه الصفحة')}
                 />
               </th>
-              <th className="px-4 py-3">{t('Expense No', 'رقم المصروف')}</th>
-              <th className="px-4 py-3">{t('Date', 'التاريخ')}</th>
-              <th className="px-4 py-3">{t('Description', 'الوصف')}</th>
-              <th className="px-4 py-3">{t('Category', 'التصنيف')}</th>
-              <th className="px-4 py-3">{t('Employee', 'الموظف')}</th>
-              <th className="px-4 py-3">{t('Project', 'المشروع')}</th>
+              {/* Expense No with Opposing Arrows Sort Button */}
+              <th 
+                onClick={() => handleSort('expense_no')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+                title={sortField === 'expense_no' && sortDirection === 'desc' ? t('Sort Oldest to Newest', 'ترتيب من الأقدم للأحدث') : t('Sort Newest to Oldest', 'ترتيب من الأحدث للأقدم')}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Expense No', 'رقم المصروف')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'expense_no' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'expense_no' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Date with Opposing Arrows Sort Button */}
+              <th 
+                onClick={() => handleSort('expense_date')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+                title={sortField === 'expense_date' && sortDirection === 'desc' ? t('Sort Oldest to Newest', 'ترتيب من الأقدم للأحدث') : t('Sort Newest to Oldest', 'ترتيب من الأحدث للأقدم')}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Date', 'التاريخ')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'expense_date' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'expense_date' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Description with Sort Button */}
+              <th 
+                onClick={() => handleSort('request_description')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Description', 'الوصف')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'request_description' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'request_description' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Category with Sort Button */}
+              <th 
+                onClick={() => handleSort('category')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Category', 'التصنيف')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'category' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'category' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Employee with Sort Button */}
+              <th 
+                onClick={() => handleSort('employee')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Employee', 'الموظف')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'employee' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'employee' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Project with Sort Button */}
+              <th 
+                onClick={() => handleSort('project')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Project', 'المشروع')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'project' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'project' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
+
+              {/* Attachment */}
               <th className="px-4 py-3 text-center">{t('Attachment', 'المرفق')}</th>
-              <th className="px-4 py-3">{t('Amount', 'المبلغ')}</th>
+
+              {/* Amount with Sort Button */}
+              <th 
+                onClick={() => handleSort('amount')}
+                className="px-4 py-3 cursor-pointer select-none group hover:text-white transition-colors"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{t('Amount', 'المبلغ')}</span>
+                  <span
+                    className={clsx(
+                      'p-1 rounded transition-colors flex items-center justify-center',
+                      sortField === 'amount' ? 'text-[#14B8A6] bg-[#14B8A6]/15 ring-1 ring-[#14B8A6]/30' : 'text-zinc-500 group-hover:text-zinc-300'
+                    )}
+                  >
+                    {sortField === 'amount' ? (
+                      sortDirection === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-[#14B8A6]" /> : <ArrowDown className="w-3.5 h-3.5 text-[#14B8A6]" />
+                    ) : (
+                      <ArrowUpDown className="w-3.5 h-3.5" />
+                    )}
+                  </span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
