@@ -231,6 +231,14 @@ export default function ExpenseTable({ expensesData, batches = [], options }: Ex
       }
 
       return true;
+    }).sort((a, b) => {
+      // Default: Newest expense first (date descending, then expense_no descending)
+      const dateA = a.expense_date || '';
+      const dateB = b.expense_date || '';
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA);
+      }
+      return (b.expense_no || '').localeCompare(a.expense_no || '');
     });
   }, [dataList, selectedYear, selectedMonth, batchFilter, categoryFilter, employeeFilter, searchQuery, invoiceBatchMap]);
 

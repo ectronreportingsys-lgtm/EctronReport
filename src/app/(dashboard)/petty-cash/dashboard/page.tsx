@@ -70,7 +70,7 @@ export default async function PettyCashDashboard() {
         profiles (full_name, username),
         projects (name)
       `)
-      .order('expense_date', { ascending: true });
+      .order('expense_date', { ascending: false });
 
     if (!error && expenses) {
       expensesData = expenses;

@@ -96,6 +96,17 @@ function batchToRow(b: PettyCashBatch): any {
   };
 }
 
+function sortBatchesDesc(list: PettyCashBatch[]): PettyCashBatch[] {
+  return [...list].sort((a, b) => {
+    if (b.year !== a.year) return b.year - a.year;
+    if (b.month !== a.month) return b.month - a.month;
+    const cA = a.createdAt || '';
+    const cB = b.createdAt || '';
+    if (cA !== cB) return cB.localeCompare(cA);
+    return b.id.localeCompare(a.id);
+  });
+}
+
 // Read batches: Supabase first, fallback to JSON
 export async function getBatches(): Promise<PettyCashBatch[]> {
   try {
@@ -103,11 +114,13 @@ export async function getBatches(): Promise<PettyCashBatch[]> {
     const { data, error } = await supabase
       .from('petty_cash_batches')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('year', { ascending: false })
+      .order('month', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (!error && data) {
       if (data.length > 0) {
-        return data.map(rowToBatch);
+        return sortBatchesDesc(data.map(rowToBatch));
       }
       // Table exists but is empty: seed from local JSON file
       const fileBatches = await readFileBatches();
@@ -115,10 +128,10 @@ export async function getBatches(): Promise<PettyCashBatch[]> {
         try {
           const rowsToInsert = fileBatches.map(batchToRow);
           await supabase.from('petty_cash_batches').insert(rowsToInsert);
-          return fileBatches;
+          return sortBatchesDesc(fileBatches);
         } catch (seedErr) {
           console.warn('Could not auto-seed batches into Supabase:', seedErr);
-          return fileBatches;
+          return sortBatchesDesc(fileBatches);
         }
       }
       return [];
@@ -128,7 +141,8 @@ export async function getBatches(): Promise<PettyCashBatch[]> {
   }
 
   // Fallback to local file
-  return await readFileBatches();
+  const fileBatches = await readFileBatches();
+  return sortBatchesDesc(fileBatches);
 }
 
 export async function createBatch(payload: {

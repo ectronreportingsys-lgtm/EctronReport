@@ -297,6 +297,14 @@ export default function PettyCashBatchesSection({
       if (filterMonth !== 'all' && b.month !== filterMonth) return false;
       if (b.year !== filterYear) return false;
       return true;
+    }).sort((a, b) => {
+      // Newest batch first: Year desc, Month desc, createdAt desc, id desc
+      if (b.year !== a.year) return b.year - a.year;
+      if (b.month !== a.month) return b.month - a.month;
+      const cA = a.createdAt || '';
+      const cB = b.createdAt || '';
+      if (cA !== cB) return cB.localeCompare(cA);
+      return b.id.localeCompare(a.id);
     });
   }, [batches, selectedStatuses, filterMonth, filterYear]);
 
@@ -693,6 +701,14 @@ export default function PettyCashBatchesSection({
         return no.includes(q) || desc.includes(q) || cat.includes(q) || proj.includes(q);
       }
       return true;
+    }).sort((a, b) => {
+      // Newest invoices first (date descending, then expense_no descending)
+      const dateA = a.expense_date || '';
+      const dateB = b.expense_date || '';
+      if (dateA !== dateB) {
+        return dateB.localeCompare(dateA);
+      }
+      return (b.expense_no || '').localeCompare(a.expense_no || '');
     });
   }, [expensesData, activeBatch, assignMonthScope, assignSearch]);
 
