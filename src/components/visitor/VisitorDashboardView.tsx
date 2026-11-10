@@ -72,6 +72,8 @@ export default function VisitorDashboardView({
   });
 
   const [isUpdating, setIsUpdating] = useState(false);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
 
   // Available countries from data
   const availableCountries = useMemo(() => {
@@ -360,6 +362,7 @@ export default function VisitorDashboardView({
     if (e) e.preventDefault();
     if (!editForm) return;
     setIsUpdating(true);
+    setErrorToast(null);
     try {
       const finalCoordination = editForm.coordination_by === 'Other'
         ? (editCustomCoordination.trim() || 'Other')
@@ -374,7 +377,7 @@ export default function VisitorDashboardView({
         organization_en: (org.organization_en || '').trim(),
         organization_ar: (org.organization_ar || '').trim(),
         visitors: (org.visitors || []).filter(vis => (vis.full_name_ar || '').trim() || (vis.full_name_en || '').trim())
-      })).filter(org => (org.organization_en || org.organization_ar) && org.visitors.length > 0);
+      })).filter(org => (org.organization_en || org.organization_ar) || org.visitors.length > 0);
 
       const summaryEn = validOrgs.map(o => o.organization_en).filter(Boolean).join(' / ');
       const summaryAr = validOrgs.map(o => o.organization_ar).filter(Boolean).join(' / ');
@@ -412,6 +415,12 @@ export default function VisitorDashboardView({
           coordination_by: finalCoordination,
           organization_en: updatedPayload.organization_en,
           organization_ar: updatedPayload.organization_ar,
+          country: updatedPayload.country,
+          visit_reason: updatedPayload.visit_reason,
+          time_in: updatedPayload.time_in || editForm.time_in,
+          time_out: updatedPayload.time_out,
+          visit_date: updatedPayload.visit_date || editForm.visit_date,
+          notes: updatedPayload.notes,
           organizations: validOrgs.length > 0 ? validOrgs : editForm.organizations,
           visitors: flattenedVisitors.length > 0 ? flattenedVisitors : editForm.visitors
         };
@@ -421,7 +430,15 @@ export default function VisitorDashboardView({
         setSelectedVisitModal(updatedRecord);
         setEditForm(JSON.parse(JSON.stringify(updatedRecord)));
         setIsEditMode(false);
+        setSuccessToast(t('Visit details updated successfully!', 'تم التعديل بنجاح'));
+        setTimeout(() => setSuccessToast(null), 4000);
+      } else {
+        setErrorToast(res.error || t('Failed to save changes', 'فشل في حفظ التعديلات'));
+        setTimeout(() => setErrorToast(null), 5000);
       }
+    } catch (err: any) {
+      setErrorToast(err?.message || t('Failed to save changes', 'فشل في حفظ التعديلات'));
+      setTimeout(() => setErrorToast(null), 5000);
     } finally {
       setIsUpdating(false);
     }
@@ -985,17 +1002,6 @@ export default function VisitorDashboardView({
 
                 {/* Top Corner Action Controls */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {!isEditMode ? (
-                    <button
-                      type="button"
-                      onClick={() => setIsEditMode(true)}
-                      className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all shadow-sm"
-                      title={t('Edit Visit', 'تعديل بيانات الزيارة')}
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      <span>{t('Edit', 'تعديل')}</span>
-                    </button>
-                  ) : null}
                   <button
                     type="button"
                     onClick={() => {
@@ -1009,6 +1015,40 @@ export default function VisitorDashboardView({
                   </button>
                 </div>
               </div>
+
+              {/* Success Notification Inside Modal */}
+              {successToast && (
+                <div className="mb-6 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <span className="text-sm font-bold">{successToast}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSuccessToast(null)}
+                    className="p-1 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Error Notification Inside Modal */}
+              {errorToast && (
+                <div className="mb-6 p-4 rounded-2xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-center gap-3">
+                    <X className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                    <span className="text-sm font-bold">{errorToast}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setErrorToast(null)}
+                    className="p-1 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
 
               {/* VIEW MODE */}
               {!isEditMode && (
@@ -1425,9 +1465,19 @@ export default function VisitorDashboardView({
                       <button
                         type="submit"
                         disabled={isUpdating}
-                        className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50"
+                        className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50 flex items-center gap-2"
                       >
-                        {isUpdating ? t('Saving...', 'جاري الحفظ...') : t('Save Changes', 'حفظ التعديلات')}
+                        {isUpdating ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>{t('Saving...', 'جاري الحفظ...')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span>{t('Save Changes', 'حفظ التعديلات')}</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   </form>
@@ -1515,6 +1565,20 @@ export default function VisitorDashboardView({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Toast Notification Floating Banner */}
+      {successToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[70] bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold animate-in fade-in slide-in-from-top-4">
+          <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+          <span>{successToast}</span>
+        </div>
+      )}
+      {errorToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[70] bg-red-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold animate-in fade-in slide-in-from-top-4">
+          <X className="w-5 h-5 flex-shrink-0" />
+          <span>{errorToast}</span>
         </div>
       )}
 

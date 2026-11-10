@@ -437,18 +437,18 @@ export async function createVisit(data: {
 
 // Update visit details
 export async function updateVisit(id: string, updates: Partial<VisitRecord>): Promise<{ success: boolean; error?: string }> {
+  let supabaseUpdated = false;
+
   try {
     const supabase = createAdminClient();
-    const updatePayload: any = { ...updates, updated_at: new Date().toISOString() };
-    delete updatePayload.visitors;
-    delete updatePayload.visit_visitors;
-
+    
+    // Process multiple organizations if provided
     let finalVisitors = updates.visitors;
+    const orgNamesEn: string[] = [];
+    const orgNamesAr: string[] = [];
+
     if (updates.organizations && updates.organizations.length > 0) {
       finalVisitors = [];
-      const orgNamesEn: string[] = [];
-      const orgNamesAr: string[] = [];
-
       updates.organizations.forEach(org => {
         const oEn = (org.organization_en || '').trim();
         const oAr = (org.organization_ar || '').trim();
@@ -467,32 +467,43 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
           });
         });
       });
-
-      if (orgNamesEn.length > 0) updatePayload.organization_en = orgNamesEn.join(' / ');
-      if (orgNamesAr.length > 0) updatePayload.organization_ar = orgNamesAr.join(' / ');
-      updatePayload.organizations = updates.organizations;
     }
 
-    const { error } = await supabase.from('visits').update(updatePayload).eq('id', id);
-    if (!error) {
-      if (finalVisitors) {
+    // Build clean Supabase payload using only existing columns in public.visits
+    const supabaseVisitPayload: any = { updated_at: new Date().toISOString() };
+    if (updates.visit_date !== undefined) supabaseVisitPayload.visit_date = updates.visit_date;
+    if (updates.time_in !== undefined) supabaseVisitPayload.time_in = updates.time_in;
+    if (updates.time_out !== undefined) supabaseVisitPayload.time_out = updates.time_out;
+    if (updates.country !== undefined) supabaseVisitPayload.country = updates.country;
+    if (updates.visit_reason !== undefined) supabaseVisitPayload.visit_reason = updates.visit_reason;
+    if (updates.notes !== undefined) supabaseVisitPayload.notes = updates.notes;
+    if (updates.registration_source !== undefined) supabaseVisitPayload.registration_source = updates.registration_source;
+
+    if (orgNamesEn.length > 0) supabaseVisitPayload.organization_en = orgNamesEn.join(' / ');
+    else if (updates.organization_en !== undefined) supabaseVisitPayload.organization_en = updates.organization_en;
+
+    if (orgNamesAr.length > 0) supabaseVisitPayload.organization_ar = orgNamesAr.join(' / ');
+    else if (updates.organization_ar !== undefined) supabaseVisitPayload.organization_ar = updates.organization_ar;
+
+    const { error: visitUpdateErr } = await supabase.from('visits').update(supabaseVisitPayload).eq('id', id);
+    if (!visitUpdateErr) {
+      supabaseUpdated = true;
+      if (finalVisitors && finalVisitors.length > 0) {
         await supabase.from('visit_visitors').delete().eq('visit_id', id);
         const visitorsToInsert = finalVisitors.map(vis => ({
           visit_id: id,
-          organization_en: vis.organization_en || updatePayload.organization_en || '',
-          organization_ar: vis.organization_ar || updatePayload.organization_ar || '',
           full_name_en: vis.full_name_en || '',
           full_name_ar: vis.full_name_ar || '',
-          phone_number: vis.phone_number || ''
+          phone_number: vis.phone_number || null
         }));
         await supabase.from('visit_visitors').insert(visitorsToInsert);
       }
-      return { success: true };
     }
   } catch (e) {
-    // fallback
+    console.error('Supabase updateVisit error:', e);
   }
 
+  // Also update local store (or fallback)
   const list = ensureLocalStore();
   const idx = list.findIndex(v => v.id === id);
   if (idx !== -1) {
@@ -541,6 +552,10 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
       updated_at: new Date().toISOString()
     };
     writeLocalStore(list);
+    return { success: true };
+  }
+
+  if (supabaseUpdated) {
     return { success: true };
   }
 
