@@ -56,8 +56,9 @@ export default function VisitorDashboardView({
   const [dateTo, setDateTo] = useState('');
 
   // Modals state
-  const [selectedVisitForDetails, setSelectedVisitForDetails] = useState<VisitRecord | null>(null);
-  const [editingVisit, setEditingVisit] = useState<VisitRecord | null>(null);
+  const [selectedVisitModal, setSelectedVisitModal] = useState<VisitRecord | null>(null);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [editForm, setEditForm] = useState<VisitRecord | null>(null);
   const [editCustomCoordination, setEditCustomCoordination] = useState<string>('');
   const [timeOutModal, setTimeOutModal] = useState<{ isOpen: boolean; visitId: string; time: string }>({
     isOpen: false,
@@ -269,91 +270,104 @@ export default function VisitorDashboardView({
     }
   };
 
+  // Open unified visit modal in view mode or edit mode
+  const handleOpenVisitModal = (visit: VisitRecord, editMode = false) => {
+    const v: VisitRecord = JSON.parse(JSON.stringify(visit));
+    if (!v.organizations || v.organizations.length === 0) {
+      v.organizations = extractOrganizationGroups(v);
+    }
+    setSelectedVisitModal(v);
+    setEditForm(JSON.parse(JSON.stringify(v)));
+    setIsEditMode(editMode);
+    const coord = v.coordination_by || 'Ectron';
+    setEditCustomCoordination(sisterCompaniesList.includes(coord) ? '' : coord);
+  };
+
   // Edit Organization & Visitors Handlers
-  const handleAddOrgToEdit = () => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+  const handleAddOrgInEdit = () => {
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     currentOrgs.push({
       organization_en: '',
       organization_ar: '',
       visitors: [{ full_name_en: '', full_name_ar: '', phone_number: '' }]
     });
-    setEditingVisit({ ...editingVisit, organizations: currentOrgs });
+    setEditForm({ ...editForm, organizations: currentOrgs });
   };
 
   const handleRemoveOrgFromEdit = (oIndex: number) => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     if (currentOrgs.length <= 1) return;
     const updated = currentOrgs.filter((_, idx) => idx !== oIndex);
-    setEditingVisit({ ...editingVisit, organizations: updated });
+    setEditForm({ ...editForm, organizations: updated });
   };
 
   const handleUpdateOrgInEdit = (oIndex: number, field: 'organization_en' | 'organization_ar', value: string) => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     currentOrgs[oIndex] = { ...currentOrgs[oIndex], [field]: value };
-    setEditingVisit({ ...editingVisit, organizations: currentOrgs });
+    setEditForm({ ...editForm, organizations: currentOrgs });
   };
 
   const handleAddVisitorToOrgInEdit = (oIndex: number) => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     const org = currentOrgs[oIndex];
     org.visitors = [...(org.visitors || []), { full_name_en: '', full_name_ar: '', phone_number: '' }];
-    setEditingVisit({ ...editingVisit, organizations: currentOrgs });
+    setEditForm({ ...editForm, organizations: currentOrgs });
   };
 
   const handleRemoveVisitorFromOrgInEdit = (oIndex: number, vIndex: number) => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     const org = currentOrgs[oIndex];
     if ((org.visitors || []).length <= 1) return;
     org.visitors = org.visitors.filter((_, idx) => idx !== vIndex);
-    setEditingVisit({ ...editingVisit, organizations: currentOrgs });
+    setEditForm({ ...editForm, organizations: currentOrgs });
   };
 
   const handleUpdateVisitorInOrgInEdit = (oIndex: number, vIndex: number, field: keyof VisitorItem, value: string) => {
-    if (!editingVisit) return;
-    const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-      ? [...editingVisit.organizations]
-      : extractOrganizationGroups(editingVisit);
+    if (!editForm) return;
+    const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+      ? [...editForm.organizations]
+      : extractOrganizationGroups(editForm);
 
     const org = currentOrgs[oIndex];
     const newVisitors = [...(org.visitors || [])];
     newVisitors[vIndex] = { ...newVisitors[vIndex], [field]: value };
     org.visitors = newVisitors;
-    setEditingVisit({ ...editingVisit, organizations: currentOrgs });
+    setEditForm({ ...editForm, organizations: currentOrgs });
   };
 
   // Handle Edit Save
-  const handleSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingVisit) return;
+  const handleSaveModalEdit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!editForm) return;
     setIsUpdating(true);
     try {
-      const finalCoordination = editingVisit.coordination_by === 'Other'
+      const finalCoordination = editForm.coordination_by === 'Other'
         ? (editCustomCoordination.trim() || 'Other')
-        : editingVisit.coordination_by;
+        : editForm.coordination_by;
 
-      const currentOrgs: OrganizationGroup[] = editingVisit.organizations && editingVisit.organizations.length > 0
-        ? editingVisit.organizations
-        : extractOrganizationGroups(editingVisit);
+      const currentOrgs: OrganizationGroup[] = editForm.organizations && editForm.organizations.length > 0
+        ? editForm.organizations
+        : extractOrganizationGroups(editForm);
 
       // Validate and clean organizations
       const validOrgs: OrganizationGroup[] = currentOrgs.map(org => ({
@@ -378,32 +392,35 @@ export default function VisitorDashboardView({
       });
 
       const updatedPayload: Partial<VisitRecord> = {
-        organization_en: summaryEn || editingVisit.organization_en,
-        organization_ar: summaryAr || editingVisit.organization_ar,
-        country: editingVisit.country,
+        organization_en: summaryEn || editForm.organization_en,
+        organization_ar: summaryAr || editForm.organization_ar,
+        country: editForm.country,
         coordination_by: finalCoordination,
-        visit_reason: editingVisit.visit_reason,
-        time_in: editingVisit.time_in,
-        time_out: editingVisit.time_out,
-        visit_date: editingVisit.visit_date,
-        notes: editingVisit.notes,
+        visit_reason: editForm.visit_reason,
+        time_in: editForm.time_in,
+        time_out: editForm.time_out,
+        visit_date: editForm.visit_date,
+        notes: editForm.notes,
         organizations: validOrgs.length > 0 ? validOrgs : undefined,
         visitors: flattenedVisitors.length > 0 ? flattenedVisitors : undefined
       };
 
-      const res = await updateVisitDetails(editingVisit.id, updatedPayload);
+      const res = await updateVisitDetails(editForm.id, updatedPayload);
       if (res.success) {
+        const updatedRecord: VisitRecord = {
+          ...editForm,
+          coordination_by: finalCoordination,
+          organization_en: updatedPayload.organization_en,
+          organization_ar: updatedPayload.organization_ar,
+          organizations: validOrgs.length > 0 ? validOrgs : editForm.organizations,
+          visitors: flattenedVisitors.length > 0 ? flattenedVisitors : editForm.visitors
+        };
         setVisits(prev =>
-          prev.map(v => (v.id === editingVisit.id ? { 
-            ...editingVisit, 
-            coordination_by: finalCoordination,
-            organization_en: updatedPayload.organization_en,
-            organization_ar: updatedPayload.organization_ar,
-            organizations: validOrgs.length > 0 ? validOrgs : editingVisit.organizations,
-            visitors: flattenedVisitors.length > 0 ? flattenedVisitors : editingVisit.visitors
-          } : v))
+          prev.map(v => (v.id === editForm.id ? updatedRecord : v))
         );
-        setEditingVisit(null);
+        setSelectedVisitModal(updatedRecord);
+        setEditForm(JSON.parse(JSON.stringify(updatedRecord)));
+        setIsEditMode(false);
       }
     } finally {
       setIsUpdating(false);
@@ -427,7 +444,7 @@ export default function VisitorDashboardView({
   ], [t]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="w-full space-y-6 pb-16">
       
       {/* 1. Header & Quick Actions Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-zinc-900/70 p-6 rounded-3xl border border-border shadow-sm glass">
@@ -473,30 +490,21 @@ export default function VisitorDashboardView({
             <span>{t('Import Excel', 'استيراد إكسل')}</span>
           </Link>
 
-          {/* Export Dropdown / Buttons */}
+          {/* Export Buttons */}
           <div className="flex items-center gap-2 border-l border-slate-200 dark:border-zinc-700 pl-3">
             <button
-              onClick={() => exportVisitsListToExcel(filteredVisits)}
-              title={t('Export Visits List to Excel', 'تصدير الزيارات إلى إكسل')}
-              className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold flex items-center gap-1.5"
-            >
-              <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
-              <span className="hidden sm:inline">{t('Visits Excel', 'إكسل الزيارات')}</span>
-            </button>
-
-            <button
               onClick={() => exportDetailedVisitorsToExcel(filteredVisits)}
-              title={t('Export Detailed Visitors Directory to Excel', 'تصدير دليل الزوار التفصيلي')}
-              className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold flex items-center gap-1.5"
+              title={t('Download Visitors List', 'تنزيل قائمة الزوار')}
+              className="px-4 py-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-sm sm:text-base font-bold flex items-center gap-2 transition-colors shadow-xs cursor-pointer"
             >
-              <Users className="w-5 h-5 text-[#0F766E]" />
-              <span className="hidden sm:inline">{t('Visitors Directory', 'دليل الزوار')}</span>
+              <FileSpreadsheet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <span>{t('Download Visitors List', 'تنزيل قائمة الزوار')}</span>
             </button>
 
             <button
               onClick={() => printVisitsReport()}
               title={t('Print Visits Report', 'طباعة تقرير الزيارات')}
-              className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold"
+              className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold transition-colors cursor-pointer"
             >
               <Printer className="w-5 h-5 text-slate-600 dark:text-zinc-400" />
             </button>
@@ -763,7 +771,9 @@ export default function VisitorDashboardView({
                   return (
                     <tr
                       key={visit.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/50 transition-colors group"
+                      onDoubleClick={() => handleOpenVisitModal(visit, false)}
+                      className="hover:bg-teal-50/50 dark:hover:bg-zinc-800/60 transition-colors group cursor-pointer select-none"
+                      title={t('Double-click to view and edit full details', 'انقر نقراً مزدوجاً لعرض وتعديل كامل البيانات')}
                     >
                       {/* Visit Number */}
                       <td className="py-4 px-4 font-mono font-extrabold text-base text-[#173B63] dark:text-teal-400 whitespace-nowrap">
@@ -885,8 +895,8 @@ export default function VisitorDashboardView({
                           {/* View Details */}
                           <button
                             type="button"
-                            onClick={() => setSelectedVisitForDetails(visit)}
-                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors"
+                            onClick={() => handleOpenVisitModal(visit, false)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors cursor-pointer"
                             title={t('View Full Details', 'عرض التفاصيل الكاملة')}
                           >
                             <Eye className="w-5 h-5" />
@@ -895,16 +905,8 @@ export default function VisitorDashboardView({
                           {/* Edit Visit */}
                           <button
                             type="button"
-                            onClick={() => {
-                              const v = JSON.parse(JSON.stringify(visit));
-                              if (!v.organizations || v.organizations.length === 0) {
-                                v.organizations = extractOrganizationGroups(v);
-                              }
-                              setEditingVisit(v);
-                              const coord = v.coordination_by || 'Ectron';
-                              setEditCustomCoordination(sisterCompaniesList.includes(coord) ? '' : coord);
-                            }}
-                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors"
+                            onClick={() => handleOpenVisitModal(visit, true)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
                             title={t('Edit Visit', 'تعديل الزيارة')}
                           >
                             <Edit3 className="w-5 h-5" />
@@ -940,166 +942,497 @@ export default function VisitorDashboardView({
         </div>
       </div>
 
-      {/* MODAL 1: Details View Modal */}
-      {selectedVisitForDetails && (() => {
-        const detailsOrgGroups = extractOrganizationGroups(selectedVisitForDetails);
+      {/* MODAL 1: Unified View & Edit Visit Modal */}
+      {selectedVisitModal && (() => {
+        const detailsOrgGroups = selectedVisitModal.organizations && selectedVisitModal.organizations.length > 0
+          ? selectedVisitModal.organizations
+          : extractOrganizationGroups(selectedVisitModal);
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 border border-border shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-4xl w-full p-6 sm:p-8 border border-border shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
               
-              <button
-                onClick={() => setSelectedVisitForDetails(null)}
-                className="absolute left-6 top-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] flex items-center justify-center text-white shadow-md">
-                  <Building2 className="w-7 h-7" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono font-bold text-[#0F766E] dark:text-teal-400">
-                      {selectedVisitForDetails.visit_number}
-                    </span>
-                    {detailsOrgGroups.length > 1 && (
-                      <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                        {t('Joint Delegation', 'وفد مشترك')} ({detailsOrgGroups.length} {t('orgs', 'مؤسسات')})
-                      </span>
-                    )}
+              {/* Header Bar */}
+              <div className="flex items-start justify-between gap-4 mb-6 pb-4 border-b border-border">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] flex items-center justify-center text-white shadow-md flex-shrink-0">
+                    <Building2 className="w-7 h-7" />
                   </div>
-                  <h3 className="text-2xl font-extrabold text-[#173B63] dark:text-white mt-1">
-                    {selectedVisitForDetails.organization_ar || selectedVisitForDetails.organization_en || t('Visit Details', 'تفاصيل الزيارة')}
-                  </h3>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-mono font-bold text-[#0F766E] dark:text-teal-400">
+                        {selectedVisitModal.visit_number}
+                      </span>
+                      {detailsOrgGroups.length > 1 && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                          {t('Joint Delegation', 'وفد مشترك')} ({detailsOrgGroups.length} {t('orgs', 'مؤسسات')})
+                        </span>
+                      )}
+                      {isEditMode && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                          {t('Edit Mode', 'وضع التعديل')}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-[#173B63] dark:text-white mt-1">
+                      {isEditMode
+                        ? `${t('Edit Visit Details', 'تعديل بيانات الزيارة')} (${selectedVisitModal.visit_number})`
+                        : (selectedVisitModal.organization_ar || selectedVisitModal.organization_en || t('Visit Details', 'تفاصيل الزيارة'))
+                      }
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Top Corner Action Controls */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {!isEditMode ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsEditMode(true)}
+                      className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                      title={t('Edit Visit', 'تعديل بيانات الزيارة')}
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      <span>{t('Edit', 'تعديل')}</span>
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedVisitModal(null);
+                      setIsEditMode(false);
+                    }}
+                    className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors"
+                    title={t('Close', 'إغلاق')}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-6 bg-slate-50 dark:bg-zinc-800/60 p-5 rounded-2xl border border-border text-base">
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Date', 'تاريخ الزيارة')}</span>
-                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.visit_date}</span>
-                </div>
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time In', 'وقت الدخول')}</span>
-                  <span className="font-extrabold text-base text-[#0F766E] dark:text-teal-400 font-mono">{selectedVisitForDetails.time_in}</span>
-                </div>
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time Out', 'وقت الخروج')}</span>
-                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100 font-mono">{selectedVisitForDetails.time_out || t('Not recorded yet', 'لم يسجل بعد')}</span>
-                </div>
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Country', 'الدولة')}</span>
-                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.country || 'Oman'}</span>
-                </div>
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Coordination by', 'عن طريق')}</span>
-                  <div>{renderCoordinationBadge(selectedVisitForDetails.coordination_by)}</div>
-                </div>
-                <div>
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Registration Source', 'مصدر التسجيل')}</span>
-                  <span className="font-bold text-base capitalize text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.registration_source}</span>
-                </div>
-                <div className="col-span-2 sm:col-span-3">
-                  <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Reason', 'سبب الزيارة')}</span>
-                  <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitForDetails.visit_reason || '—'}</span>
-                </div>
-              </div>
+              {/* VIEW MODE */}
+              {!isEditMode && (
+                <div className="space-y-6">
+                  {/* General Info Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 bg-slate-50 dark:bg-zinc-800/60 p-5 rounded-2xl border border-border text-base">
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Date', 'تاريخ الزيارة')}</span>
+                      <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitModal.visit_date}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time In', 'وقت الدخول')}</span>
+                      <span className="font-extrabold text-base text-[#0F766E] dark:text-teal-400 font-mono">{selectedVisitModal.time_in}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Time Out', 'وقت الخروج')}</span>
+                      <span className="font-bold text-base text-slate-800 dark:text-zinc-100 font-mono">{selectedVisitModal.time_out || t('Not recorded yet', 'لم يسجل بعد')}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Country', 'الدولة')}</span>
+                      <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitModal.country || 'Oman'}</span>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Coordination by', 'عن طريق')}</span>
+                      <div>{renderCoordinationBadge(selectedVisitModal.coordination_by)}</div>
+                    </div>
+                    <div>
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Registration Source', 'مصدر التسجيل')}</span>
+                      <span className="font-bold text-base capitalize text-slate-800 dark:text-zinc-100">{selectedVisitModal.registration_source}</span>
+                    </div>
+                    <div className="col-span-2 sm:col-span-3">
+                      <span className="block text-slate-400 font-semibold mb-1 text-sm">{t('Visit Reason', 'سبب الزيارة')}</span>
+                      <span className="font-bold text-base text-slate-800 dark:text-zinc-100">{selectedVisitModal.visit_reason || '—'}</span>
+                    </div>
+                  </div>
 
-              {/* Notes */}
-              {selectedVisitForDetails.notes && (
-                <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 text-sm">
-                  <span className="font-bold text-amber-800 dark:text-amber-300 block mb-1">{t('Visit Notes:', 'ملاحظات الزيارة:')}</span>
-                  <p className="text-slate-800 dark:text-zinc-200 leading-relaxed font-medium">{selectedVisitForDetails.notes}</p>
+                  {/* Notes */}
+                  {selectedVisitModal.notes && (
+                    <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 text-sm">
+                      <span className="font-bold text-amber-800 dark:text-amber-300 block mb-1">{t('Visit Notes:', 'ملاحظات الزيارة:')}</span>
+                      <p className="text-slate-800 dark:text-zinc-200 leading-relaxed font-medium">{selectedVisitModal.notes}</p>
+                    </div>
+                  )}
+
+                  {/* Organizations & Associated Visitors */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
+                        <Users className="w-5 h-5 text-[#0F766E]" />
+                        <span>{t('Participating Organizations & Visitors', 'المؤسسات والزوار المشاركون')} ({selectedVisitModal.visitors?.length || 0} {t('visitors', 'زائر')})</span>
+                      </h4>
+                      {detailsOrgGroups.length > 1 && (
+                        <span className="text-xs px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 font-extrabold">
+                          {detailsOrgGroups.length} {t('participating organizations', 'مؤسسات مشاركة')}
+                        </span>
+                      )}
+                    </div>
+
+                    {detailsOrgGroups.map((org, oIdx) => (
+                      <div key={oIdx} className="border border-border rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-zinc-800/40 shadow-sm">
+                        {/* Organization sub-header */}
+                        <div className="p-3.5 bg-gradient-to-r from-[#F0F7FC] to-[#F0FBF9] dark:from-zinc-800 dark:to-zinc-800/80 border-b border-border flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 text-[#0F766E] dark:text-teal-400 flex items-center justify-center font-bold text-sm">
+                              {oIdx + 1}
+                            </div>
+                            <div>
+                              <span className="text-base font-extrabold text-[#173B63] dark:text-white">
+                                {org.organization_ar || org.organization_en || t('Organization / Entity', 'المؤسسة / الجهة')}
+                              </span>
+                              {org.organization_ar && org.organization_en && (
+                                <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium mr-2">
+                                  ({org.organization_en})
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-700 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200/60 dark:border-teal-800 shadow-sm">
+                            {org.visitors?.length || 0} {t('visitors', 'زائر')}
+                          </span>
+                        </div>
+
+                        {/* Visitors table for this organization */}
+                        <table className="w-full text-right text-sm">
+                          <thead className="bg-white dark:bg-zinc-800/60 text-slate-600 dark:text-zinc-300 font-bold border-b border-border">
+                            <tr>
+                              <th className="py-2.5 px-3.5 w-12 text-center">#</th>
+                              <th className="py-2.5 px-3.5">{t('Name (Arabic)', 'الاسم بالعربية')}</th>
+                              <th className="py-2.5 px-3.5">{t('Name (English)', 'الاسم بالإنجليزية')}</th>
+                              <th className="py-2.5 px-3.5">{t('Phone Number', 'رقم الهاتف')}</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border bg-white dark:bg-zinc-900">
+                            {(!org.visitors || org.visitors.length === 0) ? (
+                              <tr>
+                                <td colSpan={4} className="py-4 text-center text-slate-400 text-xs">{t('No visitors registered for this organization', 'لا يوجد زوار مسجلون لهذه المؤسسة')}</td>
+                              </tr>
+                            ) : (
+                              org.visitors.map((vis, vIdx) => (
+                                <tr key={vis.id || vIdx} className="hover:bg-slate-50 dark:hover:bg-zinc-800/40 font-medium">
+                                  <td className="py-2.5 px-3.5 text-center font-bold text-slate-400">{vIdx + 1}</td>
+                                  <td className="py-2.5 px-3.5 font-bold text-slate-900 dark:text-zinc-100">{vis.full_name_ar || '—'}</td>
+                                  <td className="py-2.5 px-3.5 text-slate-700 dark:text-zinc-300">{vis.full_name_en || '—'}</td>
+                                  <td className="py-2.5 px-3.5 font-mono text-slate-700 dark:text-zinc-300">
+                                    {vis.phone_number ? (
+                                      <a href={`tel:${vis.phone_number}`} className="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-bold">
+                                        <PhoneCall className="w-3.5 h-3.5" />
+                                        <span>{vis.phone_number}</span>
+                                      </a>
+                                    ) : '—'}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bottom View Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditMode(true)}
+                      className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 flex items-center gap-2 transition-all"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      <span>{t('Edit Visit', 'تعديل بيانات الزيارة')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedVisitModal(null);
+                        setIsEditMode(false);
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-sm font-bold transition-colors"
+                    >
+                      {t('Close', 'إغلاق النافذة')}
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {/* Organizations & Associated Visitors */}
-              <div className="mb-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
-                    <Users className="w-5 h-5 text-[#0F766E]" />
-                    <span>{t('Participating Organizations & Visitors', 'المؤسسات والزوار المشاركون')} ({selectedVisitForDetails.visitors?.length || 0} {t('visitors', 'زائر')})</span>
-                  </h4>
-                  {detailsOrgGroups.length > 1 && (
-                    <span className="text-xs px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 font-extrabold">
-                      {detailsOrgGroups.length} {t('participating organizations', 'مؤسسات مشاركة')}
-                    </span>
-                  )}
-                </div>
+              {/* EDIT MODE */}
+              {isEditMode && editForm && (() => {
+                const currentOrgs = editForm.organizations && editForm.organizations.length > 0
+                  ? editForm.organizations
+                  : extractOrganizationGroups(editForm);
 
-                {detailsOrgGroups.map((org, oIdx) => (
-                  <div key={oIdx} className="border border-border rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-zinc-800/40 shadow-sm">
-                    {/* Organization sub-header */}
-                    <div className="p-3.5 bg-gradient-to-r from-[#F0F7FC] to-[#F0FBF9] dark:from-zinc-800 dark:to-zinc-800/80 border-b border-border flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/40 text-[#0F766E] dark:text-teal-400 flex items-center justify-center font-bold text-sm">
-                          {oIdx + 1}
+                return (
+                  <form onSubmit={handleSaveModalEdit} className="space-y-6">
+                    {/* General Visit Info */}
+                    <div className="bg-slate-50/70 dark:bg-zinc-800/40 p-4 sm:p-5 rounded-2xl border border-border space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        <div>
+                          <label className="block text-xs sm:text-sm font-bold mb-1">{t('Visit Date', 'تاريخ الزيارة')}</label>
+                          <input
+                            type="date"
+                            required
+                            value={editForm.visit_date}
+                            onChange={e => setEditForm({ ...editForm, visit_date: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold"
+                          />
                         </div>
                         <div>
-                          <span className="text-base font-extrabold text-[#173B63] dark:text-white">
-                            {org.organization_ar || org.organization_en || t('Organization / Entity', 'المؤسسة / الجهة')}
-                          </span>
-                          {org.organization_ar && org.organization_en && (
-                            <span className="text-xs text-slate-500 dark:text-zinc-400 font-medium mr-2">
-                              ({org.organization_en})
-                            </span>
-                          )}
+                          <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time In', 'وقت الدخول')}</label>
+                          <input
+                            type="time"
+                            required
+                            value={editForm.time_in}
+                            onChange={e => setEditForm({ ...editForm, time_in: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time Out', 'وقت الخروج')}</label>
+                          <input
+                            type="time"
+                            value={editForm.time_out || ''}
+                            onChange={e => setEditForm({ ...editForm, time_out: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
+                          />
                         </div>
                       </div>
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-700 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200/60 dark:border-teal-800 shadow-sm">
-                        {org.visitors?.length || 0} {t('visitors', 'زائر')}
-                      </span>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Country', 'الدولة')}</label>
+                          <input
+                            type="text"
+                            value={editForm.country || ''}
+                            onChange={e => setEditForm({ ...editForm, country: e.target.value })}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Coordination by', 'عن طريق')}</label>
+                          <select
+                            value={
+                              sisterCompaniesList.includes(editForm.coordination_by || 'Ectron')
+                                ? (editForm.coordination_by || 'Ectron')
+                                : 'Other'
+                            }
+                            onChange={e => {
+                              const val = e.target.value;
+                              if (val === 'Other') {
+                                setEditForm({ ...editForm, coordination_by: 'Other' });
+                                if (!editCustomCoordination) setEditCustomCoordination(editForm.coordination_by || '');
+                              } else {
+                                setEditForm({ ...editForm, coordination_by: val });
+                              }
+                            }}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold"
+                          >
+                            <option value="Ectron">Ectron</option>
+                            <option value="NEC">NEC</option>
+                            <option value="AAMU">AAMU</option>
+                            <option value="Tadoom">Tadoom</option>
+                            <option value="TadoomX">TadoomX</option>
+                            <option value="Other">{t('Other', 'أخرى (تحديد جهة التنسيق)')}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {((editForm.coordination_by === 'Other') || (!sisterCompaniesList.includes(editForm.coordination_by || 'Ectron'))) && (
+                        <div>
+                          <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Specify Coordination Agency', 'تحديد جهة التنسيق')}</label>
+                          <input
+                            type="text"
+                            value={editCustomCoordination || editForm.coordination_by || ''}
+                            onChange={e => {
+                              setEditCustomCoordination(e.target.value);
+                              setEditForm({ ...editForm, coordination_by: e.target.value });
+                            }}
+                            placeholder={t('Type coordination agency name...', 'اكتب اسم جهة التنسيق...')}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Visit Reason', 'سبب الزيارة')}</label>
+                        <input
+                          type="text"
+                          value={editForm.visit_reason || ''}
+                          onChange={e => setEditForm({ ...editForm, visit_reason: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Notes', 'ملاحظات')}</label>
+                        <textarea
+                          rows={2}
+                          value={editForm.notes || ''}
+                          onChange={e => setEditForm({ ...editForm, notes: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
+                        />
+                      </div>
                     </div>
 
-                    {/* Visitors table for this organization */}
-                    <table className="w-full text-right text-sm">
-                      <thead className="bg-white dark:bg-zinc-800/60 text-slate-600 dark:text-zinc-300 font-bold border-b border-border">
-                        <tr>
-                          <th className="py-2.5 px-3.5 w-12 text-center">#</th>
-                          <th className="py-2.5 px-3.5">{t('Name (Arabic)', 'الاسم بالعربية')}</th>
-                          <th className="py-2.5 px-3.5">{t('Name (English)', 'الاسم بالإنجليزية')}</th>
-                          <th className="py-2.5 px-3.5">{t('Phone Number', 'رقم الهاتف')}</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border bg-white dark:bg-zinc-900">
-                        {(!org.visitors || org.visitors.length === 0) ? (
-                          <tr>
-                            <td colSpan={4} className="py-4 text-center text-slate-400 text-xs">{t('No visitors registered for this organization', 'لا يوجد زوار مسجلون لهذه المؤسسة')}</td>
-                          </tr>
-                        ) : (
-                          org.visitors.map((vis, vIdx) => (
-                            <tr key={vis.id || vIdx} className="hover:bg-slate-50 dark:hover:bg-zinc-800/40 font-medium">
-                              <td className="py-2.5 px-3.5 text-center font-bold text-slate-400">{vIdx + 1}</td>
-                              <td className="py-2.5 px-3.5 font-bold text-slate-900 dark:text-zinc-100">{vis.full_name_ar || '—'}</td>
-                              <td className="py-2.5 px-3.5 text-slate-700 dark:text-zinc-300">{vis.full_name_en || '—'}</td>
-                              <td className="py-2.5 px-3.5 font-mono text-slate-700 dark:text-zinc-300">
-                                {vis.phone_number ? (
-                                  <a href={`tel:${vis.phone_number}`} className="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-bold">
-                                    <PhoneCall className="w-3.5 h-3.5" />
-                                    <span>{vis.phone_number}</span>
-                                  </a>
-                                ) : '—'}
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                ))}
-              </div>
+                    {/* Multi-Organizations Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-base sm:text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
+                            <Building2 className="w-5 h-5 text-[#0F766E]" />
+                            <span>{t('Organizations & Visitors', 'المؤسسات والزوار التابعين لها')}</span>
+                          </h4>
+                          <p className="text-xs text-slate-500">{t('Edit names and visitors under each organization', 'يمكنك تعديل أسماء المؤسسات والزوار التابعين لكل مؤسسة')}</p>
+                        </div>
 
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setSelectedVisitForDetails(null)}
-                  className="px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 text-slate-800 dark:text-zinc-200 text-sm font-bold transition-colors"
-                >
-                  {t('Close', 'إغلاق النافذة')}
-                </button>
-              </div>
+                        <button
+                          type="button"
+                          onClick={handleAddOrgInEdit}
+                          className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 text-xs sm:text-sm font-bold flex items-center gap-1.5"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>{t('Add Another Organization', 'إضافة مؤسسة أخرى')}</span>
+                        </button>
+                      </div>
+
+                      {currentOrgs.map((org, oIdx) => (
+                        <div key={oIdx} className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/60 shadow-sm space-y-4">
+                          {/* Organization Header */}
+                          <div className="flex items-center justify-between pb-3 border-b border-border">
+                            <div className="flex items-center gap-2">
+                              <span className="w-7 h-7 rounded-lg bg-teal-100 dark:bg-teal-900/50 text-[#0F766E] dark:text-teal-400 font-extrabold text-xs flex items-center justify-center">
+                                {oIdx + 1}
+                              </span>
+                              <span className="text-sm sm:text-base font-extrabold text-[#173B63] dark:text-white">
+                                {t('Organization', 'المؤسسة رقم')} #{oIdx + 1}
+                              </span>
+                            </div>
+
+                            {currentOrgs.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveOrgFromEdit(oIdx)}
+                                className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                                title={t('Delete this organization', 'حذف هذه المؤسسة')}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Organization Names */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                              <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
+                                {t('Organization Name (Arabic)', 'اسم المؤسسة بالعربية')}
+                              </label>
+                              <input
+                                type="text"
+                                value={org.organization_ar || ''}
+                                onChange={e => handleUpdateOrgInEdit(oIdx, 'organization_ar', e.target.value)}
+                                placeholder={t('e.g. Nama Supply', 'مثال: نماء لتزويد الكهرباء')}
+                                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
+                                {t('Organization Name (English)', 'اسم المؤسسة بالإنجليزية')}
+                              </label>
+                              <input
+                                type="text"
+                                value={org.organization_en || ''}
+                                onChange={e => handleUpdateOrgInEdit(oIdx, 'organization_en', e.target.value)}
+                                placeholder="e.g. Nama Supply"
+                                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Visitors for this org */}
+                          <div className="pt-2 border-t border-slate-100 dark:border-zinc-700/50 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-zinc-300">
+                                {t('Visitors for this Organization', 'الزوار التابعين لهذه المؤسسة')} ({org.visitors?.length || 0})
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleAddVisitorToOrgInEdit(oIdx)}
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold text-[#0F766E] dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 border border-teal-200/60 dark:border-teal-800 flex items-center gap-1"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>{t('Add Visitor', 'إضافة زائر')}</span>
+                              </button>
+                            </div>
+
+                            {(org.visitors || []).map((vis, vIdx) => (
+                              <div key={vis.id || vIdx} className="p-3 rounded-xl bg-slate-50/80 dark:bg-zinc-800/90 border border-slate-200/80 dark:border-zinc-700/60 grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                                <div className="sm:col-span-4">
+                                  <input
+                                    type="text"
+                                    placeholder={t('Name in Arabic', 'الاسم بالعربية')}
+                                    value={vis.full_name_ar || ''}
+                                    onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_ar', e.target.value)}
+                                    className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold"
+                                  />
+                                </div>
+                                <div className="sm:col-span-4">
+                                  <input
+                                    type="text"
+                                    placeholder={t('Name in English', 'Name in English')}
+                                    value={vis.full_name_en || ''}
+                                    onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_en', e.target.value)}
+                                    className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium"
+                                  />
+                                </div>
+                                <div className="sm:col-span-3">
+                                  <input
+                                    type="tel"
+                                    placeholder={t('Phone Number', 'رقم الهاتف')}
+                                    value={vis.phone_number || ''}
+                                    onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'phone_number', e.target.value)}
+                                    className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-mono font-medium"
+                                  />
+                                </div>
+                                <div className="sm:col-span-1 flex justify-center">
+                                  {(org.visitors || []).length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveVisitorFromOrgInEdit(oIdx, vIdx)}
+                                      className="p-1 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
+                                      title={t('Delete this visitor', 'حذف هذا الزائر')}
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Edit Actions */}
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditForm(JSON.parse(JSON.stringify(selectedVisitModal)));
+                          setIsEditMode(false);
+                        }}
+                        className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                      >
+                        {t('Cancel', 'إلغاء')}
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isUpdating}
+                        className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50"
+                      >
+                        {isUpdating ? t('Saving...', 'جاري الحفظ...') : t('Save Changes', 'حفظ التعديلات')}
+                      </button>
+                    </div>
+                  </form>
+                );
+              })()}
 
             </div>
           </div>
@@ -1184,303 +1517,6 @@ export default function VisitorDashboardView({
           </div>
         </div>
       )}
-
-      {/* MODAL 4: Edit Visit Modal */}
-      {editingVisit && (() => {
-        const currentOrgs = editingVisit.organizations && editingVisit.organizations.length > 0
-          ? editingVisit.organizations
-          : extractOrganizationGroups(editingVisit);
-
-        return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 border border-border shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-              
-              <button
-                onClick={() => setEditingVisit(null)}
-                className="absolute left-6 top-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#173B63] dark:text-white mb-1">
-                {t('Edit Visit Details', 'تعديل بيانات الزيارة')} ({editingVisit.visit_number})
-              </h3>
-              <p className="text-sm text-slate-500 mb-6">
-                {t('Update participating organizations, timing, and visitors list', 'تحديث تفاصيل المؤسسات المشاركة وتوقيت الزيارة وقائمة الزوار')}
-              </p>
-
-              <form onSubmit={handleSaveEdit} className="space-y-6">
-                {/* General Visit Info */}
-                <div className="bg-slate-50/70 dark:bg-zinc-800/40 p-4 sm:p-5 rounded-2xl border border-border space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Visit Date', 'تاريخ الزيارة')}</label>
-                      <input
-                        type="date"
-                        required
-                        value={editingVisit.visit_date}
-                        onChange={e => setEditingVisit({ ...editingVisit, visit_date: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time In', 'وقت الدخول')}</label>
-                      <input
-                        type="time"
-                        required
-                        value={editingVisit.time_in}
-                        onChange={e => setEditingVisit({ ...editingVisit, time_in: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time Out', 'وقت الخروج')}</label>
-                      <input
-                        type="time"
-                        value={editingVisit.time_out || ''}
-                        onChange={e => setEditingVisit({ ...editingVisit, time_out: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Country', 'الدولة')}</label>
-                      <input
-                        type="text"
-                        value={editingVisit.country || ''}
-                        onChange={e => setEditingVisit({ ...editingVisit, country: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Coordination by', 'عن طريق')}</label>
-                      <select
-                        value={
-                          sisterCompaniesList.includes(editingVisit.coordination_by || 'Ectron')
-                            ? (editingVisit.coordination_by || 'Ectron')
-                            : 'Other'
-                        }
-                        onChange={e => {
-                          const val = e.target.value;
-                          if (val === 'Other') {
-                            setEditingVisit({ ...editingVisit, coordination_by: 'Other' });
-                            if (!editCustomCoordination) setEditCustomCoordination(editingVisit.coordination_by || '');
-                          } else {
-                            setEditingVisit({ ...editingVisit, coordination_by: val });
-                          }
-                        }}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold"
-                      >
-                        <option value="Ectron">Ectron</option>
-                        <option value="NEC">NEC</option>
-                        <option value="AAMU">AAMU</option>
-                        <option value="Tadoom">Tadoom</option>
-                        <option value="TadoomX">TadoomX</option>
-                        <option value="Other">{t('Other', 'أخرى (تحديد جهة التنسيق)')}</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {((editingVisit.coordination_by === 'Other') || (!sisterCompaniesList.includes(editingVisit.coordination_by || 'Ectron'))) && (
-                    <div>
-                      <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Specify Coordination Agency', 'تحديد جهة التنسيق')}</label>
-                      <input
-                        type="text"
-                        value={editCustomCoordination || editingVisit.coordination_by || ''}
-                        onChange={e => {
-                          setEditCustomCoordination(e.target.value);
-                          setEditingVisit({ ...editingVisit, coordination_by: e.target.value });
-                        }}
-                        placeholder={t('Type coordination agency name...', 'اكتب اسم جهة التنسيق...')}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
-                      />
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Visit Reason', 'سبب الزيارة')}</label>
-                    <input
-                      type="text"
-                      value={editingVisit.visit_reason || ''}
-                      onChange={e => setEditingVisit({ ...editingVisit, visit_reason: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs sm:text-sm font-bold mb-1.5">{t('Notes', 'ملاحظات')}</label>
-                    <textarea
-                      rows={2}
-                      value={editingVisit.notes || ''}
-                      onChange={e => setEditingVisit({ ...editingVisit, notes: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium"
-                    />
-                  </div>
-                </div>
-
-                {/* Multi-Organizations Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-base sm:text-lg font-extrabold text-[#173B63] dark:text-white flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-[#0F766E]" />
-                        <span>{t('Organizations & Visitors', 'المؤسسات والزوار التابعين لها')}</span>
-                      </h4>
-                      <p className="text-xs text-slate-500">{t('Edit names and visitors under each organization', 'يمكنك تعديل أسماء المؤسسات والزوار التابعين لكل مؤسسة')}</p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleAddOrgToEdit}
-                      className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 text-xs sm:text-sm font-bold flex items-center gap-1.5"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>{t('Add Another Organization', 'إضافة مؤسسة أخرى')}</span>
-                    </button>
-                  </div>
-
-                  {currentOrgs.map((org, oIdx) => (
-                    <div key={oIdx} className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/60 shadow-sm space-y-4">
-                      {/* Organization Header */}
-                      <div className="flex items-center justify-between pb-3 border-b border-border">
-                        <div className="flex items-center gap-2">
-                          <span className="w-7 h-7 rounded-lg bg-teal-100 dark:bg-teal-900/50 text-[#0F766E] dark:text-teal-400 font-extrabold text-xs flex items-center justify-center">
-                            {oIdx + 1}
-                          </span>
-                          <span className="text-sm sm:text-base font-extrabold text-[#173B63] dark:text-white">
-                            {t('Organization', 'المؤسسة رقم')} #{oIdx + 1}
-                          </span>
-                        </div>
-
-                        {currentOrgs.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveOrgFromEdit(oIdx)}
-                            className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
-                            title={t('Delete this organization', 'حذف هذه المؤسسة')}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Organization Names */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                        <div>
-                          <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
-                            {t('Organization Name (Arabic)', 'اسم المؤسسة بالعربية')}
-                          </label>
-                          <input
-                            type="text"
-                            value={org.organization_ar || ''}
-                            onChange={e => handleUpdateOrgInEdit(oIdx, 'organization_ar', e.target.value)}
-                            placeholder={t('e.g. Nama Supply', 'مثال: نماء لتزويد الكهرباء')}
-                            className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-xs font-bold mb-1 text-slate-600 dark:text-zinc-300">
-                            {t('Organization Name (English)', 'اسم المؤسسة بالإنجليزية')}
-                          </label>
-                          <input
-                            type="text"
-                            value={org.organization_en || ''}
-                            onChange={e => handleUpdateOrgInEdit(oIdx, 'organization_en', e.target.value)}
-                            placeholder="e.g. Nama Supply"
-                            className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Visitors for this org */}
-                      <div className="pt-2 border-t border-slate-100 dark:border-zinc-700/50 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs sm:text-sm font-bold text-slate-700 dark:text-zinc-300">
-                            {t('Visitors for this Organization', 'الزوار التابعين لهذه المؤسسة')} ({org.visitors?.length || 0})
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleAddVisitorToOrgInEdit(oIdx)}
-                            className="px-2.5 py-1 rounded-lg text-xs font-bold text-[#0F766E] dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 border border-teal-200/60 dark:border-teal-800 flex items-center gap-1"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>{t('Add Visitor', 'إضافة زائر')}</span>
-                          </button>
-                        </div>
-
-                        {(org.visitors || []).map((vis, vIdx) => (
-                          <div key={vis.id || vIdx} className="p-3 rounded-xl bg-slate-50/80 dark:bg-zinc-800/90 border border-slate-200/80 dark:border-zinc-700/60 grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
-                            <div className="sm:col-span-4">
-                              <input
-                                type="text"
-                                placeholder={t('Name in Arabic', 'الاسم بالعربية')}
-                                value={vis.full_name_ar || ''}
-                                onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_ar', e.target.value)}
-                                className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold"
-                              />
-                            </div>
-                            <div className="sm:col-span-4">
-                              <input
-                                type="text"
-                                placeholder={t('Name in English', 'Name in English')}
-                                value={vis.full_name_en || ''}
-                                onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'full_name_en', e.target.value)}
-                                className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium"
-                              />
-                            </div>
-                            <div className="sm:col-span-3">
-                              <input
-                                type="tel"
-                                placeholder={t('Phone Number', 'رقم الهاتف')}
-                                value={vis.phone_number || ''}
-                                onChange={e => handleUpdateVisitorInOrgInEdit(oIdx, vIdx, 'phone_number', e.target.value)}
-                                className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-mono font-medium"
-                              />
-                            </div>
-                            <div className="sm:col-span-1 flex justify-center">
-                              {(org.visitors || []).length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveVisitorFromOrgInEdit(oIdx, vIdx)}
-                                  className="p-1 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
-                                  title={t('Delete this visitor', 'حذف هذا الزائر')}
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-                  <button
-                    type="button"
-                    onClick={() => setEditingVisit(null)}
-                    className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800"
-                  >
-                    {t('Cancel', 'إلغاء')}
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isUpdating}
-                    className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50"
-                  >
-                    {isUpdating ? t('Saving...', 'جاري الحفظ...') : t('Save Changes', 'حفظ التعديلات')}
-                  </button>
-                </div>
-              </form>
-
-            </div>
-          </div>
-        );
-      })()}
 
     </div>
   );
