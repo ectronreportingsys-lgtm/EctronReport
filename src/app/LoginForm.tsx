@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Loader2 } from 'lucide-react';
 import { useLanguage } from '@/components/layout/LanguageProvider';
+import { normalizeAuthPassword } from '@/lib/authUtils';
 
 export default function LoginForm() {
   const { t } = useLanguage();
@@ -23,10 +24,22 @@ export default function LoginForm() {
 
     const supabase = createClient();
     
-    const { error } = await supabase.auth.signInWithPassword({
+    const normalizedPassword = normalizeAuthPassword(password);
+    let { error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password: normalizedPassword,
     });
+
+    // Fallback attempt in case user was registered with raw password
+    if (error && normalizedPassword !== password) {
+      const fallbackAttempt = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (!fallbackAttempt.error) {
+        error = null;
+      }
+    }
 
     if (error) {
       setError(error.message === 'Invalid login credentials' ? t('Invalid username or password', 'اسم المستخدم أو كلمة المرور غير صحيحة') : error.message);

@@ -204,10 +204,14 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
                 <input
                   type="password"
                   required={!user}
+                  placeholder={user ? '••••••••' : t('e.g. 1234 (4 numbers or more)', 'مثال: 1234 (أربعة أرقام أو أكثر)')}
                   value={formData.password}
                   onChange={e => setFormData({ ...formData, password: e.target.value })}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
+                <p className="text-[11px] text-zinc-400 mt-1">
+                  {t('Supports 4 numbers (PIN) or standard password', 'يمكن تعيين 4 أرقام أو أي كلمة مرور')}
+                </p>
               </div>
 
               <div>

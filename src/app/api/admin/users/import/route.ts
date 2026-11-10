@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase-admin';
+import { normalizeAuthPassword } from '@/lib/authUtils';
 
 export async function POST(request: Request) {
   try {
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
 
         const { data: authData, error: authError } = await supabase.auth.admin.createUser({
           email,
-          password: String(u.password),
+          password: normalizeAuthPassword(u.password),
           email_confirm: true,
           user_metadata: {
             username: usernameStr,
