@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Zap, Droplet, PlusCircle, Banknote, MapPin, ShieldAlert } from 'lucide-react';
+import { Zap, Droplet, PlusCircle, Banknote, MapPin, ShieldAlert, FolderArchive } from 'lucide-react';
 import { useLanguage } from '@/components/layout/LanguageProvider';
 import { useAuth } from '@/components/layout/ClientLayoutShell';
 
@@ -80,6 +80,21 @@ export default function HomePage() {
       borderClass: 'border-2 border-[#8ED8CD] hover:border-[#14B8A6] dark:border dark:border-[#00a99d]/25',
       iconBg: 'bg-gradient-to-br from-[#0F766E] to-[#14B8A6] border border-[#14B8A6]/30 dark:bg-none dark:bg-[#00a99d]/15 dark:border-[#00a99d]/30',
       iconColor: 'text-white dark:text-[#00a99d]',
+    },
+    {
+      id: 'library',
+      name: t('Library (EDCS)', 'المكتبة والوثائق (EDCS)'),
+      description: t(
+        'Factory data repository, document control, expiration monitoring & 14-day alerts',
+        'مكتبة بيانات المصنع، حفظ الأوراق الرسمية، ومراقبة الصلاحية والتنبيهات المبكرة'
+      ),
+      permissions: ['library_dashboard', 'library_registry'],
+      icon: FolderArchive,
+      href: '/library/dashboard',
+      bgClass: 'bg-gradient-to-br from-white via-[#F0FDF4] to-[#DCFCE7] hover:to-[#CCFBF1] dark:bg-none dark:bg-[#00a99d]/10 dark:hover:bg-[#00a99d]/15',
+      borderClass: 'border-2 border-[#86EFAC] hover:border-[#10B981] dark:border dark:border-[#00a99d]/25',
+      iconBg: 'bg-gradient-to-br from-[#173B63] to-[#0F766E] border border-[#14B8A6]/30 dark:bg-none dark:bg-[#1b497f]/15 dark:border-[#1b497f]/30',
+      iconColor: 'text-white dark:text-[#2DD4BF]',
     }
   ];
 

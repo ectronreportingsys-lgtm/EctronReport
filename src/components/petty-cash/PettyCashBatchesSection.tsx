@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   FolderPlus,
   FolderOpen,
+  ArrowLeft,
   FileSpreadsheet,
   FileText,
   PackageCheck,
@@ -169,6 +170,28 @@ export default function PettyCashBatchesSection({
     });
   };
 
+  // Sorting order state: 'desc' = Newest to Oldest (default), 'asc' = Oldest to Newest
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ectron_petty_cash_batches_sort_order');
+      if (saved === 'asc' || saved === 'desc') {
+        setSortOrder(saved);
+      }
+    } catch (e) {}
+  }, []);
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => {
+      const next = prev === 'desc' ? 'asc' : 'desc';
+      try {
+        localStorage.setItem('ectron_petty_cash_batches_sort_order', next);
+      } catch (e) {}
+      return next;
+    });
+  };
+
   // Filter state - Default to all months & all statuses
   const [filterMonth, setFilterMonth] = useState<number | 'all'>('all');
   const [filterYear, setFilterYear] = useState<number>(today.getFullYear());
@@ -289,7 +312,7 @@ export default function PettyCashBatchesSection({
     return counts;
   }, [batches, filterMonth, filterYear]);
 
-  // Filtered batches for display (supports multi-status, month, year)
+  // Filtered batches for display (supports multi-status, month, year, and sortOrder)
   const displayedBatches = useMemo(() => {
     return batches.filter(b => {
       if (selectedStatuses.length > 0 && !selectedStatuses.includes(b.status)) return false;
@@ -298,15 +321,29 @@ export default function PettyCashBatchesSection({
       if (b.year !== filterYear) return false;
       return true;
     }).sort((a, b) => {
-      // Newest batch first: Year desc, Month desc, createdAt desc, id desc
-      if (b.year !== a.year) return b.year - a.year;
-      if (b.month !== a.month) return b.month - a.month;
+      // Primary: Year
+      if (a.year !== b.year) {
+        return sortOrder === 'desc' ? b.year - a.year : a.year - b.year;
+      }
+      // Secondary: Month
+      if (a.month !== b.month) {
+        return sortOrder === 'desc' ? b.month - a.month : a.month - b.month;
+      }
+      // Tertiary: createdAt date string (YYYY-MM-DD)
       const cA = a.createdAt || '';
       const cB = b.createdAt || '';
-      if (cA !== cB) return cB.localeCompare(cA);
-      return b.id.localeCompare(a.id);
+      if (cA !== cB) {
+        return sortOrder === 'desc' ? cB.localeCompare(cA) : cA.localeCompare(cB);
+      }
+      // Quaternary: Batch name numeric compare (e.g. "October 2" vs "October 1")
+      const nameComp = (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
+      if (nameComp !== 0) {
+        return sortOrder === 'desc' ? -nameComp : nameComp;
+      }
+      // Fallback: id
+      return sortOrder === 'desc' ? b.id.localeCompare(a.id) : a.id.localeCompare(b.id);
     });
-  }, [batches, selectedStatuses, filterMonth, filterYear]);
+  }, [batches, selectedStatuses, filterMonth, filterYear, sortOrder]);
 
   const maxBatches = isFullPage ? undefined : (maxDisplay ?? 4);
 
@@ -723,90 +760,178 @@ export default function PettyCashBatchesSection({
       ? `All Months ${filterYear}`
       : `${MONTH_NAMES.find(m => m.value === filterMonth)?.en || ''} ${filterYear}`;
 
-  return (
-    <div
+  const renderSortButton = () => (
+    <button
+      type="button"
+      onClick={toggleSortOrder}
       className={clsx(
-        'glass rounded-2xl border border-border dark:border-zinc-800/60 transition-all duration-200',
-        isCollapsed ? 'p-4' : 'p-6 flex flex-col gap-5'
+        "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer shadow-xs select-none group",
+        sortOrder === 'desc'
+          ? "bg-zinc-800/90 hover:bg-zinc-700/90 text-zinc-200 hover:text-white border-zinc-700/70"
+          : "bg-[#14B8A6]/15 hover:bg-[#14B8A6]/25 text-[#14B8A6] border-[#14B8A6]/50 shadow-teal-900/20"
       )}
+      title={
+        sortOrder === 'desc'
+          ? t('Click to reorder: Oldest to Newest', 'اضغط للترتيب: من الأقدم إلى الأحدث')
+          : t('Click to reorder: Newest to Oldest', 'اضغط للترتيب: من الأحدث إلى الأقدم')
+      }
+      aria-label={
+        sortOrder === 'desc'
+          ? 'Reorder batches: Oldest to Newest'
+          : 'Reorder batches: Newest to Oldest'
+      }
     >
-      {/* Toast Notification */}
-      {toast && (
-        <div
-          className={clsx(
-            'p-3.5 rounded-xl flex items-center justify-between text-sm font-medium border shadow-md animate-in fade-in duration-200',
-            toast.type === 'success'
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-              : 'bg-danger/10 text-danger border-danger/30'
-          )}
-        >
-          <div className="flex items-center gap-2.5">
-            {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-            ) : (
-              <AlertTriangle className="w-4 h-4 shrink-0" />
-            )}
-            <span>{toast.text}</span>
-          </div>
-          <button onClick={() => setToast(null)} className="text-zinc-400 hover:text-white">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      <span className={clsx(
+        "p-1 rounded-md border flex items-center justify-center transition-colors",
+        sortOrder === 'desc'
+          ? "bg-zinc-900/80 border-zinc-700/60 text-[#14B8A6] group-hover:border-[#14B8A6]/40"
+          : "bg-[#14B8A6]/20 border-[#14B8A6]/40 text-[#14B8A6]"
+      )}>
+        {sortOrder === 'desc' ? (
+          <ArrowDown className="w-3.5 h-3.5" />
+        ) : (
+          <ArrowUp className="w-3.5 h-3.5" />
+        )}
+      </span>
+      <ArrowUpDown className={clsx(
+        "w-3.5 h-3.5 transition-colors",
+        sortOrder === 'desc' ? "text-zinc-400 group-hover:text-zinc-200" : "text-[#14B8A6]"
+      )} />
+      <span className="text-xs font-semibold whitespace-nowrap">
+        {sortOrder === 'desc'
+          ? t('Newest to Oldest', 'من الأحدث للأقدم')
+          : t('Oldest to Newest', 'من الأقدم للأحدث')}
+      </span>
+    </button>
+  );
 
-      {/* Header Bar */}
-      <div className={clsx('flex flex-col gap-3.5', !isCollapsed && 'border-b border-zinc-800 pb-4')}>
-        {/* Row 1: Left has Collapse Arrow + Title; Right has "View All" text sentence */}
-        <div className="flex items-center justify-between gap-4">
-          {/* Top Left: Arrow toggle + Petty Cash Batches title */}
-          <div className="flex items-center gap-3 flex-wrap">
-            {/* Collapse/Expand Arrow button */}
-            <button
-              type="button"
-              onClick={toggleCollapse}
-              className="p-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all cursor-pointer border border-zinc-700/60 flex items-center justify-center shrink-0 shadow-xs"
-              title={isCollapsed ? t('Expand Batches', 'إظهار الباتشات') : t('Collapse Batches', 'طوي الباتشات')}
-              aria-label={isCollapsed ? 'Expand Batches' : 'Collapse Batches'}
+  return (
+    <div className="flex flex-col gap-6">
+      {/* 1. Page Header (Full Page Mode) */}
+      {isFullPage && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <Link
+              href="/petty-cash/dashboard"
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors border border-zinc-700/50 shadow-sm cursor-pointer shrink-0"
+              title={t('Back to Petty Cash Dashboard', 'العودة إلى لوحة تحكم النثرية')}
             >
-              <ChevronDown
-                className={clsx(
-                  'w-5 h-5 transition-transform duration-200 text-zinc-200',
-                  isCollapsed && '-rotate-90 rtl:rotate-90'
+              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+                <FolderOpen className="w-6 h-6 text-[#14B8A6]" />
+                <span>{t('All Petty Cash Batches', 'كافة مجموعات المصروفات النثرية')}</span>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-800/90 text-zinc-300 border border-zinc-700/60">
+                  {batches.length}
+                </span>
+              </h1>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                {t(
+                  'Comprehensive view of all batches across all months and statuses',
+                  'عرض شامل لجميع مجموعات المصروفات النثرية عبر كافة الأشهر والحالات'
                 )}
-              />
-            </button>
-
-            {/* Title: Petty Cash Batches (Always displayed on top left) */}
-            <div
-              onClick={isCollapsed ? toggleCollapse : undefined}
-              className={clsx(
-                'flex items-center gap-2.5',
-                isCollapsed && 'cursor-pointer select-none'
-              )}
-            >
-              <FolderOpen className="w-5 h-5 text-[#14B8A6] shrink-0" />
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>Petty Cash Batches</span>
-              </h2>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-800/90 text-zinc-300 border border-zinc-700/60">
-                {batches.length}
-              </span>
+              </p>
             </div>
           </div>
 
-          {/* Top Right: View All as a sentence/phrase, styled in white */}
-          {!isCollapsed && hasMoreBatches && !isFullPage && (
-            <Link
-              href="/petty-cash/batches"
-              className="text-white hover:underline font-bold text-sm flex items-center gap-1.5 transition-colors cursor-pointer group"
-              title={t('View all batches', 'عرض كافة الباتشات')}
-            >
-              <span>{t('View All', 'عرض الكل')}</span>
-              <span className="text-xs text-zinc-400 font-medium group-hover:text-zinc-200">({batches.length})</span>
-              <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </Link>
-          )}
+          {/* Top Right Corner: Reorder Icon Button */}
+          <div className="flex items-center gap-2.5 self-end sm:self-auto">
+            {renderSortButton()}
+          </div>
         </div>
+      )}
+
+      {/* 2. Glass Batches Card Container */}
+      <div
+        className={clsx(
+          'glass rounded-2xl border border-border dark:border-zinc-800/60 transition-all duration-200',
+          isCollapsed ? 'p-4' : 'p-6 flex flex-col gap-5'
+        )}
+      >
+        {/* Toast Notification */}
+        {toast && (
+          <div
+            className={clsx(
+              'p-3.5 rounded-xl flex items-center justify-between text-sm font-medium border shadow-md animate-in fade-in duration-200',
+              toast.type === 'success'
+                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                : 'bg-danger/10 text-danger border-danger/30'
+            )}
+          >
+            <div className="flex items-center gap-2.5">
+              {toast.type === 'success' ? (
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+              )}
+              <span>{toast.text}</span>
+            </div>
+            <button onClick={() => setToast(null)} className="text-zinc-400 hover:text-white">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Header Bar */}
+        <div className={clsx('flex flex-col gap-3.5', !isCollapsed && 'border-b border-zinc-800 pb-4')}>
+          {/* Row 1 (when !isFullPage): Left has Collapse Arrow + Title; Right has Reorder Button and View All */}
+          {!isFullPage && (
+            <div className="flex items-center justify-between gap-4">
+              {/* Top Left: Arrow toggle + Petty Cash Batches title */}
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Collapse/Expand Arrow button */}
+                <button
+                  type="button"
+                  onClick={toggleCollapse}
+                  className="p-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-all cursor-pointer border border-zinc-700/60 flex items-center justify-center shrink-0 shadow-xs"
+                  title={isCollapsed ? t('Expand Batches', 'إظهار الباتشات') : t('Collapse Batches', 'طوي الباتشات')}
+                  aria-label={isCollapsed ? 'Expand Batches' : 'Collapse Batches'}
+                >
+                  <ChevronDown
+                    className={clsx(
+                      'w-5 h-5 transition-transform duration-200 text-zinc-200',
+                      isCollapsed && '-rotate-90 rtl:rotate-90'
+                    )}
+                  />
+                </button>
+
+                {/* Title: Petty Cash Batches (Always displayed on top left) */}
+                <div
+                  onClick={isCollapsed ? toggleCollapse : undefined}
+                  className={clsx(
+                    'flex items-center gap-2.5',
+                    isCollapsed && 'cursor-pointer select-none'
+                  )}
+                >
+                  <FolderOpen className="w-5 h-5 text-[#14B8A6] shrink-0" />
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>Petty Cash Batches</span>
+                  </h2>
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-zinc-800/90 text-zinc-300 border border-zinc-700/60">
+                    {batches.length}
+                  </span>
+                </div>
+              </div>
+
+              {/* Top Right: Reorder Button + View All link */}
+              <div className="flex items-center gap-2.5">
+                {renderSortButton()}
+
+                {!isCollapsed && hasMoreBatches && (
+                  <Link
+                    href="/petty-cash/batches"
+                    className="text-white hover:underline font-bold text-sm flex items-center gap-1.5 transition-colors cursor-pointer group"
+                    title={t('View all batches', 'عرض كافة الباتشات')}
+                  >
+                    <span>{t('View All', 'عرض الكل')}</span>
+                    <span className="text-xs text-zinc-400 font-medium group-hover:text-zinc-200">({batches.length})</span>
+                    <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
 
         {/* Row 2: New Batch + Button & Month/Year Selectors under the title on a new line */}
         {!isCollapsed && (
@@ -2056,5 +2181,6 @@ export default function PettyCashBatchesSection({
         </div>
       )}
     </div>
+  </div>
   );
 }

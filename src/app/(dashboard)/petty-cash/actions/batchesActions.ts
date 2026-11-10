@@ -103,6 +103,8 @@ function sortBatchesDesc(list: PettyCashBatch[]): PettyCashBatch[] {
     const cA = a.createdAt || '';
     const cB = b.createdAt || '';
     if (cA !== cB) return cB.localeCompare(cA);
+    const nameComp = (b.name || '').localeCompare(a.name || '', undefined, { numeric: true, sensitivity: 'base' });
+    if (nameComp !== 0) return nameComp;
     return b.id.localeCompare(a.id);
   });
 }

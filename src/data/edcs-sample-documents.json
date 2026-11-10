@@ -1,0 +1,269 @@
+{
+  "documents": [
+    {
+      "id": "EDCS-2026-001",
+      "name": "Factory Environmental Operating Permit",
+      "nameAr": "تصريح التشغيل البيئي للمصنع - هيئة البيئة",
+      "referenceNo": "ECT-ENV-2025-089",
+      "category": "Environmental & Municipal",
+      "department": "Health, Safety & Environment (HSE)",
+      "issueDate": "2025-11-18",
+      "expiryDate": "2026-11-18",
+      "isPermanent": false,
+      "responsiblePerson": "Eng. Tariq Al-Balushi (HSE Lead)",
+      "reminderEmail": "tariq.hse@ectron.om",
+      "currentVersion": "v1.2",
+      "fileName": "ECTRON_Environmental_Permit_2025_2026.pdf",
+      "fileSize": "3.8 MB",
+      "fileType": "application/pdf",
+      "notes": "Annual statutory permit issued by Environment Authority (EA). Renewal submission required 14 days prior with environmental audit report.",
+      "createdAt": "2025-11-18T08:30:00Z",
+      "updatedAt": "2026-10-20T11:15:00Z",
+      "versions": [
+        {
+          "version": "v1.2",
+          "uploadedAt": "2025-11-18T08:30:00Z",
+          "uploadedBy": "Eng. Tariq Al-Balushi",
+          "fileName": "ECTRON_Environmental_Permit_2025_2026.pdf",
+          "fileSize": "3.8 MB",
+          "fileType": "application/pdf",
+          "notes": "Approved permit certificate for year 2025/2026."
+        },
+        {
+          "version": "v1.1",
+          "uploadedAt": "2024-11-20T09:00:00Z",
+          "uploadedBy": "Eng. Tariq Al-Balushi",
+          "fileName": "ECTRON_Environmental_Permit_2024_2025.pdf",
+          "fileSize": "3.4 MB",
+          "fileType": "application/pdf",
+          "notes": "Previous year permit archive."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-002",
+      "name": "ISO 9001:2015 Quality Management System Certificate",
+      "nameAr": "شهادة الأيزو 9001:2015 لنظام إدارة الجودة",
+      "referenceNo": "ECT-QMS-ISO-9001",
+      "category": "Quality & Standards",
+      "department": "Quality Assurance (QA)",
+      "issueDate": "2023-11-22",
+      "expiryDate": "2026-11-22",
+      "isPermanent": false,
+      "responsiblePerson": "Salim Al-Maamari (Quality Manager)",
+      "reminderEmail": "salim.qa@ectron.om",
+      "currentVersion": "v3.0",
+      "fileName": "ISO9001_2015_ECTRON_Accredited_Cert.pdf",
+      "fileSize": "2.1 MB",
+      "fileType": "application/pdf",
+      "notes": "Certified by Bureau Veritas. Triennial recertification audit scheduled for next week.",
+      "createdAt": "2023-11-22T10:00:00Z",
+      "updatedAt": "2026-10-15T14:20:00Z",
+      "versions": [
+        {
+          "version": "v3.0",
+          "uploadedAt": "2023-11-22T10:00:00Z",
+          "uploadedBy": "Salim Al-Maamari",
+          "fileName": "ISO9001_2015_ECTRON_Accredited_Cert.pdf",
+          "fileSize": "2.1 MB",
+          "fileType": "application/pdf",
+          "notes": "Recertified certificate cycle 2023-2026."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-003",
+      "name": "High Voltage Meter Testing Station Calibration Certificate",
+      "nameAr": "شهادة معايرة محطة فحص عدادات الجهد العالي",
+      "referenceNo": "ECT-CAL-HV-2026-04",
+      "category": "Calibration & Metrology",
+      "department": "Production & Assembly",
+      "issueDate": "2025-11-13",
+      "expiryDate": "2026-11-13",
+      "isPermanent": false,
+      "responsiblePerson": "Eng. Hamed Al-Harthy (Chief Metrologist)",
+      "reminderEmail": "hamed.calib@ectron.om",
+      "currentVersion": "v1.0",
+      "fileName": "Calib_Cert_HV_Station_A2_2026.pdf",
+      "fileSize": "4.5 MB",
+      "fileType": "application/pdf",
+      "notes": "Calibrated by National Metrology Lab. Critical for meter verification accuracy on Assembly Line 1.",
+      "createdAt": "2025-11-13T07:45:00Z",
+      "updatedAt": "2026-10-28T09:10:00Z",
+      "versions": [
+        {
+          "version": "v1.0",
+          "uploadedAt": "2025-11-13T07:45:00Z",
+          "uploadedBy": "Eng. Hamed Al-Harthy",
+          "fileName": "Calib_Cert_HV_Station_A2_2026.pdf",
+          "fileSize": "4.5 MB",
+          "fileType": "application/pdf",
+          "notes": "Primary calibration standard trace certificate."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-004",
+      "name": "Civil Defense Fire & Emergency Safety License",
+      "nameAr": "ترخيص استيفاء اشتراطات السلامة والوقاية من الحريق - الدفاع المدني",
+      "referenceNo": "ECT-CD-SAF-2025-41",
+      "category": "Safety & Civil Defense",
+      "department": "Health, Safety & Environment (HSE)",
+      "issueDate": "2025-11-04",
+      "expiryDate": "2026-11-04",
+      "isPermanent": false,
+      "responsiblePerson": "Eng. Tariq Al-Balushi (HSE Lead)",
+      "reminderEmail": "tariq.hse@ectron.om",
+      "currentVersion": "v2.1",
+      "fileName": "Civil_Defense_Safety_Clearance_Factory.pdf",
+      "fileSize": "1.9 MB",
+      "fileType": "application/pdf",
+      "notes": "Expired 5 days ago! Immediate inspection renewal was filed with ROP Civil Defense; awaiting physical site pass.",
+      "createdAt": "2025-11-04T11:00:00Z",
+      "updatedAt": "2026-11-05T08:00:00Z",
+      "versions": [
+        {
+          "version": "v2.1",
+          "uploadedAt": "2025-11-04T11:00:00Z",
+          "uploadedBy": "Eng. Tariq Al-Balushi",
+          "fileName": "Civil_Defense_Safety_Clearance_Factory.pdf",
+          "fileSize": "1.9 MB",
+          "fileType": "application/pdf",
+          "notes": "Annual site inspection clearance certificate."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-005",
+      "name": "Factory Commercial Registration & Industrial License",
+      "nameAr": "السجل التجاري والترخيص الصناعي للمصنع - وزارة التجارة والصناعة",
+      "referenceNo": "ECT-MOCI-IND-77812",
+      "category": "Corporate & Legal",
+      "department": "Legal & Corporate Affairs",
+      "issueDate": "2024-08-15",
+      "expiryDate": "2027-08-15",
+      "isPermanent": false,
+      "responsiblePerson": "Nasser Al-Kiyumi (Legal Counsel)",
+      "reminderEmail": "nasser.legal@ectron.om",
+      "currentVersion": "v1.0",
+      "fileName": "Commercial_Reg_Industrial_License_ECTRON.pdf",
+      "fileSize": "1.4 MB",
+      "fileType": "application/pdf",
+      "notes": "Official 3-year industrial manufacturing establishment license issued by MoCIIP.",
+      "createdAt": "2024-08-15T12:00:00Z",
+      "updatedAt": "2024-08-15T12:00:00Z",
+      "versions": [
+        {
+          "version": "v1.0",
+          "uploadedAt": "2024-08-15T12:00:00Z",
+          "uploadedBy": "Nasser Al-Kiyumi",
+          "fileName": "Commercial_Reg_Industrial_License_ECTRON.pdf",
+          "fileSize": "1.4 MB",
+          "fileType": "application/pdf",
+          "notes": "Primary commercial registration document."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-006",
+      "name": "Radiation & RF Testing Chamber Security License",
+      "nameAr": "ترخيص أمان غرفة الفحص الإشعاعي والترددات اللاسلكية",
+      "referenceNo": "ECT-RAD-CHAMBER-09",
+      "category": "Specialized Machinery",
+      "department": "Engineering & R&D",
+      "issueDate": "2026-01-10",
+      "expiryDate": "2027-01-10",
+      "isPermanent": false,
+      "responsiblePerson": "Dr. Majed Al-Farsi (Chief Technology Officer)",
+      "reminderEmail": "majed.cto@ectron.om",
+      "currentVersion": "v1.1",
+      "fileName": "RF_Chamber_Safety_Compliance_License.pdf",
+      "fileSize": "5.2 MB",
+      "fileType": "application/pdf",
+      "notes": "Required for smart meters wireless module emission compliance (TRA Oman).",
+      "createdAt": "2026-01-10T09:30:00Z",
+      "updatedAt": "2026-01-10T09:30:00Z",
+      "versions": [
+        {
+          "version": "v1.1",
+          "uploadedAt": "2026-01-10T09:30:00Z",
+          "uploadedBy": "Dr. Majed Al-Farsi",
+          "fileName": "RF_Chamber_Safety_Compliance_License.pdf",
+          "fileSize": "5.2 MB",
+          "fileType": "application/pdf",
+          "notes": "RF chamber annual inspection & approval."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-007",
+      "name": "Factory Master Architectural & Electrical Blueprint",
+      "nameAr": "المخطط العام والإنشائي والكهربائي لمبنى المصنع",
+      "referenceNo": "ECT-ENG-DWG-M001",
+      "category": "Factory Infrastructure",
+      "department": "Plant Engineering",
+      "issueDate": "2022-03-01",
+      "isPermanent": true,
+      "responsiblePerson": "Eng. Said Al-Jabri (Plant Facilities Director)",
+      "reminderEmail": "said.facilities@ectron.om",
+      "currentVersion": "v2.0",
+      "fileName": "ECTRON_Master_Plant_Blueprint_AsBuilt.pdf",
+      "fileSize": "18.4 MB",
+      "fileType": "application/pdf",
+      "notes": "As-built engineering schematic drawings for electricity transformer room, clean rooms, and production lines. Non-expiring master reference.",
+      "createdAt": "2022-03-01T10:00:00Z",
+      "updatedAt": "2025-06-12T16:00:00Z",
+      "versions": [
+        {
+          "version": "v2.0",
+          "uploadedAt": "2025-06-12T16:00:00Z",
+          "uploadedBy": "Eng. Said Al-Jabri",
+          "fileName": "ECTRON_Master_Plant_Blueprint_AsBuilt.pdf",
+          "fileSize": "18.4 MB",
+          "fileType": "application/pdf",
+          "notes": "Updated revision including Line 3 expansion."
+        },
+        {
+          "version": "v1.0",
+          "uploadedAt": "2022-03-01T10:00:00Z",
+          "uploadedBy": "Eng. Said Al-Jabri",
+          "fileName": "ECTRON_Plant_Blueprint_Original_2022.pdf",
+          "fileSize": "14.2 MB",
+          "fileType": "application/pdf",
+          "notes": "Original factory construction blueprint."
+        }
+      ]
+    },
+    {
+      "id": "EDCS-2026-008",
+      "name": "Industrial Hazardous Waste Disposal Service Agreement",
+      "nameAr": "اتفاقية التخلص الآمن من النفايات والمخلفات الصناعية الخطرة",
+      "referenceNo": "ECT-CONTR-BEAH-44",
+      "category": "Vendor & Supplier Contracts",
+      "department": "Health, Safety & Environment (HSE)",
+      "issueDate": "2026-02-01",
+      "expiryDate": "2027-02-01",
+      "isPermanent": false,
+      "responsiblePerson": "Eng. Tariq Al-Balushi (HSE Lead)",
+      "reminderEmail": "tariq.hse@ectron.om",
+      "currentVersion": "v1.0",
+      "fileName": "Beah_Industrial_Waste_Disposal_Agreement.pdf",
+      "fileSize": "2.8 MB",
+      "fileType": "application/pdf",
+      "notes": "Contract with be'ah for electronic components and chemical waste collection.",
+      "createdAt": "2026-02-01T08:00:00Z",
+      "updatedAt": "2026-02-01T08:00:00Z",
+      "versions": [
+        {
+          "version": "v1.0",
+          "uploadedAt": "2026-02-01T08:00:00Z",
+          "uploadedBy": "Eng. Tariq Al-Balushi",
+          "fileName": "Beah_Industrial_Waste_Disposal_Agreement.pdf",
+          "fileSize": "2.8 MB",
+          "fileType": "application/pdf",
+          "notes": "Active annual SLA contract."
+        }
+      ]
+    }
+  ]
+}

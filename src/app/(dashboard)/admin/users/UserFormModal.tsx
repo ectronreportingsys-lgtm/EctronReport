@@ -60,6 +60,16 @@ export const PERMISSION_MODULES = [
     ]
   },
   {
+    moduleEn: 'Library & Document Control (EDCS)',
+    moduleAr: 'المكتبة ونظام مراقبة الوثائق (EDCS)',
+    permissions: [
+      { key: 'library_dashboard', labelEn: 'Library Dashboard', labelAr: 'لوحة تحكم المكتبة والوثائق' },
+      { key: 'library_registry', labelEn: 'Document Registry', labelAr: 'سجل واستعراض الوثائق' },
+      { key: 'library_create', labelEn: 'Add / Renew Documents', labelAr: 'إضافة وتجديد الوثائق' },
+      { key: 'library_admin', labelEn: 'Document Administration', labelAr: 'إدارة وحذف وثائق المصنع' },
+    ]
+  },
+  {
     moduleEn: 'Admin Panel & Security',
     moduleAr: 'لوحة الإدارة والتحكم بالنظام',
     permissions: [

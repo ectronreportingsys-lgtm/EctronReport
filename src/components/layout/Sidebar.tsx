@@ -37,12 +37,13 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
   
   // Extract division from pathname (e.g. /water/dashboard -> water)
   const parts = pathname.split('/');
-  const division = parts[1] && (parts[1] === 'water' || parts[1] === 'electricity' || parts[1] === 'electricity-ecs1100' || parts[1] === 'petty-cash' || parts[1] === 'visits' || parts[1] === 'visitor') ? parts[1] : 'electricity'; 
+  const division = parts[1] && (parts[1] === 'water' || parts[1] === 'electricity' || parts[1] === 'electricity-ecs1100' || parts[1] === 'petty-cash' || parts[1] === 'visits' || parts[1] === 'visitor' || parts[1] === 'library') ? parts[1] : 'electricity'; 
 
   const hasPermission = (key?: string) => {
     if (!key) return true;
     if (roleName === 'Admin') return true;
     if (userPermissions.includes('visitor_admin') && key.startsWith('visitor_')) return true;
+    if (userPermissions.includes('library_admin') && key.startsWith('library_')) return true;
     return userPermissions.includes(key);
   };
 
@@ -57,6 +58,13 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
       { name: t('Analytics', 'التحليلات'), href: '/analytics', icon: BarChart3, permission: 'petty_cash_dashboard' },
       { name: t('Employee Settlement', 'تصفية العهد'), href: '/settlement', icon: Users, permission: 'petty_cash_expenses' },
       { name: t('Resources', 'المصادر والإعدادات'), href: '/resources', icon: Settings, permission: 'petty_cash_resources' },
+    ];
+  } else if (division === 'library') {
+    navItems = [
+      { name: t('Home', 'الرئيسية'), href: '/home', icon: Home, showAlways: true },
+      { name: t('Library Dashboard', 'لوحة تحكم المكتبة'), href: '/library/dashboard', icon: LayoutDashboard, permission: 'library_dashboard' },
+      { name: t('Document Registry', 'سجل الوثائق'), href: '/library/registry', icon: FileText, permission: 'library_registry' },
+      { name: t('Add Document', 'إضافة وثيقة'), href: '/library/new', icon: UploadCloud, permission: 'library_create' },
     ];
   } else if (division === 'visits' || division === 'visitor') {
     navItems = [
@@ -83,7 +91,7 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
   }
 
   const getHref = (baseHref: string) => {
-    if (baseHref.startsWith('/admin') || baseHref === '/home' || baseHref.startsWith('/visits') || baseHref.startsWith('/visitor')) return baseHref;
+    if (baseHref.startsWith('/admin') || baseHref === '/home' || baseHref.startsWith('/visits') || baseHref.startsWith('/visitor') || baseHref.startsWith('/library')) return baseHref;
     return division ? `/${division}${baseHref}` : baseHref;
   };
 
@@ -111,7 +119,7 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
             </Link>
             {!isHome && !pathname.startsWith('/admin') && (
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#14B8A6]/30 dark:bg-[#00a99d]/15 dark:text-[#00a99d] dark:border-[#00a99d]/30 capitalize shrink-0">
-                {division === 'water' ? 'Siconia' : division === 'electricity-ecs1100' ? 'ECS1100' : division === 'petty-cash' ? 'Petty Cash' : (division === 'visits' || division === 'visitor') ? 'Visitor Mgmt' : 'M212'}
+                {division === 'water' ? 'Siconia' : division === 'electricity-ecs1100' ? 'ECS1100' : division === 'petty-cash' ? 'Petty Cash' : (division === 'visits' || division === 'visitor') ? 'Visitor Mgmt' : division === 'library' ? 'EDCS Library' : 'M212'}
               </span>
             )}
           </div>
