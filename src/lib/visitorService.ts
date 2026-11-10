@@ -359,10 +359,8 @@ export async function createVisit(data: {
           organization_en: summaryOrgEn,
           organization_ar: summaryOrgAr,
           country: data.country || 'Oman',
-          coordination_by: data.coordination_by || 'Ectron',
           visit_reason: data.visit_reason || '',
           notes: data.notes || '',
-          organizations: structuredOrganizations,
           registration_source: data.registration_source,
           created_by: data.created_by || null
         })
@@ -373,11 +371,9 @@ export async function createVisit(data: {
         if (finalVisitors.length > 0) {
           const visitorsToInsert = finalVisitors.map(vis => ({
             visit_id: insertedVisit.id,
-            organization_en: vis.organization_en || summaryOrgEn,
-            organization_ar: vis.organization_ar || summaryOrgAr,
             full_name_en: vis.full_name_en || '',
             full_name_ar: vis.full_name_ar || '',
-            phone_number: vis.phone_number || ''
+            phone_number: vis.phone_number || null
           }));
           await supabase.from('visit_visitors').insert(visitorsToInsert);
         }

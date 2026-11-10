@@ -70,6 +70,7 @@ export default function VisitorDashboardView({
     visitId: '',
     visitNumber: ''
   });
+  const [isAddChoiceModalOpen, setIsAddChoiceModalOpen] = useState<boolean>(false);
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
@@ -483,13 +484,14 @@ export default function VisitorDashboardView({
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/visitor/new"
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] hover:from-[#132f4f] hover:to-[#0c5c56] text-white text-sm sm:text-base font-extrabold shadow-md transition-all flex items-center gap-2"
+          <button
+            type="button"
+            onClick={() => setIsAddChoiceModalOpen(true)}
+            className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] hover:from-[#132f4f] hover:to-[#0c5c56] text-white text-sm sm:text-base font-extrabold shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-5 h-5" />
-            <span>{t('New Visit Registration', 'تسجيل زيارة جديدة')}</span>
-          </Link>
+            <span>{t('Add Visit / Visitor', 'إضافة زيارة / زائر')}</span>
+          </button>
 
           <Link
             href="/visitor/qrcode"
@@ -1562,6 +1564,85 @@ export default function VisitorDashboardView({
                 className="px-6 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow disabled:opacity-50"
               >
                 {isUpdating ? t('Deleting...', 'جاري الحذف...') : t('Yes, Delete Visit', 'نعم، حذف الزيارة')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: Add Choice Modal (إضافة زيارة أو إضافة زائر) */}
+      {isAddChoiceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 shadow-2xl relative">
+            <button
+              type="button"
+              onClick={() => setIsAddChoiceModalOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+                <Users className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#173B63] dark:text-white">
+                {t('Choose Registration Type', 'اختر نوع التسجيل')}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1">
+                {t('Select whether you want to register a full delegation or a single visitor', 'حدد ما إذا كنت تريد تسجيل زيارة وفد/مؤسسة كاملة أو إضافة زائر فردي سريع')}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* Option 1: إضافة زيارة */}
+              <Link
+                href="/visitor/new?type=visit"
+                onClick={() => setIsAddChoiceModalOpen(false)}
+                className="group p-5 rounded-2xl border-2 border-slate-200 dark:border-zinc-800 hover:border-[#173B63] dark:hover:border-teal-500 bg-slate-50/50 dark:bg-zinc-800/40 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-all flex flex-col items-center text-center shadow-xs hover:shadow-md cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-[#173B63] dark:text-blue-300 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <Building2 className="w-6 h-6" />
+                </div>
+                <h4 className="text-base font-bold text-slate-800 dark:text-white group-hover:text-[#173B63] dark:group-hover:text-teal-400">
+                  {t('Add Visit', 'إضافة زيارة')}
+                </h4>
+                <span className="text-[11px] font-semibold text-[#0F766E] dark:text-teal-400 mt-0.5">
+                  {t('(Delegations & Orgs)', '(وفود ومؤسسات)')}
+                </span>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-2 leading-relaxed">
+                  {t('Register formal delegation visits with multiple organizations and multiple visitors.', 'تسجيل زيارة رسمية تشمل مؤسسات وجهات متعددة وزوار متعددين.')}
+                </p>
+              </Link>
+
+              {/* Option 2: إضافة زائر */}
+              <Link
+                href="/visitor/new?type=visitor"
+                onClick={() => setIsAddChoiceModalOpen(false)}
+                className="group p-5 rounded-2xl border-2 border-slate-200 dark:border-zinc-800 hover:border-[#0F766E] dark:hover:border-teal-500 bg-teal-50/30 dark:bg-zinc-800/40 hover:bg-teal-50/60 dark:hover:bg-zinc-800 transition-all flex flex-col items-center text-center shadow-xs hover:shadow-md cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-xl bg-teal-100 dark:bg-teal-950/60 text-[#0F766E] dark:text-teal-300 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <UserPlus className="w-6 h-6" />
+                </div>
+                <h4 className="text-base font-bold text-slate-800 dark:text-white group-hover:text-[#0F766E] dark:group-hover:text-teal-400">
+                  {t('Add Visitor', 'إضافة زائر')}
+                </h4>
+                <span className="text-[11px] font-semibold text-[#0F766E] dark:text-teal-400 mt-0.5">
+                  {t('(Individual Visitor)', '(زائر فردي)')}
+                </span>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-2 leading-relaxed">
+                  {t('Fast single visitor entry without complexity for swift on-site registration.', 'نموذج سريع ومباشر لتسجيل بيانات زائر واحد بدون تعقيد.')}
+                </p>
+              </Link>
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsAddChoiceModalOpen(false)}
+                className="px-6 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                {t('Cancel', 'إلغاء')}
               </button>
             </div>
           </div>

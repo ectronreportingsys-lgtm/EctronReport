@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, Suspense } from 'react';
 import clsx from 'clsx';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
@@ -44,12 +44,14 @@ export default function ClientLayoutShell({
   return (
     <AuthContext.Provider value={{ userPermissions, roleName, profile, hasPermission }}>
       <div className="min-h-screen bg-background transition-colors duration-300">
-        <Sidebar 
-          userPermissions={userPermissions} 
-          roleName={roleName} 
-          isCollapsed={isCollapsed} 
-          setIsCollapsed={setIsCollapsed} 
-        />
+        <Suspense fallback={<aside className="h-screen w-64 bg-card border-r border-border fixed left-0 top-0 z-40 print:hidden" />}>
+          <Sidebar 
+            userPermissions={userPermissions} 
+            roleName={roleName} 
+            isCollapsed={isCollapsed} 
+            setIsCollapsed={setIsCollapsed} 
+          />
+        </Suspense>
         <div className={clsx(
           "print:pl-0 flex flex-col min-h-screen transition-all duration-300",
           isCollapsed ? "pl-20" : "pl-64"

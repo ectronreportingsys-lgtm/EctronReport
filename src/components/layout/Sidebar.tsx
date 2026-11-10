@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { 
   Home, 
   LayoutDashboard, 
@@ -15,6 +15,7 @@ import {
   ChevronRight,
   BarChart3,
   UserPlus,
+  Building2,
   ListFilter,
   QrCode,
   FileSpreadsheet
@@ -33,6 +34,7 @@ interface SidebarProps {
 export default function Sidebar({ userPermissions = [], roleName = '', isCollapsed = false, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
   
   // Extract division from pathname (e.g. /water/dashboard -> water)
@@ -70,7 +72,8 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
     navItems = [
       { name: t('Home', 'الرئيسية'), href: '/home', icon: Home, showAlways: true },
       { name: t('Visitor Dashboard', 'لوحة تحكم الزوار'), href: '/visitor/dashboard', icon: LayoutDashboard, permission: 'visitor_dashboard' },
-      { name: t('Register New Visit', 'تسجيل زيارة جديدة'), href: '/visitor/new', icon: UserPlus, permission: 'visitor_register' },
+      { name: t('Add Visit', 'إضافة زيارة'), href: '/visitor/new?type=visit', icon: Building2, permission: 'visitor_register' },
+      { name: t('Add Visitor', 'إضافة زائر'), href: '/visitor/new?type=visitor', icon: UserPlus, permission: 'visitor_register' },
       { name: t('Visits List', 'قائمة الزيارات'), href: '/visitor/list', icon: ListFilter, permission: 'visitor_list' },
       { name: t('QR Code', 'رمز الاستجابة QR'), href: '/visitor/qrcode', icon: QrCode, permission: 'visitor_register' },
       { name: t('Import Excel', 'استيراد إكسل'), href: '/visitor/import', icon: FileSpreadsheet, permission: 'visitor_list' },
@@ -147,7 +150,17 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
           if (isHome && !item.showAlways && !item.href.startsWith('/admin')) return null;
 
           const href = getHref(item.href);
-          const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
+          const [itemPath, itemQuery] = href.split('?');
+          let isActive = false;
+          if (itemQuery) {
+            const currentType = searchParams?.get('type') || 'visitor';
+            const targetType = new URLSearchParams(itemQuery).get('type');
+            isActive = pathname === itemPath && currentType === targetType;
+          } else if (itemPath === '/visitor/new') {
+            isActive = pathname === itemPath;
+          } else {
+            isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
+          }
           const Icon = item.icon;
           
           return (
