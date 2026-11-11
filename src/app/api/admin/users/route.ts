@@ -83,8 +83,15 @@ export async function PUT(request: Request) {
     };
     if (password) updateData.password = normalizeAuthPassword(password);
 
-    const { error: authError } = await supabase.auth.admin.updateUserById(id, updateData);
-    if (authError) throw authError;
+    try {
+      if (supabase.auth?.admin?.updateUserById) {
+        const { error: authError } = await supabase.auth.admin.updateUserById(id, updateData);
+        if (authError && password) throw authError;
+      }
+    } catch (authErr: any) {
+      if (password) throw authErr;
+      console.warn('Auth admin update notice (non-fatal):', authErr?.message);
+    }
 
     // Update Profile
     const profileUpdate: any = { username, full_name, role_id };
