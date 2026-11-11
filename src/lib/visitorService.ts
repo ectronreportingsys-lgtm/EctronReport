@@ -34,6 +34,48 @@ function writeLocalStore(visits: VisitRecord[]) {
   }
 }
 
+// Helper to encode structured metadata (organizations & coordination_by) into notes string
+export function encodeVisitMetadata(
+  notes: string | undefined,
+  metadata: { organizations?: OrganizationGroup[]; coordination_by?: string }
+): string {
+  const cleanNotes = (notes || '').replace(/\s*<!--ECTRON_METADATA:[\s\S]*?-->/g, '').trim();
+  const metaObj: any = {};
+  if (metadata.organizations && metadata.organizations.length > 0) {
+    metaObj.organizations = metadata.organizations;
+  }
+  if (metadata.coordination_by) {
+    metaObj.coordination_by = metadata.coordination_by;
+  }
+  if (Object.keys(metaObj).length === 0) return cleanNotes;
+  const metaString = `\n<!--ECTRON_METADATA:${JSON.stringify(metaObj)}-->`;
+  return cleanNotes ? `${cleanNotes}${metaString}` : metaString.trim();
+}
+
+// Helper to decode structured metadata from notes string
+export function decodeVisitMetadata(rawNotes: string | undefined): {
+  cleanNotes: string;
+  organizations?: OrganizationGroup[];
+  coordination_by?: string;
+} {
+  if (!rawNotes) return { cleanNotes: '' };
+  const match = rawNotes.match(/<!--ECTRON_METADATA:([\s\S]*?)-->/);
+  if (match) {
+    try {
+      const parsed = JSON.parse(match[1]);
+      const cleanNotes = rawNotes.replace(/\s*<!--ECTRON_METADATA:[\s\S]*?-->/g, '').trim();
+      return {
+        cleanNotes,
+        organizations: Array.isArray(parsed.organizations) ? parsed.organizations : undefined,
+        coordination_by: parsed.coordination_by || undefined
+      };
+    } catch (e) {
+      // ignore
+    }
+  }
+  return { cleanNotes: rawNotes };
+}
+
 // Generate next sequential visit number for a year: VIS-YYYY-0001
 export async function getNextVisitNumber(year: number = new Date().getFullYear()): Promise<string> {
   const prefix = `VIS-${year}-`;
@@ -111,10 +153,40 @@ export async function getVisits(filters?: {
 
     const { data, error } = await query;
     if (!error && data) {
-      let results: VisitRecord[] = data.map((v: any) => ({
-        ...v,
-        visitors: v.visit_visitors || []
-      }));
+      let results: VisitRecord[] = data.map((v: any) => {
+        const { cleanNotes, organizations, coordination_by } = decodeVisitMetadata(v.notes);
+        const visitorsList: VisitorItem[] = (v.visit_visitors || []).map((vis: any) => ({ ...vis }));
+
+        let orgGroups = organizations;
+        if (!orgGroups || orgGroups.length === 0) {
+          orgGroups = extractOrganizationGroups({
+            ...v,
+            notes: cleanNotes,
+            visitors: visitorsList
+          });
+        }
+
+        // Attach organization info to each visitor if known from orgGroups
+        if (orgGroups && orgGroups.length > 0) {
+          orgGroups.forEach(org => {
+            (org.visitors || []).forEach(ov => {
+              const matchVis = visitorsList.find(vl => vl.id === ov.id || (vl.full_name_ar === ov.full_name_ar && vl.full_name_en === ov.full_name_en));
+              if (matchVis) {
+                matchVis.organization_ar = org.organization_ar;
+                matchVis.organization_en = org.organization_en;
+              }
+            });
+          });
+        }
+
+        return {
+          ...v,
+          notes: cleanNotes,
+          coordination_by: coordination_by || v.coordination_by || 'Ectron',
+          visitors: visitorsList,
+          organizations: orgGroups
+        };
+      });
 
       // Merge any local fallback visits not in Supabase yet
       try {
@@ -230,13 +302,28 @@ export async function getVisitById(id: string): Promise<VisitRecord | null> {
       .single();
 
     if (!error && data) {
-      const visitorsList = data.visit_visitors || [];
-      const orgGroups = (data.organizations && Array.isArray(data.organizations) && data.organizations.length > 0)
-        ? data.organizations
-        : extractOrganizationGroups({ ...data, visitors: visitorsList });
+      const { cleanNotes, organizations, coordination_by } = decodeVisitMetadata(data.notes);
+      const visitorsList: VisitorItem[] = (data.visit_visitors || []).map((vis: any) => ({ ...vis }));
+      const orgGroups = (organizations && organizations.length > 0)
+        ? organizations
+        : extractOrganizationGroups({ ...data, notes: cleanNotes, visitors: visitorsList });
+
+      if (orgGroups && orgGroups.length > 0) {
+        orgGroups.forEach(org => {
+          (org.visitors || []).forEach(ov => {
+            const matchVis = visitorsList.find(vl => vl.id === ov.id || (vl.full_name_ar === ov.full_name_ar && vl.full_name_en === ov.full_name_en));
+            if (matchVis) {
+              matchVis.organization_ar = org.organization_ar;
+              matchVis.organization_en = org.organization_en;
+            }
+          });
+        });
+      }
 
       return {
         ...data,
+        notes: cleanNotes,
+        coordination_by: coordination_by || data.coordination_by || 'Ectron',
         visitors: visitorsList,
         organizations: orgGroups
       };
@@ -331,6 +418,11 @@ export async function createVisit(data: {
       });
     }
 
+    const encodedNotes = encodeVisitMetadata(data.notes, {
+      organizations: structuredOrganizations,
+      coordination_by: data.coordination_by || 'Ectron'
+    });
+
     // Try Supabase first
     try {
       const supabase = createAdminClient();
@@ -347,7 +439,7 @@ export async function createVisit(data: {
           country: data.country || 'Oman',
           coordination_by: data.coordination_by || 'Ectron',
           visit_reason: data.visit_reason || '',
-          notes: data.notes || '',
+          notes: encodedNotes,
           organizations: structuredOrganizations,
           registration_source: data.registration_source,
           created_by: data.created_by || null
@@ -386,7 +478,7 @@ export async function createVisit(data: {
           organization_ar: summaryOrgAr,
           country: data.country || 'Oman',
           visit_reason: data.visit_reason || '',
-          notes: data.notes || '',
+          notes: encodedNotes,
           registration_source: data.registration_source,
           created_by: data.created_by || null
         })
@@ -511,7 +603,17 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
     if (updates.time_out !== undefined) supabaseVisitPayload.time_out = updates.time_out;
     if (updates.country !== undefined) supabaseVisitPayload.country = updates.country;
     if (updates.visit_reason !== undefined) supabaseVisitPayload.visit_reason = updates.visit_reason;
-    if (updates.notes !== undefined) supabaseVisitPayload.notes = updates.notes;
+    const finalOrgs = (updates.organizations && updates.organizations.length > 0)
+      ? updates.organizations
+      : undefined;
+
+    const encodedNotes = encodeVisitMetadata(updates.notes, {
+      organizations: finalOrgs,
+      coordination_by: updates.coordination_by
+    });
+    if (updates.notes !== undefined || finalOrgs || updates.coordination_by) {
+      supabaseVisitPayload.notes = encodedNotes;
+    }
     if (updates.registration_source !== undefined) supabaseVisitPayload.registration_source = updates.registration_source;
 
     if (orgNamesEn.length > 0) supabaseVisitPayload.organization_en = orgNamesEn.join(' / ');

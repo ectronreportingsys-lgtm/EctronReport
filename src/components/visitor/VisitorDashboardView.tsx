@@ -838,27 +838,28 @@ export default function VisitorDashboardView({
                       </td>
 
                       {/* Organization */}
-                      <td className="py-4 px-4 font-bold text-slate-900 dark:text-zinc-100 max-w-[240px]">
+                      <td className="py-4 px-4 font-bold text-slate-900 dark:text-zinc-100 max-w-[220px]">
                         {orgGroups.length > 1 ? (
-                          <div className="space-y-1">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                          <div className="space-y-1.5">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                               {t('Joint Delegation', 'وفد مشترك')} ({orgGroups.length} {t('orgs', 'مؤسسات')})
                             </span>
-                            <div className="space-y-0.5 mt-0.5">
+                            <div className="space-y-1">
                               {orgGroups.map((og, idx) => (
-                                <div key={idx} className="text-sm font-extrabold text-slate-800 dark:text-zinc-200 flex items-center gap-1.5 truncate">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F766E] flex-shrink-0"></span>
+                                <div key={idx} className="text-xs font-extrabold text-slate-800 dark:text-zinc-200 flex items-center gap-1.5 truncate">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F766E] flex-shrink-0" />
                                   <span className="truncate">{og.organization_ar || og.organization_en}</span>
-                                  <span className="text-xs text-slate-400 font-bold flex-shrink-0">({og.visitors?.length || 0})</span>
                                 </div>
                               ))}
                             </div>
                           </div>
                         ) : (
                           <div>
-                            <div className="truncate text-base">{visit.organization_ar || visit.organization_en || '—'}</div>
+                            <div className="truncate text-base font-extrabold text-slate-900 dark:text-white">
+                              {visit.organization_ar || visit.organization_en || '—'}
+                            </div>
                             {visit.organization_ar && visit.organization_en && (
-                              <div className="text-xs sm:text-sm text-slate-500 font-normal truncate mt-0.5">{visit.organization_en}</div>
+                              <div className="text-xs text-slate-500 font-normal truncate mt-0.5">{visit.organization_en}</div>
                             )}
                           </div>
                         )}
@@ -874,28 +875,57 @@ export default function VisitorDashboardView({
                         {renderCoordinationBadge(visit.coordination_by)}
                       </td>
 
-                      {/* Visitors Badge & Preview */}
-                      <td className="py-4 px-4">
-                        <div className="flex flex-col gap-1 max-w-[200px]">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 text-xs sm:text-sm font-extrabold border border-teal-200 dark:border-teal-800 whitespace-nowrap">
-                              {visitorsList.length || 1} {t('Visitors', 'زائر')}
-                            </span>
-                            {orgGroups.length > 1 && (
-                              <span className="text-xs font-bold text-slate-400 dark:text-zinc-500 whitespace-nowrap">
-                                {t('Across', 'عبر')} {orgGroups.length} {t('entities', 'جهات')}
-                              </span>
-                            )}
-                          </div>
-                          {orgGroups.length > 1 ? (
-                            <div className="text-xs text-slate-600 dark:text-zinc-300 truncate font-medium" title={orgGroups.map(og => `${og.organization_ar || og.organization_en || t('Organization', 'مؤسسة')}: ${(og.visitors || []).map(v => v.full_name_ar || v.full_name_en).join(', ')}`).join(' | ')}>
-                              {orgGroups.map(og => `${og.organization_ar || og.organization_en || t('Organization', 'مؤسسة')} (${og.visitors?.length || 0})`).join(' • ')}
-                            </div>
-                          ) : (
-                            <span className="text-sm sm:text-base font-medium text-slate-700 dark:text-zinc-200 truncate" title={visitorNames}>
-                              {visitorNames || '—'}
-                            </span>
-                          )}
+                      {/* Visitors Column - Separated completely by Organization */}
+                      <td className="py-4 px-4 min-w-[220px] max-w-[320px]">
+                        <div className="space-y-2">
+                          {orgGroups.map((og, oIdx) => {
+                            const ogVisitors = og.visitors || [];
+                            return (
+                              <div
+                                key={og.id || oIdx}
+                                className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/60 text-xs shadow-2xs space-y-1.5"
+                              >
+                                {/* Organization Header */}
+                                <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-zinc-700/50">
+                                  <div className="font-extrabold text-[#0F766E] dark:text-teal-400 flex items-center gap-1.5 truncate">
+                                    <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className="truncate font-bold" title={og.organization_ar || og.organization_en}>
+                                      {og.organization_ar || og.organization_en || t('Organization', 'المؤسسة')}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900/50 text-[#0F766E] dark:text-teal-300 font-extrabold flex-shrink-0">
+                                    {ogVisitors.length} {t('visitors', 'زائر')}
+                                  </span>
+                                </div>
+
+                                {/* Visitors under this organization */}
+                                <div className="space-y-1 pr-1 pl-1">
+                                  {ogVisitors.length === 0 ? (
+                                    <span className="text-slate-400 text-[11px]">—</span>
+                                  ) : (
+                                    ogVisitors.map((vis, vIdx) => (
+                                      <div
+                                        key={vis.id || vIdx}
+                                        className="flex items-center justify-between gap-1.5 text-slate-800 dark:text-zinc-200"
+                                      >
+                                        <div className="flex items-center gap-1.5 truncate">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-[#173B63] dark:bg-teal-400 flex-shrink-0" />
+                                          <span className="truncate font-semibold text-xs" title={vis.full_name_ar || vis.full_name_en}>
+                                            {vis.full_name_ar || vis.full_name_en}
+                                          </span>
+                                        </div>
+                                        {vis.phone_number && (
+                                          <span className="text-[10px] font-mono text-slate-500 dark:text-zinc-400 flex-shrink-0" dir="ltr">
+                                            {vis.phone_number}
+                                          </span>
+                                        )}
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                       </td>
 
