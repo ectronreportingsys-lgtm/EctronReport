@@ -13,7 +13,7 @@
     "registration_source": "internal",
     "created_by": "ced0fe0e-1c3c-455c-904c-92e35b38ea45",
     "created_at": "2026-11-11T08:51:53.568062+00:00",
-    "updated_at": "2026-11-11T08:52:48.039Z",
+    "updated_at": "2026-11-11T10:20:53.252Z",
     "visit_visitors": [
       {
         "id": "8d5d71a8-5649-439f-856b-45cf638f32f7",
@@ -36,14 +36,24 @@
         "created_at": "2026-11-11T08:51:53.568062+00:00"
       },
       {
-        "id": "vis-1794387168039-2-1",
+        "id": "vis-1794392453252-2-1",
         "visit_id": "2bfa1b55-02ca-405b-a14f-1b05460f4e5c",
         "organization_en": "",
         "organization_ar": "نماء نماء",
         "full_name_en": "",
         "full_name_ar": "سلطان سلطان",
         "phone_number": "",
-        "created_at": "2026-11-11T08:52:48.039Z"
+        "created_at": "2026-11-11T10:20:53.252Z"
+      },
+      {
+        "id": "vis-1794392453252-2-2",
+        "visit_id": "2bfa1b55-02ca-405b-a14f-1b05460f4e5c",
+        "organization_en": "",
+        "organization_ar": "نماء نماء",
+        "full_name_en": "",
+        "full_name_ar": "حمد حمد",
+        "phone_number": "",
+        "created_at": "2026-11-11T10:20:53.252Z"
       }
     ],
     "organizations": [
@@ -69,125 +79,88 @@
             "full_name_en": "",
             "full_name_ar": "سلطان سلطان",
             "phone_number": ""
+          },
+          {
+            "full_name_en": "",
+            "full_name_ar": "حمد حمد",
+            "phone_number": ""
           }
         ]
       }
     ]
   },
   {
-    "id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
+    "id": "4ec4253e-392d-46f8-a660-5d1c4799d195",
     "visit_number": "VIS-2026-0006",
     "visit_date": "2026-11-11",
-    "time_in": "14:00",
-    "time_out": null,
-    "organization_en": "Ministry of Housing / Nama Supply",
-    "organization_ar": "وزارة الإسكان / شركة نماء",
+    "time_in": "09:00",
+    "time_out": "12:00",
+    "organization_en": "",
+    "organization_ar": "نماء نماء / اكترون اكترون",
     "country": "Oman",
-    "visit_reason": "Testing Multi-Org Separation",
-    "notes": "Updated note after edit",
+    "visit_reason": "Business Meeting",
+    "notes": "",
     "registration_source": "internal",
-    "created_by": null,
-    "created_at": "2026-11-11T09:53:22.941461+00:00",
-    "updated_at": "2026-11-11T09:53:22.157Z",
+    "created_by": "ced0fe0e-1c3c-455c-904c-92e35b38ea45",
+    "created_at": "2026-11-11T10:18:08.87624+00:00",
+    "updated_at": "2026-11-11T10:18:08.87624+00:00",
     "visit_visitors": [
       {
-        "id": "fb3a40a6-f84f-401a-8f24-741da11e4c0e",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "created_at": "2026-11-11T09:53:22.941461+00:00",
-        "full_name_ar": "خالد المعمري",
-        "full_name_en": "Khalid Al Maamari",
-        "phone_number": "91111111"
+        "id": "f6443351-df4b-416c-aa59-eadce65d1017",
+        "visit_id": "4ec4253e-392d-46f8-a660-5d1c4799d195",
+        "created_at": "2026-11-11T10:18:08.87624+00:00",
+        "full_name_ar": "نماء نماء",
+        "full_name_en": null,
+        "phone_number": null
       },
       {
-        "id": "89dd4183-4818-480e-89d9-3db16006d601",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "created_at": "2026-11-11T09:53:22.941461+00:00",
-        "full_name_ar": "سالم الشكيلي",
-        "full_name_en": "Salim Al Shukaili",
-        "phone_number": "92222222"
-      },
-      {
-        "id": "30183d01-ac23-43e3-9fd7-e8f811c1cc46",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "created_at": "2026-11-11T09:53:22.941461+00:00",
-        "full_name_ar": "مريم البلوشية",
-        "full_name_en": "Maryam Al Balushi",
-        "phone_number": "93333333"
+        "id": "99c8138a-8a67-44c9-bbaa-e243a9f1ce51",
+        "visit_id": "4ec4253e-392d-46f8-a660-5d1c4799d195",
+        "created_at": "2026-11-11T10:18:08.87624+00:00",
+        "full_name_ar": "اكترون اكترون",
+        "full_name_en": null,
+        "phone_number": null
       }
     ],
     "coordination_by": "Ectron",
     "visitors": [
       {
-        "id": "vis-1794390802157-1-1",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "organization_en": "Ministry of Housing",
-        "organization_ar": "وزارة الإسكان",
-        "full_name_en": "Khalid Al Maamari",
-        "full_name_ar": "خالد المعمري",
-        "phone_number": "91111111",
-        "created_at": "2026-11-11T09:53:22.157Z"
+        "id": "f6443351-df4b-416c-aa59-eadce65d1017",
+        "visit_id": "4ec4253e-392d-46f8-a660-5d1c4799d195",
+        "created_at": "2026-11-11T10:18:08.87624+00:00",
+        "full_name_ar": "نماء نماء",
+        "full_name_en": null,
+        "phone_number": null
       },
       {
-        "id": "vis-1794390802157-1-2",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "organization_en": "Ministry of Housing",
-        "organization_ar": "وزارة الإسكان",
-        "full_name_en": "Salim Al Shukaili",
-        "full_name_ar": "سالم الشكيلي",
-        "phone_number": "92222222",
-        "created_at": "2026-11-11T09:53:22.157Z"
-      },
-      {
-        "id": "vis-1794390802157-2-1",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "organization_en": "Nama Supply",
-        "organization_ar": "شركة نماء",
-        "full_name_en": "Maryam Al Balushi",
-        "full_name_ar": "مريم البلوشية",
-        "phone_number": "93333333",
-        "created_at": "2026-11-11T09:53:22.157Z"
-      },
-      {
-        "id": "vis-1794390802157-2-2",
-        "visit_id": "cb15886d-7e50-4ab5-928c-61d2994e4303",
-        "organization_en": "Nama Supply",
-        "organization_ar": "شركة نماء",
-        "full_name_en": "Faisal Al Hinai",
-        "full_name_ar": "فيصل الهنائي",
-        "phone_number": "94444444",
-        "created_at": "2026-11-11T09:53:22.157Z"
+        "id": "99c8138a-8a67-44c9-bbaa-e243a9f1ce51",
+        "visit_id": "4ec4253e-392d-46f8-a660-5d1c4799d195",
+        "created_at": "2026-11-11T10:18:08.87624+00:00",
+        "full_name_ar": "اكترون اكترون",
+        "full_name_en": null,
+        "phone_number": null
       }
     ],
     "organizations": [
       {
-        "organization_ar": "وزارة الإسكان",
-        "organization_en": "Ministry of Housing",
+        "organization_en": "",
+        "organization_ar": "نماء نماء",
         "visitors": [
           {
-            "full_name_ar": "خالد المعمري",
-            "full_name_en": "Khalid Al Maamari",
-            "phone_number": "91111111"
-          },
-          {
-            "full_name_ar": "سالم الشكيلي",
-            "full_name_en": "Salim Al Shukaili",
-            "phone_number": "92222222"
+            "full_name_en": "",
+            "full_name_ar": "نماء نماء",
+            "phone_number": ""
           }
         ]
       },
       {
-        "organization_ar": "شركة نماء",
-        "organization_en": "Nama Supply",
+        "organization_en": "",
+        "organization_ar": "اكترون اكترون",
         "visitors": [
           {
-            "full_name_ar": "مريم البلوشية",
-            "full_name_en": "Maryam Al Balushi",
-            "phone_number": "93333333"
-          },
-          {
-            "full_name_ar": "فيصل الهنائي",
-            "full_name_en": "Faisal Al Hinai",
-            "phone_number": "94444444"
+            "full_name_en": "",
+            "full_name_ar": "اكترون اكترون",
+            "phone_number": ""
           }
         ]
       }

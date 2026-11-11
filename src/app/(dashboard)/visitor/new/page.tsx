@@ -382,21 +382,21 @@ function VisitorNewForm() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="w-full space-y-6 pb-16">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900/60 p-6 rounded-3xl border border-border shadow-sm glass">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] flex items-center justify-center text-white shadow-sm">
-            <UserCheck className="w-6 h-6" />
+        <div className="flex items-center gap-3.5">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#173B63] to-[#0F766E] flex items-center justify-center text-white shadow-md">
+            <UserCheck className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#173B63] dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#173B63] dark:text-white">
               {registrationType === 'visitor'
                 ? t('Register New Visitor', 'إضافة زائر جديد (تسجيل مباشر)')
                 : t('Register New Visit', 'إضافة زيارة جديدة (وفود ومؤسسات)')}
             </h1>
-            <p className="text-sm text-slate-500 dark:text-zinc-400">
+            <p className="text-sm sm:text-base text-slate-500 dark:text-zinc-400 font-medium mt-0.5">
               {registrationType === 'visitor'
                 ? t('Quick single visitor entry registration', 'تسجيل بيانات زائر فردي واحد بشكل سريع ومبسط داخل النظام')
                 : t('Complete visit registration with multiple organizations and delegations', 'تسجيل وفد رسمي أو مؤسسات متعددة وزوار مشاركين')}
@@ -404,17 +404,17 @@ function VisitorNewForm() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <Link
             href="/visitor/dashboard"
-            className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-1.5"
+            className="px-4 py-2.5 text-sm font-bold text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-2"
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>{t('Dashboard', 'لوحة التحكم')}</span>
           </Link>
           <Link
             href="/visitor/list"
-            className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-1.5"
+            className="px-4 py-2.5 text-sm font-bold text-slate-700 dark:text-zinc-300 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-xl transition-colors flex items-center gap-2"
           >
             <ListFilter className="w-4 h-4" />
             <span>{t('Visits Log', 'سجل الزيارات')}</span>
@@ -423,7 +423,7 @@ function VisitorNewForm() {
       </div>
 
       {/* Mode Switcher Toggle Tabs */}
-      <div className="flex p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-2xl w-full max-w-lg mx-auto border border-slate-200 dark:border-zinc-700 shadow-inner">
+      <div className="flex p-1.5 bg-slate-100 dark:bg-zinc-800/80 rounded-2xl w-full max-w-2xl mx-auto border border-slate-200 dark:border-zinc-700 shadow-inner">
         <button
           type="button"
           onClick={() => {
@@ -475,28 +475,31 @@ function VisitorNewForm() {
             <span>{t('Visit Date & Time', 'تاريخ وتوقيت الزيارة')}</span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200">
-                  {t('Visit Date', 'تاريخ الزيارة (Visit Date)')}
-                  <span className="text-red-500 ms-1">*</span>
+              <div className="flex items-center justify-between mb-1 min-h-[26px]">
+                <label className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-zinc-200 text-sm sm:text-base whitespace-nowrap">
+                  <span>{t('Visit Date', 'تاريخ الزيارة')}</span>
+                  <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">(Visit Date)</span>
+                  <span className="text-red-500">*</span>
                 </label>
               </div>
-              <div className="p-2 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm focus-within:ring-2 focus-within:ring-[#14B8A6] focus-within:border-transparent transition-all">
+              <div className="flex items-center gap-2 px-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm focus-within:ring-2 focus-within:ring-[#14B8A6] focus-within:border-transparent transition-all h-[52px]">
+                <Calendar className="w-4 h-4 text-slate-400 flex-shrink-0" />
                 <input
                   type="date"
                   required
                   value={visitDate}
                   onChange={e => setVisitDate(e.target.value)}
-                  className="w-full py-2 px-2 bg-transparent text-foreground text-base font-medium focus:outline-none cursor-pointer"
+                  className="w-full bg-transparent text-foreground text-base font-semibold focus:outline-none cursor-pointer"
                 />
               </div>
             </div>
 
             <div>
               <TimePicker12
-                label={t('Time In', 'وقت الدخول (Time In)')}
+                label={t('Time In', 'وقت الدخول')}
+                sublabel="(Time In)"
                 required
                 value={timeIn}
                 onChange={val => setTimeIn(val)}
@@ -505,7 +508,8 @@ function VisitorNewForm() {
 
             <div>
               <TimePicker12
-                label={t('Time Out (Optional)', 'وقت الخروج (Time Out) - اختياري')}
+                label={t('Time Out', 'وقت الخروج')}
+                sublabel={t('(Optional)', '(اختياري)')}
                 value={timeOut}
                 onChange={val => setTimeOut(val)}
                 allowClear
@@ -521,15 +525,15 @@ function VisitorNewForm() {
             <span>{t('Visit Details & Purpose', 'بيانات وتفاصيل الزيارة')}</span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Country', 'الدولة (Country)')}
+              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                {t('Country', 'الدولة')} <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">(Country)</span>
               </label>
               <select
                 value={country}
                 onChange={e => setCountry(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer"
               >
                 {countries.map(c => (
                   <option key={c.en} value={c.en}>{t(c.en, `${c.ar} (${c.en})`)}</option>
@@ -538,45 +542,28 @@ function VisitorNewForm() {
             </div>
 
             <div>
-              <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Coordination by', 'عن طريق (Coordination by)')}
+              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                {t('Coordination by', 'عن طريق')} <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">(Coordination)</span>
               </label>
               <select
                 value={coordinationBy}
                 onChange={e => setCoordinationBy(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer"
               >
                 {coordinationOptions.map(co => (
-                  <option key={co.value} value={co.value}>{co.label}</option>
+                  <option key={co.value} value={co.label}>{co.label}</option>
                 ))}
               </select>
             </div>
 
-            {coordinationBy === 'Other' && (
-              <div className="md:col-span-2">
-                <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Specify Coordination Party', 'تحديد جهة التنسيق (Specify Coordination Party)')}
-                  <span className="text-red-500 mr-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={customCoordination}
-                  onChange={e => setCustomCoordination(e.target.value)}
-                  placeholder={t('e.g. In coordination with company or specific person...', 'مثال: بالتنسيق مع شركة كذا أو شخص محدد...')}
-                  className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-                />
-              </div>
-            )}
-
-            <div className={coordinationBy === 'Other' ? 'md:col-span-2' : ''}>
-              <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Visit Reason', 'سبب الزيارة (Visit Reason)')}
+            <div>
+              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                {t('Visit Reason', 'سبب الزيارة')} <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">(Reason)</span>
               </label>
               <select
                 value={visitReason}
                 onChange={e => setVisitReason(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6] cursor-pointer"
               >
                 {visitReasons.map(r => (
                   <option key={r.en} value={r.en}>{t(r.en, `${r.ar} - ${r.en}`)}</option>
@@ -584,11 +571,26 @@ function VisitorNewForm() {
               </select>
             </div>
 
+            {coordinationBy === 'Other' && (
+              <div className="md:col-span-2 lg:col-span-3">
+                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                  {t('Specify Coordination Party', 'تحديد جهة التنسيق')} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={customCoordination}
+                  onChange={e => setCustomCoordination(e.target.value)}
+                  placeholder={t('e.g. In coordination with company or specific person...', 'مثال: بالتنسيق مع شركة كذا أو شخص محدد...')}
+                  className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                />
+              </div>
+            )}
+
             {visitReason === 'Other' && (
-              <div className="md:col-span-2">
-                <label className="block text-base sm:text-lg font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Specify Visit Reason', 'تحديد سبب الزيارة (Specify Visit Reason)')}
-                  <span className="text-red-500 mr-1">*</span>
+              <div className="md:col-span-2 lg:col-span-3">
+                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                  {t('Specify Visit Reason', 'تحديد سبب الزيارة')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -596,21 +598,21 @@ function VisitorNewForm() {
                   value={customReason}
                   onChange={e => setCustomReason(e.target.value)}
                   placeholder={t('Type visit reason...', 'اكتب سبب الزيارة هنا...')}
-                  className="w-full px-4 py-3.5 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                  className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                 />
               </div>
             )}
 
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 lg:col-span-3">
               <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Notes (Optional)', 'ملاحظات إضافية (اختياري)')}
+                {t('Notes (Optional)', 'ملاحظات إضافية')} <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">(Optional Notes)</span>
               </label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 placeholder={t('Any special notes, meeting room or person to meet...', 'أي ملاحظات أو متطلبات خاصة بالزيارة أو الشخص المقابل...')}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                className="w-full p-4 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
               />
             </div>
           </div>
@@ -624,87 +626,88 @@ function VisitorNewForm() {
               <span>{t('Visitor & Organization Information', 'بيانات الزائر والمؤسسة التابع لها')}</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Visitor Name (Arabic) */}
-              <div>
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Visitor Name (Arabic)', 'اسم الزائر (بالعربية)')}
-                  <span className="text-red-500 mr-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  required={!singleNameEn}
-                  value={singleNameAr}
-                  onChange={e => setSingleNameAr(e.target.value)}
-                  placeholder={t('e.g. Ahmed Al Saadi', 'مثال: أحمد بن علي السعدي')}
-                  dir="rtl"
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-                />
-              </div>
-
-              {/* Visitor Name (English) */}
-              <div>
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Visitor Name (English)', 'اسم الزائر (بالإنجليزية)')}
-                </label>
-                <input
-                  type="text"
-                  value={singleNameEn}
-                  onChange={e => setSingleNameEn(e.target.value)}
-                  placeholder="e.g. Ahmed Al Saadi"
-                  dir="ltr"
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-                />
-              </div>
-
-              {/* Phone Number */}
-              <div>
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Phone Number', 'رقم الهاتف / النقال')}
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="space-y-6">
+              {/* Visitor row: 3 columns */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                    {t('Visitor Name (Arabic)', 'اسم الزائر (بالعربية)')}
+                    <span className="text-red-500 ms-1">*</span>
+                  </label>
                   <input
-                    type="tel"
-                    value={singlePhone}
-                    onChange={e => setSinglePhone(e.target.value)}
-                    placeholder="+968 91234567"
-                    dir="ltr"
-                    className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base font-mono focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                    type="text"
+                    required={!singleNameEn}
+                    value={singleNameAr}
+                    onChange={e => setSingleNameAr(e.target.value)}
+                    placeholder={t('e.g. Ahmed Al Saadi', 'مثال: أحمد بن علي السعدي')}
+                    dir="rtl"
+                    className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                    {t('Visitor Name (English)', 'اسم الزائر (بالإنجليزية)')}
+                  </label>
+                  <input
+                    type="text"
+                    value={singleNameEn}
+                    onChange={e => setSingleNameEn(e.target.value)}
+                    placeholder="e.g. Ahmed Al Saadi"
+                    dir="ltr"
+                    className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                    {t('Phone Number', 'رقم الهاتف / النقال')}
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="tel"
+                      value={singlePhone}
+                      onChange={e => setSinglePhone(e.target.value)}
+                      placeholder="+968 91234567"
+                      dir="ltr"
+                      className="w-full pl-10 pr-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base font-mono focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Organization (Arabic) */}
-              <div>
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Organization Name (Arabic)', 'اسم المؤسسة / الشركة (بالعربية)')}
-                  <span className="text-red-500 mr-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  required={!singleOrgEn}
-                  value={singleOrgAr}
-                  onChange={e => setSingleOrgAr(e.target.value)}
-                  placeholder={t('e.g. Nama Supply', 'مثال: شركة نماء، وزارة العمل...')}
-                  dir="rtl"
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-                />
-              </div>
+              {/* Organization row: 2 columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
+                <div>
+                  <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                    {t('Organization Name (Arabic)', 'اسم المؤسسة / الشركة (بالعربية)')}
+                    <span className="text-red-500 ms-1">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required={!singleOrgEn}
+                    value={singleOrgAr}
+                    onChange={e => setSingleOrgAr(e.target.value)}
+                    placeholder={t('e.g. Nama Supply', 'مثال: شركة نماء، وزارة العمل...')}
+                    dir="rtl"
+                    className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                  />
+                </div>
 
-              {/* Organization (English) */}
-              <div className="md:col-span-2">
-                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                  {t('Organization Name (English)', 'اسم المؤسسة / الشركة (بالإنجليزية)')}
-                </label>
-                <input
-                  type="text"
-                  value={singleOrgEn}
-                  onChange={e => setSingleOrgEn(e.target.value)}
-                  placeholder="e.g. Nama Supply, Siemens..."
-                  dir="ltr"
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-                />
+                <div>
+                  <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
+                    {t('Organization Name (English)', 'اسم المؤسسة / الشركة (بالإنجليزية)')}
+                  </label>
+                  <input
+                    type="text"
+                    value={singleOrgEn}
+                    onChange={e => setSingleOrgEn(e.target.value)}
+                    placeholder="e.g. Nama Supply, Siemens..."
+                    dir="ltr"
+                    className="w-full px-4 h-[52px] rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -816,7 +819,7 @@ function VisitorNewForm() {
                       {org.visitors.map((visitor, vIdx) => (
                         <div
                           key={visitor.id}
-                          className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
+                          className="p-3.5 rounded-2xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
                         >
                           <div className="sm:col-span-4">
                             <input
@@ -825,7 +828,7 @@ function VisitorNewForm() {
                               onChange={e => updateVisitorInOrg(org.id, visitor.id, 'full_name_ar', e.target.value)}
                               placeholder={t('Name in Arabic', 'الاسم بالعربية')}
                               dir="rtl"
-                              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold"
+                              className="w-full px-3.5 h-[44px] rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                             />
                           </div>
                           <div className="sm:col-span-4">
@@ -835,7 +838,7 @@ function VisitorNewForm() {
                               onChange={e => updateVisitorInOrg(org.id, visitor.id, 'full_name_en', e.target.value)}
                               placeholder={t('Name in English', 'الاسم بالإنجليزية')}
                               dir="ltr"
-                              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium"
+                              className="w-full px-3.5 h-[44px] rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                             />
                           </div>
                           <div className="sm:col-span-3">
@@ -845,7 +848,7 @@ function VisitorNewForm() {
                               onChange={e => updateVisitorInOrg(org.id, visitor.id, 'phone_number', e.target.value)}
                               placeholder={t('Phone', 'رقم الهاتف')}
                               dir="ltr"
-                              className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-mono font-medium"
+                              className="w-full px-3.5 h-[44px] rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-mono font-medium focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
                             />
                           </div>
                           <div className="sm:col-span-1 flex justify-center">
@@ -853,7 +856,7 @@ function VisitorNewForm() {
                               <button
                                 type="button"
                                 onClick={() => removeVisitorFromOrg(org.id, visitor.id)}
-                                className="p-1 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40"
+                                className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
                                 title={t('Remove', 'حذف')}
                               >
                                 <Trash2 className="w-4 h-4" />

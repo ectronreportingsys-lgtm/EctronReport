@@ -8,6 +8,7 @@ export interface TimePicker12Props {
   value: string; // "HH:mm" (24h) or ""
   onChange: (value: string) => void;
   label?: string;
+  sublabel?: string;
   required?: boolean;
   disabled?: boolean;
   className?: string;
@@ -26,6 +27,7 @@ export function TimePicker12({
   value,
   onChange,
   label,
+  sublabel,
   required = false,
   disabled = false,
   className = '',
@@ -119,17 +121,22 @@ export function TimePicker12({
   return (
     <div className={`space-y-1.5 ${className}`}>
       {label && (
-        <div className="flex items-center justify-between mb-1">
-          <label className={`block font-bold text-slate-800 dark:text-zinc-200 ${compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'}`}>
-            {label}
-            {required && <span className="text-red-500 ms-1">*</span>}
+        <div className="flex items-center justify-between mb-1 min-h-[26px]">
+          <label className={`flex items-center gap-1.5 font-bold text-slate-800 dark:text-zinc-200 whitespace-nowrap ${compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'}`}>
+            <span>{label}</span>
+            {sublabel && (
+              <span className="text-xs font-normal text-slate-400 dark:text-zinc-500">
+                {sublabel}
+              </span>
+            )}
+            {required && <span className="text-red-500">*</span>}
           </label>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             {showNowButton && !disabled && (
               <button
                 type="button"
                 onClick={setNow}
-                className="text-xs px-2 py-0.5 rounded-md font-semibold text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 transition-colors"
+                className="text-xs px-2 py-0.5 rounded-lg font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 border border-teal-200/60 dark:border-teal-800/60 transition-colors"
                 title={t('Set current time', 'ضبط الوقت الحالي')}
               >
                 {t('Now', 'الآن')}
@@ -139,7 +146,7 @@ export function TimePicker12({
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-xs px-1.5 py-0.5 rounded-md font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors flex items-center gap-0.5"
+                className="text-xs px-2 py-0.5 rounded-lg font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 border border-rose-200/60 dark:border-rose-800/60 transition-colors flex items-center gap-1"
                 title={t('Clear time', 'مسح الوقت')}
               >
                 <X className="w-3 h-3" />
@@ -152,15 +159,15 @@ export function TimePicker12({
 
       {/* Control row */}
       <div
-        className={`flex items-center gap-1.5 sm:gap-2 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm focus-within:ring-2 focus-within:ring-[#14B8A6] focus-within:border-transparent transition-all ${
-          compact ? 'p-1 sm:p-1.5' : 'p-2'
+        className={`flex items-center gap-2 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm focus-within:ring-2 focus-within:ring-[#14B8A6] focus-within:border-transparent transition-all ${
+          compact ? 'h-[44px] px-2' : 'h-[52px] px-2.5 sm:px-3'
         }`}
       >
-        <div className="flex items-center gap-1.5 flex-1 min-w-0">
-          <Clock className="w-4 h-4 text-slate-400 ms-1 flex-shrink-0" />
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
+          <Clock className="w-4 h-4 text-slate-400 flex-shrink-0" />
 
           {/* Hour Select: 1 to 12 without repetition */}
-          <div className="flex-1 min-w-[55px]">
+          <div className="flex-1 min-w-[50px]">
             <select
               aria-label={t('Hour (1-12)', 'الساعة (1-12)')}
               value={parsedHour !== null ? parsedHour : ''}
@@ -168,7 +175,7 @@ export function TimePicker12({
               disabled={disabled}
               required={required}
               className={`w-full text-center rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-foreground font-bold font-mono focus:outline-none focus:bg-white dark:focus:bg-zinc-800 cursor-pointer ${
-                compact ? 'py-1.5 px-1 text-sm' : 'py-2 px-1 text-base'
+                compact ? 'py-1 px-1 text-sm' : 'py-1.5 px-1 sm:px-2 text-base'
               }`}
             >
               <option value="" disabled={required}>
@@ -182,10 +189,10 @@ export function TimePicker12({
             </select>
           </div>
 
-          <span className="text-lg sm:text-xl font-bold text-slate-400 select-none">:</span>
+          <span className="text-lg font-bold text-slate-400 select-none">:</span>
 
           {/* Minute Select: 0 to 59 without repetition */}
-          <div className="flex-1 min-w-[55px]">
+          <div className="flex-1 min-w-[50px]">
             <select
               aria-label={t('Minute (00-59)', 'الدقيقة (00-59)')}
               value={parsedMinute !== null ? parsedMinute : ''}
@@ -193,7 +200,7 @@ export function TimePicker12({
               disabled={disabled}
               required={required && parsedHour !== null}
               className={`w-full text-center rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-foreground font-bold font-mono focus:outline-none focus:bg-white dark:focus:bg-zinc-800 cursor-pointer ${
-                compact ? 'py-1.5 px-1 text-sm' : 'py-2 px-1 text-base'
+                compact ? 'py-1 px-1 text-sm' : 'py-1.5 px-1 sm:px-2 text-base'
               }`}
             >
               <option value="" disabled={required}>
@@ -209,13 +216,13 @@ export function TimePicker12({
         </div>
 
         {/* AM / PM Segmented Toggle */}
-        <div className="flex items-center bg-slate-100 dark:bg-zinc-900 p-0.5 sm:p-1 rounded-xl border border-slate-200 dark:border-zinc-700 flex-shrink-0">
+        <div className="flex items-center bg-slate-100 dark:bg-zinc-900 p-0.5 rounded-xl border border-slate-200 dark:border-zinc-700 flex-shrink-0">
           <button
             type="button"
             onClick={() => handlePeriodToggle('AM')}
             disabled={disabled}
             className={`rounded-lg font-bold transition-all ${
-              compact ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs sm:text-sm'
+              compact ? 'px-2 py-1 text-xs' : 'px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm'
             } ${
               activePeriod === 'AM' && hasValue
                 ? 'bg-[#0F766E] text-white shadow-sm'
@@ -229,7 +236,7 @@ export function TimePicker12({
             onClick={() => handlePeriodToggle('PM')}
             disabled={disabled}
             className={`rounded-lg font-bold transition-all ${
-              compact ? 'px-2 py-1 text-xs' : 'px-3 py-1.5 text-xs sm:text-sm'
+              compact ? 'px-2 py-1 text-xs' : 'px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm'
             } ${
               activePeriod === 'PM' && hasValue
                 ? 'bg-[#0F766E] text-white shadow-sm'
