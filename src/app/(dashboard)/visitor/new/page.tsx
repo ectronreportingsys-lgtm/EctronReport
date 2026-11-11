@@ -94,8 +94,8 @@ function VisitorNewForm() {
 
   // General Fields
   const [visitDate, setVisitDate] = useState<string>('');
-  const [timeIn, setTimeIn] = useState<string>('');
-  const [timeOut, setTimeOut] = useState<string>('');
+  const [timeIn, setTimeIn] = useState<string>('09:00');
+  const [timeOut, setTimeOut] = useState<string>('12:00');
   const [country, setCountry] = useState('Oman');
   const [coordinationBy, setCoordinationBy] = useState('Ectron');
   const [customCoordination, setCustomCoordination] = useState('');
@@ -123,9 +123,10 @@ function VisitorNewForm() {
   ]);
 
   useEffect(() => {
-    const { date, time } = getMuscatNow();
+    const { date } = getMuscatNow();
     setVisitDate(date);
-    setTimeIn(time);
+    setTimeIn('09:00');
+    setTimeOut('12:00');
   }, []);
 
   const addOrganization = () => {
@@ -194,10 +195,10 @@ function VisitorNewForm() {
   };
 
   const resetForm = () => {
-    const { date, time } = getMuscatNow();
+    const { date } = getMuscatNow();
     setVisitDate(date);
-    setTimeIn(time);
-    setTimeOut('');
+    setTimeIn('09:00');
+    setTimeOut('12:00');
     setCountry('Oman');
     setCoordinationBy('Ectron');
     setCustomCoordination('');
