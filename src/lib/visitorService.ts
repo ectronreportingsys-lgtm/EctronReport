@@ -704,22 +704,93 @@ export async function updateVisitTimeOut(id: string, timeOut: string): Promise<{
   return updateVisit(id, { time_out: timeOut });
 }
 
-// Delete visit (cascades to visitors)
+// Delete visit (cascades to visitors and purges from both Supabase and Local Store)
 export async function deleteVisit(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = createAdminClient();
-    const { error } = await supabase.from('visits').delete().eq('id', id);
-    if (!error) {
-      return { success: true };
-    }
-  } catch (e) {
-    // fallback
-  }
+    const list = ensureLocalStore();
+    // 1. Identify visit details from local store or argument
+    const localTarget = list.find(v => v.id === id || v.visit_number === id);
+    const visitNumber = localTarget?.visit_number;
+    const localId = localTarget?.id || id;
 
-  const list = ensureLocalStore();
-  const filtered = list.filter(v => v.id !== id);
-  writeLocalStore(filtered);
-  return { success: true };
+    const isUuid = (val?: string | null) =>
+      Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val));
+
+    // 2. Perform deletion in Supabase
+    try {
+      const supabase = createAdminClient();
+      const supaIdsToDelete = new Set<string>();
+
+      // Check if id or localId is a valid UUID
+      if (isUuid(id)) supaIdsToDelete.add(id);
+      if (isUuid(localId)) supaIdsToDelete.add(localId);
+
+      // Search by visit_number in Supabase to find its exact Supabase UUID
+      if (visitNumber) {
+        const { data: byNum } = await supabase
+          .from('visits')
+          .select('id, visit_number')
+          .eq('visit_number', visitNumber);
+        if (byNum && byNum.length > 0) {
+          byNum.forEach(v => {
+            if (v.id) supaIdsToDelete.add(v.id);
+          });
+        }
+      }
+
+      // If id was a visit_number itself
+      if (id.startsWith('VIS-')) {
+        const { data: byRawNum } = await supabase
+          .from('visits')
+          .select('id, visit_number')
+          .eq('visit_number', id);
+        if (byRawNum && byRawNum.length > 0) {
+          byRawNum.forEach(v => {
+            if (v.id) supaIdsToDelete.add(v.id);
+          });
+        }
+      }
+
+      // For every matched Supabase visit, delete child visitors first, then visit
+      for (const supaId of supaIdsToDelete) {
+        try {
+          await supabase.from('visit_visitors').delete().eq('visit_id', supaId);
+        } catch (visErr) {
+          console.warn('Error deleting visit_visitors in Supabase:', visErr);
+        }
+
+        try {
+          await supabase.from('visits').delete().eq('id', supaId);
+        } catch (vErr) {
+          console.warn('Error deleting visit in Supabase:', vErr);
+        }
+      }
+
+      // Also ensure deletion by visit_number if known
+      if (visitNumber) {
+        await supabase.from('visits').delete().eq('visit_number', visitNumber);
+      }
+      if (id.startsWith('VIS-')) {
+        await supabase.from('visits').delete().eq('visit_number', id);
+      }
+    } catch (supaErr) {
+      console.warn('Supabase delete error:', supaErr);
+    }
+
+    // 3. ALWAYS purge from local store by ALL matching keys so it never reappears
+    const remaining = list.filter(v => {
+      if (v.id === id || v.id === localId) return false;
+      if (visitNumber && v.visit_number === visitNumber) return false;
+      if (v.visit_number === id) return false;
+      return true;
+    });
+
+    writeLocalStore(remaining);
+    return { success: true };
+  } catch (err: any) {
+    console.error('Error in deleteVisit:', err);
+    return { success: false, error: err?.message || 'Failed to delete visit' };
+  }
 }
 
 // Calculate Dashboard Summary Metrics for selected Year and Month

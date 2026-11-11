@@ -269,9 +269,27 @@ export default function VisitorDashboardView({
     try {
       const res = await removeVisit(deleteConfirm.visitId);
       if (res.success) {
-        setVisits(prev => prev.filter(v => v.id !== deleteConfirm.visitId));
+        setVisits(prev =>
+          prev.filter(
+            v =>
+              v.id !== deleteConfirm.visitId &&
+              (deleteConfirm.visitNumber ? v.visit_number !== deleteConfirm.visitNumber : true)
+          )
+        );
+        if (
+          selectedVisitModal &&
+          (selectedVisitModal.id === deleteConfirm.visitId ||
+            selectedVisitModal.visit_number === deleteConfirm.visitNumber)
+        ) {
+          setSelectedVisitModal(null);
+          setIsEditMode(false);
+        }
         setDeleteConfirm({ isOpen: false, visitId: '', visitNumber: '' });
+      } else {
+        alert(res.error || t('Failed to delete visit', 'تعذر حذف الزيارة'));
       }
+    } catch (err: any) {
+      alert(err?.message || t('Error deleting visit', 'حدث خطأ أثناء حذف الزيارة'));
     } finally {
       setIsUpdating(false);
     }
@@ -1500,22 +1518,38 @@ export default function VisitorDashboardView({
                     </div>
 
                     {/* Bottom Edit Actions */}
-                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+                    <div className="flex items-center justify-between pt-4 border-t border-border">
                       <button
                         type="button"
                         onClick={() => {
-                          setEditForm(JSON.parse(JSON.stringify(selectedVisitModal)));
-                          setIsEditMode(false);
+                          setDeleteConfirm({
+                            isOpen: true,
+                            visitId: editForm.id,
+                            visitNumber: editForm.visit_number,
+                          });
                         }}
-                        className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                        className="px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1.5"
                       >
-                        {t('Cancel', 'إلغاء')}
+                        <Trash2 className="w-4 h-4" />
+                        <span>{t('Delete Visit', 'حذف هذه الزيارة')}</span>
                       </button>
-                      <button
-                        type="submit"
-                        disabled={isUpdating}
-                        className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50 flex items-center gap-2"
-                      >
+
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditForm(JSON.parse(JSON.stringify(selectedVisitModal)));
+                            setIsEditMode(false);
+                          }}
+                          className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                        >
+                          {t('Cancel', 'إلغاء')}
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={isUpdating}
+                          className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 disabled:opacity-50 flex items-center gap-2"
+                        >
                         {isUpdating ? (
                           <>
                             <RefreshCw className="w-4 h-4 animate-spin" />
@@ -1529,7 +1563,8 @@ export default function VisitorDashboardView({
                         )}
                       </button>
                     </div>
-                  </form>
+                  </div>
+                </form>
                 );
               })()}
 
