@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
     let permNames = new Set<string>();
     
     // Extract role safely whether it's an object or an array (Supabase typings can be weird)
-    const role = Array.isArray(user.roles) ? user.roles[0] : user.roles;
+    const role = user?.roles ? (Array.isArray(user.roles) ? user.roles[0] : user.roles) : null;
 
     // Admin has everything
     if (role?.name === 'Admin') {

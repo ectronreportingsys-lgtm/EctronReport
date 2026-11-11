@@ -365,7 +365,13 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
           roles={roles}
           onClose={() => setIsModalOpen(false)} 
           onSuccess={(savedUser) => {
-            const role = Array.isArray(savedUser.roles) ? savedUser.roles[0] : savedUser.roles;
+            if (!savedUser) {
+              setIsModalOpen(false);
+              return;
+            }
+            const role = savedUser.roles
+              ? (Array.isArray(savedUser.roles) ? savedUser.roles[0] : savedUser.roles)
+              : null;
             let computed: string[] = [];
             if (role?.name === 'Admin') {
               computed = ['Full Access (Admin)'];

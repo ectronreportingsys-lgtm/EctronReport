@@ -197,6 +197,16 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save user (Check SUPABASE_SERVICE_ROLE_KEY)');
       
+      if (!data.user) {
+        throw new Error(
+          data.error ||
+          t(
+            'Saved successfully but could not retrieve user data. Please ensure SUPABASE_SERVICE_ROLE_KEY is configured in Vercel.',
+            'تم الحفظ بنجاح، لكن تعذر جلب المستخدم المحدث. يرجى التأكد من إضافة SUPABASE_SERVICE_ROLE_KEY في إعدادات Vercel.'
+          )
+        );
+      }
+      
       onSuccess(data.user);
     } catch (err: any) {
       setError(err.message);

@@ -57,9 +57,22 @@ export async function POST(request: Request) {
         .from('profiles')
         .select('id, username, full_name, is_active, roles(id, name), user_permissions ( permissions ( page_key ) )')
         .eq('id', authData.user.id)
-        .single();
+        .maybeSingle();
+
+      const { data: roleObj } = role_id
+        ? await supabase.from('roles').select('id, name').eq('id', role_id).maybeSingle()
+        : { data: null };
+
+      const returnedUser = newUser || {
+        id: authData.user.id,
+        username,
+        full_name,
+        is_active: is_active !== undefined ? is_active : true,
+        roles: roleObj || { id: role_id, name: 'Employee' },
+        user_permissions: (custom_permissions || []).map((k: string) => ({ permissions: { page_key: k } }))
+      };
         
-      return NextResponse.json({ success: true, user: newUser });
+      return NextResponse.json({ success: true, user: returnedUser });
     }
 
     return NextResponse.json({ error: 'Failed to create user' }, { status: 400 });
@@ -126,9 +139,22 @@ export async function PUT(request: Request) {
       .from('profiles')
       .select('id, username, full_name, is_active, roles(id, name), user_permissions ( permissions ( page_key ) )')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    const { data: roleObj } = role_id
+      ? await supabase.from('roles').select('id, name').eq('id', role_id).maybeSingle()
+      : { data: null };
+
+    const returnedUser = updatedUser || {
+      id,
+      username,
+      full_name,
+      is_active: is_active !== undefined ? is_active : true,
+      roles: roleObj || { id: role_id, name: 'Employee' },
+      user_permissions: (custom_permissions || []).map((k: string) => ({ permissions: { page_key: k } }))
+    };
+
+    return NextResponse.json({ success: true, user: returnedUser });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
