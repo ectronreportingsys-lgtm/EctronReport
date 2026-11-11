@@ -112,14 +112,32 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
     if (manuallyChanged) return;
     
     // Load existing user permissions only once when editing
-    if (user && user.user_permissions && !initialLoaded) {
-      const userPerms = user.user_permissions.map((up: any) => up.permissions?.page_key).filter(Boolean);
-      setSelectedPermissions(userPerms);
+    if (user && !initialLoaded) {
+      const userPerms = user.user_permissions
+        ?.map((up: any) => up.permissions?.page_key)
+        .filter((k: string) => Boolean(k) && k !== 'no_access') || [];
+        
+      if (userPerms.length > 0) {
+        setSelectedPermissions(userPerms);
+      } else {
+        // Fallback to role defaults if user had no specific custom permissions set
+        const selectedRole = roles.find(r => r.id === (user.roles?.id || formData.role_id));
+        const roleName = selectedRole?.name?.toLowerCase() || '';
+        if (roleName.includes('admin')) {
+          setSelectedPermissions(ALL_PERMISSIONS.map(p => p.key));
+        } else if (roleName.includes('manager')) {
+          setSelectedPermissions(['electricity_dashboard', 'electricity_reports', 'water_dashboard', 'water_reports']);
+        } else if (roleName.includes('supervisor')) {
+          setSelectedPermissions(['electricity_dashboard', 'electricity_reports', 'electricity_daily_entry', 'water_dashboard', 'water_reports', 'water_daily_entry', 'visitor_dashboard', 'visitor_register', 'visitor_list']);
+        } else {
+          setSelectedPermissions(['electricity_dashboard', 'electricity_reports', 'electricity_daily_entry', 'water_dashboard', 'water_reports', 'water_daily_entry']);
+        }
+      }
       setInitialLoaded(true);
       return;
     }
     
-    // Auto-update permissions if role changes (only for new users or if role is changed from original)
+    // Auto-update permissions if role changes (only for new users or if role is explicitly switched)
     if (!user || (user && formData.role_id !== user.roles?.id)) {
       const selectedRole = roles.find(r => r.id === formData.role_id);
       if (!selectedRole) return;
@@ -129,9 +147,30 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
       if (roleName.includes('admin')) {
         setSelectedPermissions(ALL_PERMISSIONS.map(p => p.key));
       } else if (roleName.includes('manager')) {
-        setSelectedPermissions(['electricity_dashboard', 'electricity_reports', 'water_dashboard', 'water_reports']);
+        setSelectedPermissions([
+          'electricity_dashboard', 'electricity_reports', 
+          'water_dashboard', 'water_reports',
+          'electricity-ecs1100_dashboard', 'electricity-ecs1100_reports',
+          'petty_cash_dashboard',
+          'visitor_dashboard', 'visitor_list',
+          'library_dashboard', 'library_registry'
+        ]);
+      } else if (roleName.includes('supervisor')) {
+        setSelectedPermissions([
+          'electricity_dashboard', 'electricity_reports', 'electricity_daily_entry', 
+          'water_dashboard', 'water_reports', 'water_daily_entry',
+          'electricity-ecs1100_dashboard', 'electricity-ecs1100_reports', 'electricity-ecs1100_daily_entry',
+          'visitor_dashboard', 'visitor_register', 'visitor_list',
+          'library_dashboard', 'library_registry'
+        ]);
+      } else if (roleName.includes('employee')) {
+        // Default for Employee: Electricity & Water pre-checked, but fully removable
+        setSelectedPermissions([
+          'electricity_dashboard', 'electricity_reports', 'electricity_daily_entry', 
+          'water_dashboard', 'water_reports', 'water_daily_entry'
+        ]);
       } else {
-        setSelectedPermissions(['electricity_daily_entry', 'water_daily_entry']);
+        setSelectedPermissions(['electricity_dashboard', 'water_dashboard']);
       }
     }
   }, [formData.role_id, roles, manuallyChanged, user, initialLoaded]);
@@ -252,13 +291,65 @@ export default function UserFormModal({ user, roles, onClose, onSuccess }: UserF
             </div>
 
             <div className="pt-4 border-t border-zinc-800">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-zinc-200">{t('Custom Permissions / Pages', 'صلاحيات مخصصة / صفحات')}</h3>
-                <span className="text-xs text-teal-400 font-semibold">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-200">{t('Permissions & Page Access', 'صلاحيات الأقسام والصفحات')}</h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    {t('Check the exact pages this user can access. Any unchecked section will NOT appear for the employee.', 'حدد الأقسام والصفحات المسموح لهذا الموظف برؤيتها. أي قسم أو صفحة غير محددة لن تظهر له إطلاقاً.')}
+                  </p>
+                </div>
+                <span className="text-xs text-teal-400 font-semibold shrink-0">
                   {selectedPermissions.length} / {ALL_PERMISSIONS.length} {t('Selected', 'محدد')}
                 </span>
               </div>
-              <p className="text-xs text-zinc-500 mb-4">{t('Select additional pages this user can access (overrides role defaults).', 'حدد الصفحات الإضافية المتاحة لهذا المستخدم.')}</p>
+
+              {/* Quick Preset Buttons */}
+              <div className="flex flex-wrap items-center gap-2 mb-4 p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-800">
+                <span className="text-xs text-zinc-400 font-medium ml-1 mr-2">{t('Quick Presets:', 'اختيارات سريعة:')}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPermissions(['visitor_dashboard', 'visitor_register', 'visitor_list', 'visitor_admin']);
+                    setManuallyChanged(true);
+                  }}
+                  className="px-2.5 py-1 text-xs rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/20 transition-colors"
+                >
+                  {t('Visitor Management Only', 'قسم الزوار فقط')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPermissions([
+                      'electricity_dashboard', 'electricity_reports', 'electricity_daily_entry',
+                      'water_dashboard', 'water_reports', 'water_daily_entry'
+                    ]);
+                    setManuallyChanged(true);
+                  }}
+                  className="px-2.5 py-1 text-xs rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/20 transition-colors"
+                >
+                  {t('Electricity & Water (Default)', 'كهرباء ومياه فقط (الافتراضي)')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPermissions(ALL_PERMISSIONS.map(p => p.key));
+                    setManuallyChanged(true);
+                  }}
+                  className="px-2.5 py-1 text-xs rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition-colors"
+                >
+                  {t('Select All', 'تحديد الكل')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPermissions([]);
+                    setManuallyChanged(true);
+                  }}
+                  className="px-2.5 py-1 text-xs rounded-lg bg-zinc-800 hover:bg-zinc-700 text-red-400 transition-colors"
+                >
+                  {t('Deselect All', 'إلغاء تحديد الكل')}
+                </button>
+              </div>
               
               <div className="space-y-4">
                 {PERMISSION_MODULES.map((mod, mIdx) => {

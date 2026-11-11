@@ -88,7 +88,7 @@ export default function HomePage() {
         'Factory data repository, document control, expiration monitoring & 14-day alerts',
         'مكتبة بيانات المصنع، حفظ الأوراق الرسمية، ومراقبة الصلاحية والتنبيهات المبكرة'
       ),
-      permissions: ['library_dashboard', 'library_registry'],
+      permissions: ['library_dashboard', 'library_registry', 'library_create', 'library_admin'],
       icon: FolderArchive,
       href: '/library/dashboard',
       bgClass: 'bg-gradient-to-br from-white via-[#F0FDF4] to-[#DCFCE7] hover:to-[#CCFBF1] dark:bg-none dark:bg-[#00a99d]/10 dark:hover:bg-[#00a99d]/15',

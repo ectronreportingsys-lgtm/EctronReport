@@ -74,7 +74,7 @@ export default function Sidebar({ userPermissions = [], roleName = '', isCollaps
       { name: t('Visitor Dashboard', 'لوحة تحكم الزوار'), href: '/visitor/dashboard', icon: LayoutDashboard, permission: 'visitor_dashboard' },
       { name: t('Add Visit', 'إضافة زيارة'), href: '/visitor/new?type=visit', icon: Building2, permission: 'visitor_register' },
       { name: t('Add Visitor', 'إضافة زائر'), href: '/visitor/new?type=visitor', icon: UserPlus, permission: 'visitor_register' },
-      { name: t('Visits List', 'قائمة الزيارات'), href: '/visitor/list', icon: ListFilter, permission: 'visitor_list' },
+      { name: t('Manage Visits List', 'إدارة قائمة الزيارات'), href: '/visitor/list', icon: ListFilter, permission: 'visitor_list' },
       { name: t('QR Code', 'رمز الاستجابة QR'), href: '/visitor/qrcode', icon: QrCode, permission: 'visitor_register' },
       { name: t('Import Excel', 'استيراد إكسل'), href: '/visitor/import', icon: FileSpreadsheet, permission: 'visitor_list' },
     ];

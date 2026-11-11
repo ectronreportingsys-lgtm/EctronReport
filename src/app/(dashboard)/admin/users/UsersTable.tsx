@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { UserPlus, Trash2, Edit2, ShieldAlert, Upload, CheckCircle2, AlertTriangle, XCircle, Loader2, ArrowUpDown, ChevronUp, ChevronDown, Download } from 'lucide-react';
 import clsx from 'clsx';
-import UserFormModal from './UserFormModal';
+import UserFormModal, { PERMISSION_MODULES } from './UserFormModal';
 import RolesManagementModal from './RolesManagementModal';
 import { createClient } from '@/lib/supabase';
 import * as xlsx from 'xlsx';
@@ -364,12 +364,34 @@ export default function UsersTable({ initialUsers, roles: initialRoles }: { init
           user={editingUser} 
           roles={roles}
           onClose={() => setIsModalOpen(false)} 
-          onSuccess={(newUser) => {
+          onSuccess={(savedUser) => {
+            const role = Array.isArray(savedUser.roles) ? savedUser.roles[0] : savedUser.roles;
+            let computed: string[] = [];
+            if (role?.name === 'Admin') {
+              computed = ['Full Access (Admin)'];
+            } else if (savedUser.user_permissions && savedUser.user_permissions.length > 0) {
+              const allFlat = PERMISSION_MODULES.flatMap(m => m.permissions);
+              computed = savedUser.user_permissions
+                .map((up: any) => {
+                  const key = up.permissions?.page_key;
+                  if (!key || key === 'no_access') return null;
+                  const found = allFlat.find(p => p.key === key);
+                  return found ? t(found.labelEn, found.labelAr) : key;
+                })
+                .filter(Boolean);
+              if (computed.length === 0) computed = [t('No Access', 'لا توجد صفحات مفعلة')];
+            }
+            const formattedUser = {
+              ...savedUser,
+              roles: role,
+              computed_permissions: computed
+            };
+
             if (editingUser) {
-              setUsers(users.map(u => u.id === newUser.id ? newUser : u));
+              setUsers(users.map(u => u.id === formattedUser.id ? formattedUser : u));
               setSuccessMessage(t('User updated successfully!', 'تم تعديل بيانات المستخدم بنجاح!'));
             } else {
-              setUsers([newUser, ...users]);
+              setUsers([formattedUser, ...users]);
               setSuccessMessage(t('User added successfully!', 'تمت إضافة المستخدم بنجاح!'));
             }
             setIsModalOpen(false);

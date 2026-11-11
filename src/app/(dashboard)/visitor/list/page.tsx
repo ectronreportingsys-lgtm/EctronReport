@@ -2,8 +2,8 @@ import { getVisits, getAvailableYears } from '@/lib/visitorService';
 import VisitorDashboardView from '@/components/visitor/VisitorDashboardView';
 
 export const metadata = {
-  title: 'Visits List | ECTRON Visitor Management',
-  description: 'Complete list of ECTRON registered visits and visitors'
+  title: 'Manage Visits List | ECTRON Visitor Management',
+  description: 'Complete management and administration of ECTRON registered visits and visitors'
 };
 
 export default async function VisitorListPage() {
@@ -19,6 +19,7 @@ export default async function VisitorListPage() {
       initialVisits={visits}
       initialYears={availableYears}
       initialSelectedYear={defaultYear}
+      mode="manage"
     />
   );
 }

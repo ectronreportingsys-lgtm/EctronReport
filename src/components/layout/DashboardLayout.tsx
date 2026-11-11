@@ -27,27 +27,30 @@ export default async function DashboardLayout({ children }: { children: React.Re
       profile = profileData;
       roleName = profileData.roles?.name || '';
       
-      // Fetch role permissions
-      if (profileData.role_id) {
-        const { data: rolePerms } = await supabase
-          .from('role_permissions')
-          .select('permissions(page_key)')
-          .eq('role_id', profileData.role_id);
-          
-        if (rolePerms) {
-          permissions = rolePerms.map((rp: any) => rp.permissions.page_key);
-        }
-      }
-      
-      // Fetch user custom permissions
+      // Fetch user custom permissions first
       const { data: userPerms } = await supabase
         .from('user_permissions')
         .select('permissions(page_key)')
         .eq('user_id', user.id);
         
       if (userPerms && userPerms.length > 0) {
-        const customPerms = userPerms.map((up: any) => up.permissions.page_key);
-        permissions = [...new Set([...permissions, ...customPerms])];
+        // User has explicit custom permissions configured by the admin:
+        // Use ONLY these assigned permissions (override any role defaults completely)
+        permissions = userPerms
+          .map((up: any) => up.permissions?.page_key)
+          .filter((k: string) => Boolean(k) && k !== 'no_access');
+      } else if (profileData.role_id) {
+        // Fallback to role default permissions only when custom permissions have never been set
+        const { data: rolePerms } = await supabase
+          .from('role_permissions')
+          .select('permissions(page_key)')
+          .eq('role_id', profileData.role_id);
+          
+        if (rolePerms) {
+          permissions = rolePerms
+            .map((rp: any) => rp.permissions?.page_key)
+            .filter((k: string) => Boolean(k) && k !== 'no_access');
+        }
       }
     }
   }

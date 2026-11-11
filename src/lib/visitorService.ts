@@ -116,6 +116,18 @@ export async function getVisits(filters?: {
         visitors: v.visit_visitors || []
       }));
 
+      // Merge any local fallback visits not in Supabase yet
+      try {
+        const localStore = ensureLocalStore();
+        const supaNumSet = new Set(results.map(v => v.visit_number));
+        const missingFromSupa = localStore.filter(v => v.visit_number && !supaNumSet.has(v.visit_number));
+        if (missingFromSupa.length > 0) {
+          results = [...missingFromSupa, ...results];
+        }
+      } catch (mergeErr) {
+        // Ignore merge error
+      }
+
       // Apply month filter in memory
       if (filters?.month && filters.month > 0) {
         results = results.filter(v => {
@@ -345,7 +357,21 @@ export async function createVisit(data: {
 
       if (!rpcErr && rpcRes && rpcRes.id) {
         const created = await getVisitById(rpcRes.id);
-        if (created) return { success: true, visit: created };
+        if (created) {
+          try {
+            const localVisits = ensureLocalStore();
+            const existsIdx = localVisits.findIndex(v => v.id === created.id || v.visit_number === created.visit_number);
+            if (existsIdx >= 0) {
+              localVisits[existsIdx] = created;
+            } else {
+              localVisits.unshift(created);
+            }
+            writeLocalStore(localVisits);
+          } catch (e) {
+            // Ignore local backup error
+          }
+          return { success: true, visit: created };
+        }
       }
 
       // If RPC not available, do standard Supabase insert
@@ -379,7 +405,20 @@ export async function createVisit(data: {
         }
 
         const fullVisit = await getVisitById(insertedVisit.id);
-        return { success: true, visit: fullVisit || insertedVisit };
+        const savedRecord = fullVisit || insertedVisit;
+        try {
+          const localVisits = ensureLocalStore();
+          const existsIdx = localVisits.findIndex(v => v.id === savedRecord.id || v.visit_number === savedRecord.visit_number);
+          if (existsIdx >= 0) {
+            localVisits[existsIdx] = savedRecord;
+          } else {
+            localVisits.unshift(savedRecord);
+          }
+          writeLocalStore(localVisits);
+        } catch (e) {
+          // Ignore local backup error
+        }
+        return { success: true, visit: savedRecord };
       }
     } catch (dbErr) {
       console.warn('Supabase insert failed, syncing to local store:', dbErr);

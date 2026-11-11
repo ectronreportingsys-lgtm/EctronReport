@@ -633,7 +633,7 @@ function VisitorNewForm() {
                 </label>
                 <input
                   type="text"
-                  required
+                  required={!singleNameEn}
                   value={singleNameAr}
                   onChange={e => setSingleNameAr(e.target.value)}
                   placeholder={t('e.g. Ahmed Al Saadi', 'مثال: أحمد بن علي السعدي')}

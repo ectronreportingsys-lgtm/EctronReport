@@ -35,23 +35,22 @@ export default async function AdminUsersPage() {
     // Admin has everything
     if (role?.name === 'Admin') {
       permNames.add('Full Access (Admin)');
-    } else {
-      // Add role permissions
-      if (role?.id && rolePermissions && allPermissions) {
-        const rolePermIds = rolePermissions.filter(rp => rp.role_id === role.id).map(rp => rp.permission_id);
-        const rolePerms = allPermissions.filter(p => rolePermIds.includes(p.id)).map(p => p.page_name);
-        rolePerms.forEach(p => permNames.add(p));
+    } else if (user.user_permissions && user.user_permissions.length > 0) {
+      // User has custom permissions assigned: display ONLY their assigned permissions
+      user.user_permissions.forEach((up: any) => {
+        if (up.permissions?.page_key && up.permissions.page_key !== 'no_access') {
+          const perm = allPermissions?.find(p => p.page_key === up.permissions.page_key);
+          if (perm) permNames.add(perm.page_name);
+        }
+      });
+      if (permNames.size === 0) {
+        permNames.add('No Access (لا توجد صفحات مفعلة)');
       }
-      
-      // Add user custom permissions (if any)
-      if (user.user_permissions && allPermissions) {
-        user.user_permissions.forEach((up: any) => {
-          if (up.permissions?.page_key) {
-            const perm = allPermissions.find(p => p.page_key === up.permissions.page_key);
-            if (perm) permNames.add(perm.page_name);
-          }
-        });
-      }
+    } else if (role?.id && rolePermissions && allPermissions) {
+      // Fallback to role permissions only if user has no explicit custom permissions
+      const rolePermIds = rolePermissions.filter(rp => rp.role_id === role.id).map(rp => rp.permission_id);
+      const rolePerms = allPermissions.filter(p => rolePermIds.includes(p.id)).map(p => p.page_name);
+      rolePerms.forEach(p => permNames.add(p));
     }
     
     return {

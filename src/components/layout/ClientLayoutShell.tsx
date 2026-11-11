@@ -38,6 +38,7 @@ export default function ClientLayoutShell({
     if (!key) return true;
     if (roleName === 'Admin') return true;
     if (userPermissions.includes('visitor_admin') && key.startsWith('visitor_')) return true;
+    if (userPermissions.includes('library_admin') && key.startsWith('library_')) return true;
     return userPermissions.includes(key);
   };
 

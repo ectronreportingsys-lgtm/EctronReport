@@ -35,14 +35,20 @@ export async function POST(request: Request) {
           is_active: is_active !== undefined ? is_active : true
         });
         
-      // Add custom permissions if any
-      if (custom_permissions && custom_permissions.length > 0) {
-        // First get permission IDs based on keys
-        const { data: perms } = await supabase.from('permissions').select('id, page_key').in('page_key', custom_permissions);
-        
-        if (perms && perms.length > 0) {
-          const userPerms = perms.map(p => ({ user_id: authData.user.id, permission_id: p.id }));
-          await supabase.from('user_permissions').insert(userPerms);
+      // Add custom permissions if provided
+      if (custom_permissions) {
+        if (custom_permissions.length > 0) {
+          const { data: perms } = await supabase.from('permissions').select('id, page_key').in('page_key', custom_permissions);
+          if (perms && perms.length > 0) {
+            const userPerms = perms.map(p => ({ user_id: authData.user.id, permission_id: p.id }));
+            await supabase.from('user_permissions').insert(userPerms);
+          }
+        } else {
+          // Explicitly zero permissions assigned: insert 'no_access' marker
+          const { data: noAccessPerm } = await supabase.from('permissions').select('id').eq('page_key', 'no_access').single();
+          if (noAccessPerm) {
+            await supabase.from('user_permissions').insert({ user_id: authData.user.id, permission_id: noAccessPerm.id });
+          }
         }
       }
       
@@ -93,11 +99,19 @@ export async function PUT(request: Request) {
     // Update custom permissions (delete old, insert new)
     await supabase.from('user_permissions').delete().eq('user_id', id);
     
-    if (custom_permissions && custom_permissions.length > 0) {
-      const { data: perms } = await supabase.from('permissions').select('id, page_key').in('page_key', custom_permissions);
-      if (perms && perms.length > 0) {
-        const userPerms = perms.map(p => ({ user_id: id, permission_id: p.id }));
-        await supabase.from('user_permissions').insert(userPerms);
+    if (custom_permissions) {
+      if (custom_permissions.length > 0) {
+        const { data: perms } = await supabase.from('permissions').select('id, page_key').in('page_key', custom_permissions);
+        if (perms && perms.length > 0) {
+          const userPerms = perms.map(p => ({ user_id: id, permission_id: p.id }));
+          await supabase.from('user_permissions').insert(userPerms);
+        }
+      } else {
+        // Explicitly zero permissions assigned: insert 'no_access' marker
+        const { data: noAccessPerm } = await supabase.from('permissions').select('id').eq('page_key', 'no_access').single();
+        if (noAccessPerm) {
+          await supabase.from('user_permissions').insert({ user_id: id, permission_id: noAccessPerm.id });
+        }
       }
     }
 

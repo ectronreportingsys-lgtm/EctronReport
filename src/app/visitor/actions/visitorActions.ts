@@ -161,18 +161,22 @@ export async function submitInternalRegistration(payload: {
   }>;
 }) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
     let createdByName = 'Staff';
     let createdById: string | null = null;
 
-    if (user) {
-      createdById = user.id;
-      const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
-      if (prof?.full_name) {
-        createdByName = prof.full_name;
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        createdById = user.id;
+        const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
+        if (prof?.full_name) {
+          createdByName = prof.full_name;
+        }
       }
+    } catch (authErr) {
+      // Auth retrieval fallback
     }
 
     // Handle structured organizations if provided

@@ -19,6 +19,7 @@ export default async function VisitorDashboardPage() {
       initialVisits={visits}
       initialYears={availableYears}
       initialSelectedYear={defaultYear}
+      mode="dashboard"
     />
   );
 }
