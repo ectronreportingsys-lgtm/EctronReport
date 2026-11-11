@@ -32,6 +32,7 @@ import { VisitRecord, OrganizationGroup, VisitorItem, extractOrganizationGroups 
 import { updateTimeOut, removeVisit, updateVisitDetails } from '@/app/visitor/actions/visitorActions';
 import { exportVisitsListToExcel, exportDetailedVisitorsToExcel, printVisitsReport } from '@/lib/visitorExporter';
 import { useLanguage } from '@/components/layout/LanguageProvider';
+import { TimePicker12 } from './TimePicker12';
 
 interface VisitorDashboardViewProps {
   initialVisits: VisitRecord[];
@@ -1260,26 +1261,25 @@ export default function VisitorDashboardView({
                             required
                             value={editForm.visit_date}
                             onChange={e => setEditForm({ ...editForm, visit_date: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold"
+                            className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time In', 'وقت الدخول')}</label>
-                          <input
-                            type="time"
+                          <TimePicker12
+                            label={t('Time In', 'وقت الدخول')}
                             required
+                            compact
                             value={editForm.time_in}
-                            onChange={e => setEditForm({ ...editForm, time_in: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
+                            onChange={val => setEditForm({ ...editForm, time_in: val })}
                           />
                         </div>
                         <div>
-                          <label className="block text-xs sm:text-sm font-bold mb-1">{t('Time Out', 'وقت الخروج')}</label>
-                          <input
-                            type="time"
+                          <TimePicker12
+                            label={t('Time Out', 'وقت الخروج')}
+                            compact
+                            allowClear
                             value={editForm.time_out || ''}
-                            onChange={e => setEditForm({ ...editForm, time_out: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm font-semibold font-mono"
+                            onChange={val => setEditForm({ ...editForm, time_out: val })}
                           />
                         </div>
                       </div>
@@ -1553,12 +1553,14 @@ export default function VisitorDashboardView({
               {t('Enter visit departure time for visitors', 'أدخل وقت انتهاء الزيارة ومغادرة الزوار')}
             </p>
 
-            <input
-              type="time"
-              value={timeOutModal.time}
-              onChange={e => setTimeOutModal(prev => ({ ...prev, time: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-center font-mono font-bold text-lg mb-4 focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-            />
+            <div className="mb-4">
+              <TimePicker12
+                label={t('Time Out', 'وقت المغادرة')}
+                required
+                value={timeOutModal.time}
+                onChange={val => setTimeOutModal(prev => ({ ...prev, time: val }))}
+              />
+            </div>
 
             <div className="flex items-center justify-center gap-2">
               <button

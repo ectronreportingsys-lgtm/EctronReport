@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { submitInternalRegistration } from '@/app/visitor/actions/visitorActions';
 import { useLanguage } from '@/components/layout/LanguageProvider';
+import { TimePicker12 } from '@/components/visitor/TimePicker12';
 
 interface VisitorItemForm {
   id: string;
@@ -473,42 +474,40 @@ function VisitorNewForm() {
             <span>{t('Visit Date & Time', 'تاريخ وتوقيت الزيارة')}</span>
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
             <div>
-              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Visit Date', 'تاريخ الزيارة (Visit Date)')}
-              </label>
-              <input
-                type="date"
-                required
-                value={visitDate}
-                onChange={e => setVisitDate(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200">
+                  {t('Visit Date', 'تاريخ الزيارة (Visit Date)')}
+                  <span className="text-red-500 ms-1">*</span>
+                </label>
+              </div>
+              <div className="p-2 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm focus-within:ring-2 focus-within:ring-[#14B8A6] focus-within:border-transparent transition-all">
+                <input
+                  type="date"
+                  required
+                  value={visitDate}
+                  onChange={e => setVisitDate(e.target.value)}
+                  className="w-full py-2 px-2 bg-transparent text-foreground text-base font-medium focus:outline-none cursor-pointer"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Time In', 'وقت الدخول (Time In)')}
-              </label>
-              <input
-                type="time"
+              <TimePicker12
+                label={t('Time In', 'وقت الدخول (Time In)')}
                 required
                 value={timeIn}
-                onChange={e => setTimeIn(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                onChange={val => setTimeIn(val)}
               />
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-bold text-slate-800 dark:text-zinc-200 mb-2">
-                {t('Time Out (Optional)', 'وقت الخروج (Time Out) - اختياري')}
-              </label>
-              <input
-                type="time"
+              <TimePicker12
+                label={t('Time Out (Optional)', 'وقت الخروج (Time Out) - اختياري')}
                 value={timeOut}
-                onChange={e => setTimeOut(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-foreground text-base focus:outline-none focus:ring-2 focus:ring-[#14B8A6]"
+                onChange={val => setTimeOut(val)}
+                allowClear
               />
             </div>
           </div>
