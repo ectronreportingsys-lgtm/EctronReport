@@ -935,6 +935,7 @@ export default function VisitorDashboardView({
                   <th className="py-3 px-3 whitespace-nowrap">{t('Visit #', 'رقم الزيارة')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Date', 'التاريخ')}</th>
                   <th className="py-3 px-3 min-w-[160px]">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
+                  <th className="py-3 px-3 min-w-[150px]">{t('Visitors', 'الزوار')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Country', 'الدولة')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Coordination by', 'عن طريق')}</th>
                   <th className="py-3 px-3 min-w-[140px]">{t('Visit Reason', 'سبب الزيارة')}</th>
@@ -945,13 +946,18 @@ export default function VisitorDashboardView({
               <tbody className="divide-y divide-border">
                 {paginatedVisits.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
+                    <td colSpan={9} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
                       {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
                     </td>
                   </tr>
                 ) : (
                   paginatedVisits.map((visit) => {
                     const orgGroups = extractOrganizationGroups(visit);
+                    const visitorsList = visit.visitors || [];
+                    const visitorNames = visitorsList
+                      .map(v => v.full_name_ar || v.full_name_en)
+                      .filter(Boolean);
+                    const visitorNamesStr = visitorNames.join('، ');
 
                     return (
                       <tr
@@ -991,6 +997,24 @@ export default function VisitorDashboardView({
                               visit.organization_ar && visit.organization_en && (
                                 <div className="text-[11px] text-slate-400 truncate mt-0.5">{visit.organization_en}</div>
                               )
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Visitors */}
+                        <td className="py-3.5 px-3 min-w-[150px] max-w-[210px]">
+                          <div className="text-xs text-slate-800 dark:text-zinc-200 font-semibold truncate" title={visitorNamesStr || '—'}>
+                            {visitorNames.length === 0 ? (
+                              <span className="text-slate-400 font-normal">—</span>
+                            ) : visitorNames.length === 1 ? (
+                              <span className="truncate">{visitorNames[0]}</span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 truncate">
+                                <span className="truncate">{visitorNames[0]}</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-bold border border-slate-200 dark:border-zinc-700 flex-shrink-0" title={visitorNamesStr}>
+                                  +{visitorNames.length - 1}
+                                </span>
+                              </span>
                             )}
                           </div>
                         </td>
@@ -1092,6 +1116,11 @@ export default function VisitorDashboardView({
             <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {paginatedVisits.map((visit) => {
                 const orgGroups = extractOrganizationGroups(visit);
+                const visitorsList = visit.visitors || [];
+                const visitorNames = visitorsList
+                  .map(v => v.full_name_ar || v.full_name_en)
+                  .filter(Boolean);
+                const visitorNamesStr = visitorNames.join('، ');
 
                 return (
                   <div
@@ -1144,6 +1173,16 @@ export default function VisitorDashboardView({
                         <span>{visit.country || 'Oman'}</span>
                       </div>
                     </div>
+
+                    {/* Visitors */}
+                    {visitorNames.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-xs text-slate-700 dark:text-zinc-300 font-medium pt-1">
+                        <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
+                        <span className="truncate" title={visitorNamesStr}>
+                          {visitorNamesStr}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Visit Reason */}
                     {visit.visit_reason && (
