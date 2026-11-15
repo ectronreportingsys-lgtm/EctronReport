@@ -14,6 +14,18 @@ import {
 import { createClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 
+function revalidateVisitorPages() {
+  try {
+    revalidatePath('/visitor/dashboard');
+    revalidatePath('/visitor/list');
+    revalidatePath('/visits');
+    revalidatePath('/(dashboard)/visitor/dashboard');
+    revalidatePath('/(dashboard)/visitor/list');
+  } catch (e) {
+    // ignore
+  }
+}
+
 // Submit public visitor registration
 export async function submitPublicRegistration(payload: {
   organization_en?: string;
@@ -84,8 +96,7 @@ export async function submitPublicRegistration(payload: {
     });
 
     if (res.success && res.visit) {
-      revalidatePath('/visitor/dashboard');
-      revalidatePath('/visitor/list');
+      revalidateVisitorPages();
       return {
         success: true,
         visit_number: res.visit.visit_number,
@@ -226,8 +237,7 @@ export async function submitInternalRegistration(payload: {
       });
 
       if (res.success && res.visit) {
-        revalidatePath('/visitor/dashboard');
-        revalidatePath('/visitor/list');
+        revalidateVisitorPages();
         return {
           success: true,
           visit_number: res.visit.visit_number,
@@ -268,8 +278,7 @@ export async function submitInternalRegistration(payload: {
     });
 
     if (res.success && res.visit) {
-      revalidatePath('/visitor/dashboard');
-      revalidatePath('/visitor/list');
+      revalidateVisitorPages();
       return {
         success: true,
         visit_number: res.visit.visit_number,
@@ -310,8 +319,7 @@ export async function fetchVisitsList(filters?: {
 export async function updateTimeOut(visitId: string, timeOut: string) {
   const res = await updateVisitTimeOut(visitId, timeOut);
   if (res.success) {
-    revalidatePath('/visitor/dashboard');
-    revalidatePath('/visitor/list');
+    revalidateVisitorPages();
   }
   return res;
 }
@@ -320,8 +328,7 @@ export async function updateTimeOut(visitId: string, timeOut: string) {
 export async function updateVisitDetails(visitId: string, updates: Partial<VisitRecord>) {
   const res = await updateVisit(visitId, updates);
   if (res.success) {
-    revalidatePath('/visitor/dashboard');
-    revalidatePath('/visitor/list');
+    revalidateVisitorPages();
   }
   return res;
 }
@@ -330,8 +337,7 @@ export async function updateVisitDetails(visitId: string, updates: Partial<Visit
 export async function removeVisit(visitId: string) {
   const res = await deleteVisit(visitId);
   if (res.success) {
-    revalidatePath('/visitor/dashboard');
-    revalidatePath('/visitor/list');
+    revalidateVisitorPages();
   }
   return res;
 }
@@ -390,8 +396,7 @@ export async function importHistoricalVisits(records: Array<{
       }
     }
 
-    revalidatePath('/visitor/dashboard');
-    revalidatePath('/visitor/list');
+    revalidateVisitorPages();
 
     return {
       success: true,

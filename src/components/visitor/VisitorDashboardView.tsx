@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Building2, 
   Users, 
@@ -29,7 +30,7 @@ import {
   UserPlus
 } from 'lucide-react';
 import { VisitRecord, OrganizationGroup, VisitorItem, extractOrganizationGroups } from '@/lib/visitorTypes';
-import { updateTimeOut, removeVisit, updateVisitDetails } from '@/app/visitor/actions/visitorActions';
+import { updateTimeOut, removeVisit, updateVisitDetails, fetchVisitsList } from '@/app/visitor/actions/visitorActions';
 import { exportVisitsListToExcel, exportDetailedVisitorsToExcel, printVisitsReport } from '@/lib/visitorExporter';
 import { useLanguage } from '@/components/layout/LanguageProvider';
 import { TimePicker12 } from './TimePicker12';
@@ -49,6 +50,7 @@ export default function VisitorDashboardView({
 }: VisitorDashboardViewProps) {
   const isManageMode = mode === 'manage';
   const { t } = useLanguage();
+  const router = useRouter();
   const [visits, setVisits] = useState<VisitRecord[]>(initialVisits);
   const [selectedYear, setSelectedYear] = useState<number>(initialSelectedYear);
   const [selectedMonth, setSelectedMonth] = useState<number>(0); // 0 = all
@@ -58,6 +60,29 @@ export default function VisitorDashboardView({
   const [selectedCoordination, setSelectedCoordination] = useState<string>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    setVisits(initialVisits);
+  }, [initialVisits]);
+
+  const handleRefreshData = async () => {
+    setIsRefreshing(true);
+    try {
+      const fresh = await fetchVisitsList();
+      if (fresh) {
+        setVisits(fresh);
+      }
+      router.refresh();
+      setSuccessToast(t('Data refreshed from database successfully', 'تم تحديث البيانات من قاعدة البيانات بنجاح'));
+      setTimeout(() => setSuccessToast(null), 3000);
+    } catch (e: any) {
+      setErrorToast(t('Failed to refresh data', 'تعذر تحديث البيانات'));
+      setTimeout(() => setErrorToast(null), 3000);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   // Modals state
   const [selectedVisitModal, setSelectedVisitModal] = useState<VisitRecord | null>(null);
@@ -140,8 +165,8 @@ export default function VisitorDashboardView({
   // Filtered Visits
   const filteredVisits = useMemo(() => {
     return visits.filter(v => {
-      // Year filter
-      if (selectedYear) {
+      // Year filter (0 = all years)
+      if (selectedYear && selectedYear > 0) {
         const y = parseInt(v.visit_date.substring(0, 4), 10);
         if (y !== selectedYear) return false;
       }
@@ -508,9 +533,68 @@ export default function VisitorDashboardView({
           </div>
         </div>
 
-        {/* Action Buttons - Rendered ONLY in Manage Visits List page */}
-        {isManageMode && (
-          <div className="flex flex-wrap items-center gap-3">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Refresh Data from DB button - available in BOTH Dashboard and Manage List */}
+          <button
+            type="button"
+            onClick={handleRefreshData}
+            disabled={isRefreshing}
+            title={t('Refresh Data from Database', 'تحديث البيانات من الداتابيس')}
+            className="px-4 py-3 rounded-xl bg-white dark:bg-zinc-800 text-slate-700 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-700 text-sm sm:text-base font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+          >
+            <RefreshCw className={`w-5 h-5 text-[#0F766E] dark:text-teal-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? t('Refreshing...', 'جاري التحديث...') : t('Refresh Data', 'تحديث البيانات')}</span>
+          </button>
+
+          {isManageMode ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsAddChoiceModalOpen(true)}
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] hover:from-[#132f4f] hover:to-[#0c5c56] text-white text-sm sm:text-base font-extrabold shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+                <span>{t('Add Visit / Visitor', 'إضافة زيارة / زائر')}</span>
+              </button>
+
+              <Link
+                href="/visitor/qrcode"
+                className="px-4 py-3 rounded-xl bg-[#F0FDFA] dark:bg-zinc-800 text-[#0F766E] dark:text-[#00a99d] border border-[#14B8A6]/40 hover:bg-[#CCFBF1] text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
+              >
+                <QrCode className="w-5 h-5" />
+                <span>{t('QR Code', 'رمز الاستجابة QR')}</span>
+              </Link>
+
+              <Link
+                href="/visitor/import"
+                className="px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
+              >
+                <Upload className="w-5 h-5" />
+                <span>{t('Import Excel', 'استيراد إكسل')}</span>
+              </Link>
+
+              {/* Export Buttons */}
+              <div className="flex items-center gap-2 border-l border-slate-200 dark:border-zinc-700 pl-3">
+                <button
+                  onClick={() => exportDetailedVisitorsToExcel(filteredVisits)}
+                  title={t('Download Visitors List', 'تنزيل قائمة الزوار')}
+                  className="px-4 py-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-sm sm:text-base font-bold flex items-center gap-2 transition-colors shadow-xs cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{t('Download Visitors List', 'تنزيل قائمة الزوار')}</span>
+                </button>
+
+                <button
+                  onClick={() => printVisitsReport()}
+                  title={t('Print Visits Report', 'طباعة تقرير الزيارات')}
+                  className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold transition-colors cursor-pointer"
+                >
+                  <Printer className="w-5 h-5 text-slate-600 dark:text-zinc-400" />
+                </button>
+              </div>
+            </>
+          ) : (
             <button
               type="button"
               onClick={() => setIsAddChoiceModalOpen(true)}
@@ -519,44 +603,8 @@ export default function VisitorDashboardView({
               <Plus className="w-5 h-5" />
               <span>{t('Add Visit / Visitor', 'إضافة زيارة / زائر')}</span>
             </button>
-
-            <Link
-              href="/visitor/qrcode"
-              className="px-4 py-3 rounded-xl bg-[#F0FDFA] dark:bg-zinc-800 text-[#0F766E] dark:text-[#00a99d] border border-[#14B8A6]/40 hover:bg-[#CCFBF1] text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
-            >
-              <QrCode className="w-5 h-5" />
-              <span>{t('QR Code', 'رمز الاستجابة QR')}</span>
-            </Link>
-
-            <Link
-              href="/visitor/import"
-              className="px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 text-sm sm:text-base font-bold transition-colors flex items-center gap-2"
-            >
-              <Upload className="w-5 h-5" />
-              <span>{t('Import Excel', 'استيراد إكسل')}</span>
-            </Link>
-
-            {/* Export Buttons */}
-            <div className="flex items-center gap-2 border-l border-slate-200 dark:border-zinc-700 pl-3">
-              <button
-                onClick={() => exportDetailedVisitorsToExcel(filteredVisits)}
-                title={t('Download Visitors List', 'تنزيل قائمة الزوار')}
-                className="px-4 py-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-sm sm:text-base font-bold flex items-center gap-2 transition-colors shadow-xs cursor-pointer"
-              >
-                <FileSpreadsheet className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                <span>{t('Download Visitors List', 'تنزيل قائمة الزوار')}</span>
-              </button>
-
-              <button
-                onClick={() => printVisitsReport()}
-                title={t('Print Visits Report', 'طباعة تقرير الزيارات')}
-                className="p-3 rounded-xl border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-slate-50 text-slate-700 dark:text-zinc-200 text-sm font-bold transition-colors cursor-pointer"
-              >
-                <Printer className="w-5 h-5 text-slate-600 dark:text-zinc-400" />
-              </button>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* 2. Year & Month Period Selector */}
@@ -569,9 +617,21 @@ export default function VisitorDashboardView({
 
           {/* Year selector */}
           <div className="flex items-center gap-1.5 bg-[#F0F6FA] dark:bg-zinc-800 p-1.5 rounded-xl border border-[#D2E3F0] dark:border-zinc-700">
+            <button
+              type="button"
+              onClick={() => setSelectedYear(0)}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                selectedYear === 0
+                  ? 'bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white shadow-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-[#173B63] dark:hover:text-white'
+              }`}
+            >
+              {t('All Years', 'كل السنوات')}
+            </button>
             {initialYears.map(yr => (
               <button
                 key={yr}
+                type="button"
                 onClick={() => setSelectedYear(yr)}
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                   selectedYear === yr
@@ -619,7 +679,7 @@ export default function VisitorDashboardView({
             <span className="text-sm text-slate-500 dark:text-zinc-400 font-bold">{t('Recorded Visits', 'زيارة مسجلة')}</span>
           </div>
           <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 border-t border-slate-200/70 dark:border-zinc-700/60 pt-2.5 flex items-center justify-between font-medium">
-            <span>{t(`For Year ${selectedYear}`, `لعام ${selectedYear}`)}</span>
+            <span>{selectedYear > 0 ? t(`For Year ${selectedYear}`, `لعام ${selectedYear}`) : t('All Recorded Years', 'لكل السنوات المسجلة')}</span>
             <span className="text-emerald-600 dark:text-emerald-400 font-bold">{t('100% Documented', '100% موثقة')}</span>
           </div>
         </div>

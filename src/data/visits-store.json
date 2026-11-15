@@ -1,46 +1,164 @@
 [
   {
-    "id": "test-nec-1",
-    "visit_number": "VIS-2026-0003",
-    "visit_date": "2026-10-27",
-    "time_in": "11:00",
-    "organization_en": "NEC Corporation",
-    "organization_ar": "شركة إن إي سي",
+    "id": "c46296a9-8ed0-4ccd-9da6-bfbb2d70f554",
+    "visit_number": "VIS-2026-0006",
+    "visit_date": "2026-11-15",
+    "time_in": "09:00",
+    "time_out": "12:00",
+    "organization_en": "Ectron / Hala FM Radio",
+    "organization_ar": "إكترون / هلا أف أم",
     "country": "Oman",
-    "coordination_by": "NEC",
-    "visit_reason": "Technical Support / Maintenance",
+    "visit_reason": "Interview",
+    "notes": "",
     "registration_source": "internal",
+    "created_by": "ced0fe0e-1c3c-455c-904c-92e35b38ea45",
+    "created_at": "2026-11-15T05:40:19.72677+00:00",
+    "updated_at": "2026-11-15T05:41:17.018+00:00",
+    "visit_visitors": [
+      {
+        "id": "9e63414f-8fef-4f52-b07d-58969fe19953",
+        "visit_id": "c46296a9-8ed0-4ccd-9da6-bfbb2d70f554",
+        "created_at": "2026-11-15T05:41:20.373003+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null
+      },
+      {
+        "id": "ca6b11b0-9fbe-49e0-8c4e-48bafbfc46f6",
+        "visit_id": "c46296a9-8ed0-4ccd-9da6-bfbb2d70f554",
+        "created_at": "2026-11-15T05:41:20.373003+00:00",
+        "full_name_ar": "Amani",
+        "full_name_en": "",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
     "visitors": [
       {
-        "id": "vis-test-1",
-        "full_name_en": "Kenji Sato",
-        "full_name_ar": "كينجي ساتو",
-        "phone_number": "91234567"
+        "id": "9e63414f-8fef-4f52-b07d-58969fe19953",
+        "visit_id": "c46296a9-8ed0-4ccd-9da6-bfbb2d70f554",
+        "created_at": "2026-11-15T05:41:20.373003+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "ca6b11b0-9fbe-49e0-8c4e-48bafbfc46f6",
+        "visit_id": "c46296a9-8ed0-4ccd-9da6-bfbb2d70f554",
+        "created_at": "2026-11-15T05:41:20.373003+00:00",
+        "full_name_ar": "Amani",
+        "full_name_en": "",
+        "phone_number": null,
+        "organization_ar": "هلا أف أم",
+        "organization_en": "Hala FM Radio"
+      }
+    ],
+    "organizations": [
+      {
+        "organization_en": "Ectron",
+        "organization_ar": "إكترون",
+        "visitors": [
+          {
+            "full_name_en": "Sultan Al Jahwari",
+            "full_name_ar": "سلطان الجهوري",
+            "phone_number": ""
+          }
+        ]
+      },
+      {
+        "organization_en": "Hala FM Radio",
+        "organization_ar": "هلا أف أم",
+        "visitors": [
+          {
+            "full_name_en": "",
+            "full_name_ar": "Amani",
+            "phone_number": ""
+          }
+        ]
       }
     ]
   },
   {
-    "id": "test-custom-1",
-    "visit_number": "VIS-2026-0004",
-    "visit_date": "2026-10-27",
-    "time_in": "11:30",
-    "organization_en": "OQ Exploration",
-    "organization_ar": "أوكيو للاستكشاف",
+    "id": "79aa80af-651f-48c6-acaf-e356fb6012f9",
+    "visit_number": "VIS-2026-0005",
+    "visit_date": "2026-11-11",
+    "time_in": "09:00",
+    "time_out": "12:00",
+    "organization_en": "",
+    "organization_ar": "hhh / hhh",
     "country": "Oman",
-    "coordination_by": "OQ Partner Relations",
     "visit_reason": "Business Meeting",
-    "registration_source": "public",
+    "notes": "",
+    "registration_source": "internal",
+    "created_by": "9fc034d3-881f-4ef6-a1a5-fdbb337a3126",
+    "created_at": "2026-11-11T12:15:57.535071+00:00",
+    "updated_at": "2026-11-11T12:15:57.535071+00:00",
+    "visit_visitors": [
+      {
+        "id": "a407f832-d3d4-496a-a5b1-2bec4d620005",
+        "visit_id": "79aa80af-651f-48c6-acaf-e356fb6012f9",
+        "created_at": "2026-11-11T12:15:57.535071+00:00",
+        "full_name_ar": "hhh",
+        "full_name_en": null,
+        "phone_number": null
+      },
+      {
+        "id": "5753b480-fc2d-41b6-a2d0-5fc4bbf3ac24",
+        "visit_id": "79aa80af-651f-48c6-acaf-e356fb6012f9",
+        "created_at": "2026-11-11T12:15:57.535071+00:00",
+        "full_name_ar": "hhh",
+        "full_name_en": null,
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
     "visitors": [
       {
-        "id": "vis-test-2",
-        "full_name_en": "Ahmed Al Balushi",
-        "full_name_ar": "أحمد البلوشي",
-        "phone_number": "99887766"
+        "id": "a407f832-d3d4-496a-a5b1-2bec4d620005",
+        "visit_id": "79aa80af-651f-48c6-acaf-e356fb6012f9",
+        "created_at": "2026-11-11T12:15:57.535071+00:00",
+        "full_name_ar": "hhh",
+        "full_name_en": null,
+        "phone_number": null
+      },
+      {
+        "id": "5753b480-fc2d-41b6-a2d0-5fc4bbf3ac24",
+        "visit_id": "79aa80af-651f-48c6-acaf-e356fb6012f9",
+        "created_at": "2026-11-11T12:15:57.535071+00:00",
+        "full_name_ar": "hhh",
+        "full_name_en": null,
+        "phone_number": null
+      }
+    ],
+    "organizations": [
+      {
+        "organization_en": "",
+        "organization_ar": "hhh",
+        "visitors": [
+          {
+            "full_name_en": "",
+            "full_name_ar": "hhh",
+            "phone_number": ""
+          }
+        ]
+      },
+      {
+        "organization_en": "",
+        "organization_ar": "hhh",
+        "visitors": [
+          {
+            "full_name_en": "",
+            "full_name_ar": "hhh",
+            "phone_number": ""
+          }
+        ]
       }
     ]
   },
   {
-    "id": "visit-1793082365029-99s3z",
+    "id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
     "visit_number": "VIS-2026-0002",
     "visit_date": "2026-10-27",
     "time_in": "10:26",
@@ -52,39 +170,109 @@
     "notes": "Engineering students visit",
     "registration_source": "public",
     "created_by": null,
-    "created_by_name": null,
-    "created_at": "2026-10-27T06:26:05.029Z",
-    "updated_at": "2026-10-27T06:26:05.029Z",
-    "visitors": [
+    "created_at": "2026-11-11T08:42:47.391883+00:00",
+    "updated_at": "2026-11-11T08:42:47.391883+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-1793082365029-1",
-        "visit_id": "visit-1793082365029-99s3z",
-        "full_name_en": "Dr. Salem Al Harthy",
+        "id": "da6b89b4-8a4f-42fe-b8ec-32a6a4b1c72c",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
         "full_name_ar": "د. سالم الحارثي",
-        "phone_number": "99887766",
-        "created_at": "2026-10-27T06:26:05.029Z"
+        "full_name_en": "Dr. Salem Al Harthy",
+        "phone_number": "99887766"
       },
       {
-        "id": "vis-1793082365029-2",
-        "visit_id": "visit-1793082365029-99s3z",
-        "full_name_en": "Fatma Al Zadjali",
+        "id": "ea40a353-627a-4bde-9616-b1194f7fd354",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
         "full_name_ar": "فاطمة الزدجالي",
-        "phone_number": "98765432",
-        "created_at": "2026-10-27T06:26:05.029Z"
+        "full_name_en": "Fatma Al Zadjali",
+        "phone_number": "98765432"
       },
       {
-        "id": "vis-1793082365029-3",
-        "visit_id": "visit-1793082365029-99s3z",
-        "full_name_en": "Mohammed Al Lawati",
+        "id": "94b2a8ae-b5b9-4c0a-9a5e-c9ca6f1a3049",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
         "full_name_ar": "محمد اللواتي",
-        "phone_number": "91239874",
-        "created_at": "2026-10-27T06:26:05.029Z"
+        "full_name_en": "Mohammed Al Lawati",
+        "phone_number": "91239874"
       }
     ],
-    "coordination_by": "Ectron"
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "da6b89b4-8a4f-42fe-b8ec-32a6a4b1c72c",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
+        "full_name_ar": "د. سالم الحارثي",
+        "full_name_en": "Dr. Salem Al Harthy",
+        "phone_number": "99887766",
+        "organization_ar": "جامعة السلطان قابوس",
+        "organization_en": "Sultan Qaboos University"
+      },
+      {
+        "id": "ea40a353-627a-4bde-9616-b1194f7fd354",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
+        "full_name_ar": "فاطمة الزدجالي",
+        "full_name_en": "Fatma Al Zadjali",
+        "phone_number": "98765432",
+        "organization_ar": "جامعة السلطان قابوس",
+        "organization_en": "Sultan Qaboos University"
+      },
+      {
+        "id": "94b2a8ae-b5b9-4c0a-9a5e-c9ca6f1a3049",
+        "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+        "created_at": "2026-11-11T08:42:47.56994+00:00",
+        "full_name_ar": "محمد اللواتي",
+        "full_name_en": "Mohammed Al Lawati",
+        "phone_number": "91239874",
+        "organization_ar": "جامعة السلطان قابوس",
+        "organization_en": "Sultan Qaboos University"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Sultan Qaboos University",
+        "organization_ar": "جامعة السلطان قابوس",
+        "visitors": [
+          {
+            "id": "da6b89b4-8a4f-42fe-b8ec-32a6a4b1c72c",
+            "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+            "created_at": "2026-11-11T08:42:47.56994+00:00",
+            "full_name_ar": "د. سالم الحارثي",
+            "full_name_en": "Dr. Salem Al Harthy",
+            "phone_number": "99887766",
+            "organization_en": "Sultan Qaboos University",
+            "organization_ar": "جامعة السلطان قابوس"
+          },
+          {
+            "id": "ea40a353-627a-4bde-9616-b1194f7fd354",
+            "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+            "created_at": "2026-11-11T08:42:47.56994+00:00",
+            "full_name_ar": "فاطمة الزدجالي",
+            "full_name_en": "Fatma Al Zadjali",
+            "phone_number": "98765432",
+            "organization_en": "Sultan Qaboos University",
+            "organization_ar": "جامعة السلطان قابوس"
+          },
+          {
+            "id": "94b2a8ae-b5b9-4c0a-9a5e-c9ca6f1a3049",
+            "visit_id": "2627ab0a-81e3-4e50-9645-b0b559e61d1d",
+            "created_at": "2026-11-11T08:42:47.56994+00:00",
+            "full_name_ar": "محمد اللواتي",
+            "full_name_en": "Mohammed Al Lawati",
+            "phone_number": "91239874",
+            "organization_en": "Sultan Qaboos University",
+            "organization_ar": "جامعة السلطان قابوس"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "visit-1793082351067-0z7j3",
+    "id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
     "visit_number": "VIS-2026-0001",
     "visit_date": "2026-10-27",
     "time_in": "10:25",
@@ -96,1346 +284,427 @@
     "notes": "Discussion regarding fiber rollout",
     "registration_source": "public",
     "created_by": null,
-    "created_by_name": null,
-    "created_at": "2026-10-27T06:25:51.067Z",
-    "updated_at": "2026-10-27T06:25:51.067Z",
-    "visitors": [
+    "created_at": "2026-11-11T08:42:46.961048+00:00",
+    "updated_at": "2026-11-11T08:42:46.961048+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-1793082351067-1",
-        "visit_id": "visit-1793082351067-0z7j3",
-        "full_name_en": "Ali Al Hinai",
+        "id": "90161ebb-48ca-4aa6-ad6d-1d395572c8db",
+        "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+        "created_at": "2026-11-11T08:42:47.218087+00:00",
         "full_name_ar": "علي الهنائي",
-        "phone_number": "91112233",
-        "created_at": "2026-10-27T06:25:51.067Z"
+        "full_name_en": "Ali Al Hinai",
+        "phone_number": "91112233"
       },
       {
-        "id": "vis-1793082351067-2",
-        "visit_id": "visit-1793082351067-0z7j3",
-        "full_name_en": "Said Al Balushi",
+        "id": "d1651000-8fa5-42ed-a0cb-5c21b8e6c52b",
+        "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+        "created_at": "2026-11-11T08:42:47.218087+00:00",
         "full_name_ar": "سعيد البلوشي",
+        "full_name_en": "Said Al Balushi",
+        "phone_number": "92223344"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "90161ebb-48ca-4aa6-ad6d-1d395572c8db",
+        "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+        "created_at": "2026-11-11T08:42:47.218087+00:00",
+        "full_name_ar": "علي الهنائي",
+        "full_name_en": "Ali Al Hinai",
+        "phone_number": "91112233",
+        "organization_ar": "الشركة العمانية للنطاق العريض",
+        "organization_en": "Oman Broadband"
+      },
+      {
+        "id": "d1651000-8fa5-42ed-a0cb-5c21b8e6c52b",
+        "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+        "created_at": "2026-11-11T08:42:47.218087+00:00",
+        "full_name_ar": "سعيد البلوشي",
+        "full_name_en": "Said Al Balushi",
         "phone_number": "92223344",
-        "created_at": "2026-10-27T06:25:51.067Z"
+        "organization_ar": "الشركة العمانية للنطاق العريض",
+        "organization_en": "Oman Broadband"
       }
     ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-1",
-    "visit_number": "VIS-2024-0001",
-    "visit_date": "2024-05-05",
-    "time_in": "11:30",
-    "time_out": "12:15",
-    "organization_en": "Ministry of Labor",
-    "organization_ar": "وزارة العمل",
-    "country": "Oman",
-    "visit_reason": "Visit",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-05-05T00:00:00.000Z",
-    "updated_at": "2024-05-05T00:00:00.000Z",
-    "visitors": [
+    "organizations": [
       {
-        "id": "vis-1-1",
-        "visit_id": "visit-1",
-        "full_name_en": "Khalid Al Hasani",
-        "full_name_ar": "خالد الحسني",
-        "phone_number": "92396526",
-        "created_at": "2024-05-05T00:00:00.000Z"
-      },
-      {
-        "id": "vis-1-2",
-        "visit_id": "visit-1",
-        "full_name_en": "Waleed AL Sabagh",
-        "full_name_ar": "وليد الصباغ",
-        "phone_number": "",
-        "created_at": "2024-05-05T00:00:00.000Z"
+        "id": "org-1",
+        "organization_en": "Oman Broadband",
+        "organization_ar": "الشركة العمانية للنطاق العريض",
+        "visitors": [
+          {
+            "id": "90161ebb-48ca-4aa6-ad6d-1d395572c8db",
+            "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+            "created_at": "2026-11-11T08:42:47.218087+00:00",
+            "full_name_ar": "علي الهنائي",
+            "full_name_en": "Ali Al Hinai",
+            "phone_number": "91112233",
+            "organization_en": "Oman Broadband",
+            "organization_ar": "الشركة العمانية للنطاق العريض"
+          },
+          {
+            "id": "d1651000-8fa5-42ed-a0cb-5c21b8e6c52b",
+            "visit_id": "207c9d76-c6fb-46f1-bef6-ffd12dd07be6",
+            "created_at": "2026-11-11T08:42:47.218087+00:00",
+            "full_name_ar": "سعيد البلوشي",
+            "full_name_en": "Said Al Balushi",
+            "phone_number": "92223344",
+            "organization_en": "Oman Broadband",
+            "organization_ar": "الشركة العمانية للنطاق العريض"
+          }
+        ]
       }
-    ],
-    "coordination_by": "Ectron"
+    ]
   },
   {
-    "id": "visit-2",
-    "visit_number": "VIS-2024-0002",
-    "visit_date": "2024-09-05",
-    "time_in": "10:00",
-    "time_out": "11:00",
-    "organization_en": "ikea",
-    "organization_ar": "أيكيا",
-    "country": "Oman",
-    "visit_reason": "Shipment of Tabels Arraived",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-09-05T00:00:00.000Z",
-    "updated_at": "2024-09-05T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-2-1",
-        "visit_id": "visit-2",
-        "full_name_en": "ikea",
-        "full_name_ar": "أيكيا",
-        "phone_number": "",
-        "created_at": "2024-09-05T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-3",
-    "visit_number": "VIS-2024-0003",
-    "visit_date": "2024-09-05",
-    "time_in": "11:00",
-    "time_out": "11:10",
-    "organization_en": "Vodafone Center",
-    "organization_ar": "مركز فودافير",
-    "country": "Oman",
-    "visit_reason": "Shipment of Gloves Arraived",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-09-05T00:00:00.000Z",
-    "updated_at": "2024-09-05T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-3-1",
-        "visit_id": "visit-3",
-        "full_name_en": "",
-        "full_name_ar": "",
-        "phone_number": "",
-        "created_at": "2024-09-05T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-4",
-    "visit_number": "VIS-2024-0004",
-    "visit_date": "2024-09-05",
-    "time_in": "12:30",
-    "time_out": "02:00",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Oman",
-    "visit_reason": "Visit for equipment supply",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-09-05T00:00:00.000Z",
-    "updated_at": "2024-09-05T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-4-1",
-        "visit_id": "visit-4",
-        "full_name_en": "Ahmed AL Mamari",
-        "full_name_ar": "أحمد المعمري",
-        "phone_number": "",
-        "created_at": "2024-09-05T00:00:00.000Z"
-      },
-      {
-        "id": "vis-4-2",
-        "visit_id": "visit-4",
-        "full_name_en": "Rashid AL Masiri",
-        "full_name_ar": "راشد المسيري",
-        "phone_number": "",
-        "created_at": "2024-09-05T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-5",
-    "visit_number": "VIS-2024-0005",
-    "visit_date": "2024-05-20",
-    "time_in": "11:30",
-    "time_out": "12:05",
-    "organization_en": "Companionship for Business and Services",
-    "organization_ar": "الرفقة للأعمال والخدمات",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-05-20T00:00:00.000Z",
-    "updated_at": "2024-05-20T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-5-1",
-        "visit_id": "visit-5",
-        "full_name_en": "Ahmed AL Saadi",
-        "full_name_ar": "أحمد السعدي",
-        "phone_number": "96059593",
-        "created_at": "2024-05-20T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-6",
-    "visit_number": "VIS-2024-0006",
-    "visit_date": "2024-05-30",
-    "time_in": "10:00",
-    "time_out": "10:30",
-    "organization_en": "Environment Authority",
-    "organization_ar": "هيئة البيئة",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-05-30T00:00:00.000Z",
-    "updated_at": "2024-05-30T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-6-1",
-        "visit_id": "visit-6",
-        "full_name_en": "Nabila Al Kharousi",
-        "full_name_ar": "نبيلة الخروصي",
-        "phone_number": "99256160",
-        "created_at": "2024-05-30T00:00:00.000Z"
-      },
-      {
-        "id": "vis-6-2",
-        "visit_id": "visit-6",
-        "full_name_en": "Asma AL Aasri",
-        "full_name_ar": "أسماء العاصري",
-        "phone_number": "",
-        "created_at": "2024-05-30T00:00:00.000Z"
-      },
-      {
-        "id": "vis-6-3",
-        "visit_id": "visit-6",
-        "full_name_en": "Ahmed",
-        "full_name_ar": "أحمد",
-        "phone_number": "",
-        "created_at": "2024-05-30T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-7",
-    "visit_number": "VIS-2024-0007",
-    "visit_date": "2024-05-06",
-    "time_in": "10:00",
-    "time_out": "10:47",
-    "organization_en": "Ministry of Trade and Industry",
-    "organization_ar": "وزارة التجارة والصناعة",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-05-06T00:00:00.000Z",
-    "updated_at": "2024-05-06T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-7-1",
-        "visit_id": "visit-7",
-        "full_name_en": "Mahmood Al Soqi",
-        "full_name_ar": "محمود الصوقي",
-        "phone_number": "98993499",
-        "created_at": "2024-05-06T00:00:00.000Z"
-      },
-      {
-        "id": "vis-7-2",
-        "visit_id": "visit-7",
-        "full_name_en": "Ahmed Al Hadi",
-        "full_name_ar": "أحمد الهادي",
-        "phone_number": "",
-        "created_at": "2024-05-06T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-8",
-    "visit_number": "VIS-2024-0008",
-    "visit_date": "2024-06-06",
-    "time_in": "11:00",
-    "time_out": "01:00",
-    "organization_en": "Mikrotik",
-    "organization_ar": "ميكروتيك",
-    "country": "Qatar",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-06-06T00:00:00.000Z",
-    "updated_at": "2024-06-06T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-8-1",
-        "visit_id": "visit-8",
-        "full_name_en": "Ahmed Abdullah",
-        "full_name_ar": "أحمد عبدالله",
-        "phone_number": "",
-        "created_at": "2024-06-06T00:00:00.000Z"
-      },
-      {
-        "id": "vis-8-2",
-        "visit_id": "visit-8",
-        "full_name_en": "Mohammed Al Harqouq",
-        "full_name_ar": "سعادة محمد الحرقوق",
-        "phone_number": "",
-        "created_at": "2024-06-06T00:00:00.000Z"
-      },
-      {
-        "id": "vis-8-3",
-        "visit_id": "visit-8",
-        "full_name_en": "Mustafa",
-        "full_name_ar": "مصطفى",
-        "phone_number": "",
-        "created_at": "2024-06-06T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-9",
-    "visit_number": "VIS-2024-0009",
-    "visit_date": "2024-07-14",
-    "time_in": "08:00",
-    "time_out": "10:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-07-14T00:00:00.000Z",
-    "updated_at": "2024-07-14T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-9-1",
-        "visit_id": "visit-9",
-        "full_name_en": "Khalid",
-        "full_name_ar": "خالد اللاقو",
-        "phone_number": "",
-        "created_at": "2024-07-14T00:00:00.000Z"
-      },
-      {
-        "id": "vis-9-2",
-        "visit_id": "visit-9",
-        "full_name_en": "Saif Al Kanki",
-        "full_name_ar": "سيف الكنكي",
-        "phone_number": "",
-        "created_at": "2024-07-14T00:00:00.000Z"
-      },
-      {
-        "id": "vis-9-3",
-        "visit_id": "visit-9",
-        "full_name_en": "Talal AL Qasmi",
-        "full_name_ar": "طلال القاسمي",
-        "phone_number": "",
-        "created_at": "2024-07-14T00:00:00.000Z"
-      },
-      {
-        "id": "vis-9-4",
-        "visit_id": "visit-9",
-        "full_name_en": "Salim Al Maamari",
-        "full_name_ar": "سالم المعمري",
-        "phone_number": "",
-        "created_at": "2024-07-14T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-10",
-    "visit_number": "VIS-2024-0010",
-    "visit_date": "2024-07-15",
-    "time_in": "11:30",
-    "time_out": "12:17",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-07-15T00:00:00.000Z",
-    "updated_at": "2024-07-15T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-10-1",
-        "visit_id": "visit-10",
-        "full_name_en": "Yahya AL Naabi",
-        "full_name_ar": "يحيى الناعبي",
-        "phone_number": "",
-        "created_at": "2024-07-15T00:00:00.000Z"
-      },
-      {
-        "id": "vis-10-2",
-        "visit_id": "visit-10",
-        "full_name_en": "Said Al Sabkhi",
-        "full_name_ar": "سعيد السبخي",
-        "phone_number": "",
-        "created_at": "2024-07-15T00:00:00.000Z"
-      },
-      {
-        "id": "vis-10-3",
-        "visit_id": "visit-10",
-        "full_name_en": "Said Al Maamari",
-        "full_name_ar": "سعيد المعمري",
-        "phone_number": "",
-        "created_at": "2024-07-15T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-11",
-    "visit_number": "VIS-2024-0011",
-    "visit_date": "2024-07-15",
-    "time_in": "02:00",
-    "time_out": "04:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-07-15T00:00:00.000Z",
-    "updated_at": "2024-07-15T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-11-1",
-        "visit_id": "visit-11",
-        "full_name_en": "Saif Al Dughaishi",
-        "full_name_ar": "منصر العوفي",
-        "phone_number": "",
-        "created_at": "2024-07-15T00:00:00.000Z"
-      },
-      {
-        "id": "vis-11-2",
-        "visit_id": "visit-11",
-        "full_name_en": "",
-        "full_name_ar": "سيف الدغيشي",
-        "phone_number": "",
-        "created_at": "2024-07-15T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-12",
-    "visit_number": "VIS-2024-0012",
-    "visit_date": "2024-07-18",
-    "time_in": "08:30",
-    "time_out": "01:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-07-18T00:00:00.000Z",
-    "updated_at": "2024-07-18T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-12-1",
-        "visit_id": "visit-12",
-        "full_name_en": "Khalifa Al Maskari",
-        "full_name_ar": "خليفة المسكري",
-        "phone_number": "92926268",
-        "created_at": "2024-07-18T00:00:00.000Z"
-      },
-      {
-        "id": "vis-12-2",
-        "visit_id": "visit-12",
-        "full_name_en": "",
-        "full_name_ar": "منصر العوفي",
-        "phone_number": "",
-        "created_at": "2024-07-18T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-13",
-    "visit_number": "VIS-2024-0013",
-    "visit_date": "2024-05-08",
-    "time_in": "11:00",
-    "time_out": "11:50",
-    "organization_en": "jasubhai",
-    "organization_ar": "",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-05-08T00:00:00.000Z",
-    "updated_at": "2024-05-08T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-13-1",
-        "visit_id": "visit-13",
-        "full_name_en": "Amal Al Mahbashi",
-        "full_name_ar": "أمل المحبشي",
-        "phone_number": "92204808",
-        "created_at": "2024-05-08T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-14",
-    "visit_number": "VIS-2024-0014",
-    "visit_date": "2024-11-08",
+    "id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+    "visit_number": "VIS-2026-0003",
+    "visit_date": "2026-10-12",
     "time_in": "09:00",
-    "time_out": "12:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-08T00:00:00.000Z",
-    "updated_at": "2024-11-08T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-14-1",
-        "visit_id": "visit-14",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-11-08T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-15",
-    "visit_number": "VIS-2024-0015",
-    "visit_date": "2024-08-19",
-    "time_in": "03:00",
-    "time_out": "05:18",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-19T00:00:00.000Z",
-    "updated_at": "2024-08-19T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-15-1",
-        "visit_id": "visit-15",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-08-19T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-16",
-    "visit_number": "VIS-2024-0016",
-    "visit_date": "2024-08-20",
-    "time_in": "11:30",
-    "time_out": "12:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-20T00:00:00.000Z",
-    "updated_at": "2024-08-20T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-16-1",
-        "visit_id": "visit-16",
-        "full_name_en": "christopher",
-        "full_name_ar": "كريستوفر",
-        "phone_number": "",
-        "created_at": "2024-08-20T00:00:00.000Z"
-      },
-      {
-        "id": "vis-16-2",
-        "visit_id": "visit-16",
-        "full_name_en": "chris",
-        "full_name_ar": "كريس",
-        "phone_number": "",
-        "created_at": "2024-08-20T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-17",
-    "visit_number": "VIS-2024-0017",
-    "visit_date": "2024-08-21",
-    "time_in": "02:30",
-    "time_out": "03:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-21T00:00:00.000Z",
-    "updated_at": "2024-08-21T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-17-1",
-        "visit_id": "visit-17",
-        "full_name_en": "Salim Al Hamiri",
-        "full_name_ar": "سالم الحميري",
-        "phone_number": "",
-        "created_at": "2024-08-21T00:00:00.000Z"
-      },
-      {
-        "id": "vis-17-2",
-        "visit_id": "visit-17",
-        "full_name_en": "Christopher",
-        "full_name_ar": "كريس",
-        "phone_number": "",
-        "created_at": "2024-08-21T00:00:00.000Z"
-      },
-      {
-        "id": "vis-17-3",
-        "visit_id": "visit-17",
-        "full_name_en": "Chris",
-        "full_name_ar": "كريستوفر",
-        "phone_number": "",
-        "created_at": "2024-08-21T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-18",
-    "visit_number": "VIS-2024-0018",
-    "visit_date": "2024-08-08",
-    "time_in": "10:10",
-    "time_out": "02:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-08T00:00:00.000Z",
-    "updated_at": "2024-08-08T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-18-1",
-        "visit_id": "visit-18",
-        "full_name_en": "Christopher",
-        "full_name_ar": "كريستوفر",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      },
-      {
-        "id": "vis-18-2",
-        "visit_id": "visit-18",
-        "full_name_en": "Chris",
-        "full_name_ar": "كريس",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-19",
-    "visit_number": "VIS-2024-0019",
-    "visit_date": "2024-08-08",
-    "time_in": "11:30",
-    "time_out": "01:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-08T00:00:00.000Z",
-    "updated_at": "2024-08-08T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-19-1",
-        "visit_id": "visit-19",
-        "full_name_en": "Fatima Al Qasmi",
-        "full_name_ar": "فاطمة القاسمي",
-        "phone_number": "97004470\r\n99669995",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      },
-      {
-        "id": "vis-19-2",
-        "visit_id": "visit-19",
-        "full_name_en": "Wafa Al Mandhari",
-        "full_name_ar": "وفاء المنذري",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-20",
-    "visit_number": "VIS-2024-0020",
-    "visit_date": "2024-08-08",
-    "time_in": "11:30",
-    "time_out": "01:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-08T00:00:00.000Z",
-    "updated_at": "2024-08-08T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-20-1",
-        "visit_id": "visit-20",
-        "full_name_en": "Yusif Al Abdali",
-        "full_name_ar": "يوسف العبدلي",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      },
-      {
-        "id": "vis-20-2",
-        "visit_id": "visit-20",
-        "full_name_en": "Adnan Al Harrasi",
-        "full_name_ar": "عدنان المعمري",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      },
-      {
-        "id": "vis-20-3",
-        "visit_id": "visit-20",
-        "full_name_en": "Yusif Al Harrasi",
-        "full_name_ar": "يوسف الحراصي",
-        "phone_number": "",
-        "created_at": "2024-08-08T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-21",
-    "visit_number": "VIS-2024-0021",
-    "visit_date": "2024-02-09",
-    "time_in": "04:20",
-    "time_out": "04:31",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-02-09T00:00:00.000Z",
-    "updated_at": "2024-02-09T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-21-1",
-        "visit_id": "visit-21",
-        "full_name_en": "Khalil Al Musallami",
-        "full_name_ar": "خليل المسلمي",
-        "phone_number": "95584055",
-        "created_at": "2024-02-09T00:00:00.000Z"
-      },
-      {
-        "id": "vis-21-2",
-        "visit_id": "visit-21",
-        "full_name_en": "Khamis Al Aamri",
-        "full_name_ar": "خميس العامري",
-        "phone_number": "",
-        "created_at": "2024-02-09T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-22",
-    "visit_number": "VIS-2024-0022",
-    "visit_date": "2024-08-09",
-    "time_in": "08:50",
-    "time_out": "09:50",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-08-09T00:00:00.000Z",
-    "updated_at": "2024-08-09T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-22-1",
-        "visit_id": "visit-22",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-08-09T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-23",
-    "visit_number": "VIS-2024-0023",
-    "visit_date": "2024-09-09",
-    "time_in": "11:25",
-    "time_out": "11:30",
-    "organization_en": "International Heavy Equipment",
-    "organization_ar": "شركة المعدات الثقيلة الدولية",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-09-09T00:00:00.000Z",
-    "updated_at": "2024-09-09T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-23-1",
-        "visit_id": "visit-23",
-        "full_name_en": "Vignesh",
-        "full_name_ar": "فيجنيش",
-        "phone_number": "98993972",
-        "created_at": "2024-09-09T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-24",
-    "visit_number": "VIS-2024-0024",
-    "visit_date": "2024-10-09",
-    "time_in": "08:30",
-    "time_out": "11:00",
-    "organization_en": "",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-10-09T00:00:00.000Z",
-    "updated_at": "2024-10-09T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-24-1",
-        "visit_id": "visit-24",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-10-09T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-25",
-    "visit_number": "VIS-2024-0025",
-    "visit_date": "2024-09-22",
-    "time_in": "08:50",
-    "time_out": "10:00",
-    "organization_en": "",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-09-22T00:00:00.000Z",
-    "updated_at": "2024-09-22T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-25-1",
-        "visit_id": "visit-25",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-09-22T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-26",
-    "visit_number": "VIS-2024-0026",
-    "visit_date": "2024-06-10",
-    "time_in": "09:00",
-    "time_out": "01:20",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Eygept\r\nOman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-06-10T00:00:00.000Z",
-    "updated_at": "2024-06-10T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-26-1",
-        "visit_id": "visit-26",
-        "full_name_en": "Waffiya Mudhwi",
-        "full_name_ar": "وفية مضوي",
-        "phone_number": "",
-        "created_at": "2024-06-10T00:00:00.000Z"
-      },
-      {
-        "id": "vis-26-2",
-        "visit_id": "visit-26",
-        "full_name_en": "Abdullah Al Rashdi",
-        "full_name_ar": "عبدالله الراشدي",
-        "phone_number": "",
-        "created_at": "2024-06-10T00:00:00.000Z"
-      },
-      {
-        "id": "vis-26-3",
-        "visit_id": "visit-26",
-        "full_name_en": "Mohammed Al Hajri",
-        "full_name_ar": "سعادة محمد الحجري",
-        "phone_number": "",
-        "created_at": "2024-06-10T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-27",
-    "visit_number": "VIS-2024-0027",
-    "visit_date": "2024-10-10",
-    "time_in": "12:30",
-    "time_out": "01:30",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "China",
-    "visit_reason": "Visit from China with Murli",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-10-10T00:00:00.000Z",
-    "updated_at": "2024-10-10T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-27-1",
-        "visit_id": "visit-27",
-        "full_name_en": "Murali",
-        "full_name_ar": "مورلي",
-        "phone_number": "",
-        "created_at": "2024-10-10T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-28",
-    "visit_number": "VIS-2024-0028",
-    "visit_date": "2024-10-11",
-    "time_in": "09:30",
-    "time_out": "10:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-10-11T00:00:00.000Z",
-    "updated_at": "2024-10-11T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-28-1",
-        "visit_id": "visit-28",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-10-11T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-29",
-    "visit_number": "VIS-2024-0029",
-    "visit_date": "2024-11-10",
-    "time_in": "02:30",
-    "time_out": "03:40",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-10T00:00:00.000Z",
-    "updated_at": "2024-11-10T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-29-1",
-        "visit_id": "visit-29",
-        "full_name_en": "Azzan Al Roishdi",
-        "full_name_ar": "عزان الرويشدي",
-        "phone_number": "96006428",
-        "created_at": "2024-11-10T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-30",
-    "visit_number": "VIS-2024-0030",
-    "visit_date": "2024-12-11",
-    "time_in": "09:30",
     "time_out": "12:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
+    "organization_en": "Oman Air",
+    "organization_ar": "مطارات عمان",
     "country": "Oman",
-    "visit_reason": "",
+    "visit_reason": "Factory Tour Test Passed",
     "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-12-11T00:00:00.000Z",
-    "updated_at": "2024-12-11T00:00:00.000Z",
-    "visitors": [
+    "registration_source": "internal",
+    "created_by": "ced0fe0e-1c3c-455c-904c-92e35b38ea45",
+    "created_at": "2026-10-27T06:39:18.765162+00:00",
+    "updated_at": "2026-11-10T09:16:27.61+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-30-1",
-        "visit_id": "visit-30",
-        "full_name_en": "Christopher",
-        "full_name_ar": "كريستوفر",
-        "phone_number": "",
-        "created_at": "2024-12-11T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-31",
-    "visit_number": "VIS-2024-0031",
-    "visit_date": "2024-11-13",
-    "time_in": "10:00",
-    "time_out": "10:30",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-13T00:00:00.000Z",
-    "updated_at": "2024-11-13T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-31-1",
-        "visit_id": "visit-31",
-        "full_name_en": "Aziz Al Harthi",
-        "full_name_ar": "عزيز الحارثي",
-        "phone_number": "",
-        "created_at": "2024-11-13T00:00:00.000Z"
+        "id": "f763ae7a-25dd-46f6-a8bd-3b94332008a4",
+        "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+        "created_at": "2026-11-10T09:13:39.102731+00:00",
+        "full_name_ar": "محمود الريامي",
+        "full_name_en": "Mahmood Al Riyami",
+        "phone_number": null
       },
       {
-        "id": "vis-31-2",
-        "visit_id": "visit-31",
-        "full_name_en": "Ali Al Shaibani",
-        "full_name_ar": "علي الشيباني",
-        "phone_number": "",
-        "created_at": "2024-11-13T00:00:00.000Z"
+        "id": "2ca257aa-26f0-43c1-8df1-7f9a03042db7",
+        "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+        "created_at": "2026-11-10T09:13:39.102731+00:00",
+        "full_name_ar": "فريد المحروقي",
+        "full_name_en": "Freed Al Mahrouqi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "f763ae7a-25dd-46f6-a8bd-3b94332008a4",
+        "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+        "created_at": "2026-11-10T09:13:39.102731+00:00",
+        "full_name_ar": "محمود الريامي",
+        "full_name_en": "Mahmood Al Riyami",
+        "phone_number": null,
+        "organization_ar": "مطارات عمان",
+        "organization_en": "Oman Air"
       },
       {
-        "id": "vis-31-3",
-        "visit_id": "visit-31",
-        "full_name_en": "Ahmed Al Kazroni",
-        "full_name_ar": "أحمد الكازروني",
-        "phone_number": "",
-        "created_at": "2024-11-13T00:00:00.000Z"
-      },
-      {
-        "id": "vis-31-4",
-        "visit_id": "visit-31",
-        "full_name_en": "Al Hinai",
-        "full_name_ar": "الهنائي",
-        "phone_number": "",
-        "created_at": "2024-11-13T00:00:00.000Z"
+        "id": "2ca257aa-26f0-43c1-8df1-7f9a03042db7",
+        "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+        "created_at": "2026-11-10T09:13:39.102731+00:00",
+        "full_name_ar": "فريد المحروقي",
+        "full_name_en": "Freed Al Mahrouqi",
+        "phone_number": null,
+        "organization_ar": "مطارات عمان",
+        "organization_en": "Oman Air"
       }
     ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-32",
-    "visit_number": "VIS-2024-0032",
-    "visit_date": "2024-11-14",
-    "time_in": "09:50",
-    "time_out": "02:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-14T00:00:00.000Z",
-    "updated_at": "2024-11-14T00:00:00.000Z",
-    "visitors": [
+    "organizations": [
       {
-        "id": "vis-32-1",
-        "visit_id": "visit-32",
-        "full_name_en": "Salim Al Badri",
-        "full_name_ar": "سالم البدري",
-        "phone_number": "",
-        "created_at": "2024-11-14T00:00:00.000Z"
+        "id": "org-1",
+        "organization_en": "Oman Air",
+        "organization_ar": "مطارات عمان",
+        "visitors": [
+          {
+            "id": "f763ae7a-25dd-46f6-a8bd-3b94332008a4",
+            "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+            "created_at": "2026-11-10T09:13:39.102731+00:00",
+            "full_name_ar": "محمود الريامي",
+            "full_name_en": "Mahmood Al Riyami",
+            "phone_number": null,
+            "organization_en": "Oman Air",
+            "organization_ar": "مطارات عمان"
+          },
+          {
+            "id": "2ca257aa-26f0-43c1-8df1-7f9a03042db7",
+            "visit_id": "67f48760-1e92-4bcf-a140-eeea334f3e0f",
+            "created_at": "2026-11-10T09:13:39.102731+00:00",
+            "full_name_ar": "فريد المحروقي",
+            "full_name_en": "Freed Al Mahrouqi",
+            "phone_number": null,
+            "organization_en": "Oman Air",
+            "organization_ar": "مطارات عمان"
+          }
+        ]
       }
-    ],
-    "coordination_by": "Ectron"
+    ]
   },
   {
-    "id": "visit-33",
-    "visit_number": "VIS-2024-0033",
-    "visit_date": "2024-11-14",
-    "time_in": "11:40",
-    "time_out": "04:00",
-    "organization_en": "Nama Water Services",
-    "organization_ar": "نماء لخدمات المياه",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-14T00:00:00.000Z",
-    "updated_at": "2024-11-14T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-33-1",
-        "visit_id": "visit-33",
-        "full_name_en": "Christopher",
-        "full_name_ar": "كريستوفر",
-        "phone_number": "",
-        "created_at": "2024-11-14T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-34",
-    "visit_number": "VIS-2024-0034",
-    "visit_date": "2024-12-11",
-    "time_in": "11:00",
-    "time_out": "01:00",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Saudia Arabia",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-12-11T00:00:00.000Z",
-    "updated_at": "2024-12-11T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-34-1",
-        "visit_id": "visit-34",
-        "full_name_en": "Eng Mustafa Al Hinai",
-        "full_name_ar": "مهندس مصطفى الهنائي",
-        "phone_number": "",
-        "created_at": "2024-12-11T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-35",
-    "visit_number": "VIS-2024-0035",
-    "visit_date": "2024-11-16",
+    "id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+    "visit_number": "VIS-2026-0004",
+    "visit_date": "2026-09-14",
     "time_in": "12:00",
-    "time_out": "01:00",
-    "organization_en": "",
-    "organization_ar": "",
+    "time_out": "16:00",
+    "organization_en": "Nama Electricity Distribution Company / Ectron",
+    "organization_ar": "نماء لتوزيع الكهرباء / إكترون",
     "country": "Oman",
-    "visit_reason": "Visit",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-11-16T00:00:00.000Z",
-    "updated_at": "2024-11-16T00:00:00.000Z",
-    "visitors": [
+    "visit_reason": "AAMU Meeting",
+    "notes": "Updated note at 2026-11-10T09:21:51.283Z",
+    "registration_source": "internal",
+    "created_by": "ced0fe0e-1c3c-455c-904c-92e35b38ea45",
+    "created_at": "2026-11-04T10:29:33.513202+00:00",
+    "updated_at": "2026-11-10T10:51:55.397+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-35-1",
-        "visit_id": "visit-35",
-        "full_name_en": "Eng Abdullah Al Badi",
-        "full_name_ar": "مهندس عبدالله البادي",
-        "phone_number": "",
-        "created_at": "2024-11-16T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-36",
-    "visit_number": "VIS-2024-0036",
-    "visit_date": "2024-12-22",
-    "time_in": "12:00",
-    "time_out": "01:50",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-12-22T00:00:00.000Z",
-    "updated_at": "2024-12-22T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-36-1",
-        "visit_id": "visit-36",
-        "full_name_en": "Eng Abdullah Al Badi",
-        "full_name_ar": "مهندس عبدالله البادي",
-        "phone_number": "",
-        "created_at": "2024-12-22T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-37",
-    "visit_number": "VIS-2024-0037",
-    "visit_date": "2024-12-22",
-    "time_in": "09:00",
-    "time_out": null,
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2024-12-22T00:00:00.000Z",
-    "updated_at": "2024-12-22T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-37-1",
-        "visit_id": "visit-37",
-        "full_name_en": "Ibrahim Al Harthi",
-        "full_name_ar": "إبراهيم الحارثي",
-        "phone_number": "",
-        "created_at": "2024-12-22T00:00:00.000Z"
+        "id": "dc155846-7b9c-422c-a7b5-67a9f4715ac5",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "نصر ألبوسعيدي",
+        "full_name_en": "Nasr Albosaidi",
+        "phone_number": null
       },
       {
-        "id": "vis-37-2",
-        "visit_id": "visit-37",
-        "full_name_en": "Ahmed Al Hajri",
-        "full_name_ar": "احمد الحجري",
-        "phone_number": "",
-        "created_at": "2024-12-22T00:00:00.000Z"
+        "id": "782686b1-07ae-4387-80db-c28e31d35727",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "عبدالله الإسماعيلي",
+        "full_name_en": "Abdullah Al Ismaili",
+        "phone_number": null
       },
       {
-        "id": "vis-37-3",
-        "visit_id": "visit-37",
-        "full_name_en": "Sami Al Ayshi",
-        "full_name_ar": "سامي العيشبي",
-        "phone_number": "",
-        "created_at": "2024-12-22T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-38",
-    "visit_number": "VIS-2025-0038",
-    "visit_date": "2025-02-06",
-    "time_in": "03:00",
-    "time_out": "05:00",
-    "organization_en": "",
-    "organization_ar": "",
-    "country": "Bahrain",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2025-02-06T00:00:00.000Z",
-    "updated_at": "2025-02-06T00:00:00.000Z",
-    "visitors": [
-      {
-        "id": "vis-38-1",
-        "visit_id": "visit-38",
-        "full_name_en": "Jabir Al Ghanbari",
-        "full_name_ar": "جابر الغنبري",
-        "phone_number": "",
-        "created_at": "2025-02-06T00:00:00.000Z"
+        "id": "850f5857-6ba8-419b-95c5-b847119389c9",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "علي المعيني",
+        "full_name_en": "Ali Al Mani",
+        "phone_number": null
       },
       {
-        "id": "vis-38-2",
-        "visit_id": "visit-38",
-        "full_name_en": "Ridha Kamshki",
-        "full_name_ar": "ورضا كـمشكي",
-        "phone_number": "",
-        "created_at": "2025-02-06T00:00:00.000Z"
+        "id": "a0590f17-691a-49a6-b0b5-f89ae7597aef",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "ابراهيم اليعربي",
+        "full_name_en": "Ibrahim Al Yarubi",
+        "phone_number": null
       },
       {
-        "id": "vis-38-3",
-        "visit_id": "visit-38",
-        "full_name_en": "Hasan",
-        "full_name_ar": "حسن",
-        "phone_number": "",
-        "created_at": "2025-02-06T00:00:00.000Z"
+        "id": "3c22a8ca-10a3-4a6f-ac94-ba4d3f97c663",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "صلاح الزكواني",
+        "full_name_en": "Salah Al Zakwani",
+        "phone_number": null
+      },
+      {
+        "id": "4ff3eab9-eb5b-427e-adc4-ce8d19a24f56",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سيف المعمري",
+        "full_name_en": "Saif Al Mamari",
+        "phone_number": null
+      },
+      {
+        "id": "d646d0cb-35ea-43eb-92dc-9b2ca30d266e",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null
+      },
+      {
+        "id": "087b3932-b732-4fde-af5f-5e4963cd6f0f",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null
       }
     ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-39",
-    "visit_number": "VIS-2025-0039",
-    "visit_date": "2025-03-16",
-    "time_in": "10:00",
-    "time_out": "11:00",
-    "organization_en": "Development Bank",
-    "organization_ar": "بنك التنمية",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2025-03-16T00:00:00.000Z",
-    "updated_at": "2025-03-16T00:00:00.000Z",
+    "coordination_by": "Ectron",
     "visitors": [
       {
-        "id": "vis-39-1",
-        "visit_id": "visit-39",
-        "full_name_en": "Majed Al Rahbi",
-        "full_name_ar": "ماجد الرحبي",
-        "phone_number": "",
-        "created_at": "2025-03-16T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-40",
-    "visit_number": "VIS-2025-0040",
-    "visit_date": "2025-10-12",
-    "time_in": "09:00",
-    "time_out": null,
-    "organization_en": "KEMA Lab",
-    "organization_ar": "مختبر كيما",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2025-10-12T00:00:00.000Z",
-    "updated_at": "2025-10-12T00:00:00.000Z",
-    "visitors": [
+        "id": "dc155846-7b9c-422c-a7b5-67a9f4715ac5",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "نصر ألبوسعيدي",
+        "full_name_en": "Nasr Albosaidi",
+        "phone_number": null,
+        "organization_ar": "نماء لتوزيع الكهرباء",
+        "organization_en": "Nama Electricity Distribution Company"
+      },
       {
-        "id": "vis-40-1",
-        "visit_id": "visit-40",
-        "full_name_en": "Levent",
-        "full_name_ar": "ليفينت",
-        "phone_number": "",
-        "created_at": "2025-10-12T00:00:00.000Z"
-      }
-    ],
-    "coordination_by": "Ectron"
-  },
-  {
-    "id": "visit-41",
-    "visit_number": "VIS-2025-0041",
-    "visit_date": "2025-10-13",
-    "time_in": "09:00",
-    "time_out": null,
-    "organization_en": "Maksan",
-    "organization_ar": "ماكسان",
-    "country": "Oman",
-    "visit_reason": "",
-    "notes": "",
-    "registration_source": "import",
-    "created_at": "2025-10-13T00:00:00.000Z",
-    "updated_at": "2025-10-13T00:00:00.000Z",
-    "visitors": [
+        "id": "782686b1-07ae-4387-80db-c28e31d35727",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "عبدالله الإسماعيلي",
+        "full_name_en": "Abdullah Al Ismaili",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
       {
-        "id": "vis-41-1",
-        "visit_id": "visit-41",
-        "full_name_en": "Burak",
-        "full_name_ar": "بوراك",
-        "phone_number": "",
-        "created_at": "2025-10-13T00:00:00.000Z"
+        "id": "850f5857-6ba8-419b-95c5-b847119389c9",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "علي المعيني",
+        "full_name_en": "Ali Al Mani",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "a0590f17-691a-49a6-b0b5-f89ae7597aef",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "ابراهيم اليعربي",
+        "full_name_en": "Ibrahim Al Yarubi",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "3c22a8ca-10a3-4a6f-ac94-ba4d3f97c663",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "صلاح الزكواني",
+        "full_name_en": "Salah Al Zakwani",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "4ff3eab9-eb5b-427e-adc4-ce8d19a24f56",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سيف المعمري",
+        "full_name_en": "Saif Al Mamari",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "d646d0cb-35ea-43eb-92dc-9b2ca30d266e",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null,
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron"
+      },
+      {
+        "id": "087b3932-b732-4fde-af5f-5e4963cd6f0f",
+        "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+        "created_at": "2026-11-10T10:51:57.758552+00:00",
+        "full_name_ar": "سلطان الجهوري",
+        "full_name_en": "Sultan Al Jahwari",
+        "phone_number": null
       }
     ],
-    "coordination_by": "Ectron"
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_ar": "نماء لتوزيع الكهرباء",
+        "organization_en": "Nama Electricity Distribution Company",
+        "visitors": [
+          {
+            "id": "dc155846-7b9c-422c-a7b5-67a9f4715ac5",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "نصر ألبوسعيدي",
+            "full_name_en": "Nasr Albosaidi",
+            "phone_number": null,
+            "organization_ar": "نماء لتوزيع الكهرباء",
+            "organization_en": "Nama Electricity Distribution Company"
+          }
+        ]
+      },
+      {
+        "id": "org-2",
+        "organization_ar": "إكترون",
+        "organization_en": "Ectron",
+        "visitors": [
+          {
+            "id": "782686b1-07ae-4387-80db-c28e31d35727",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "عبدالله الإسماعيلي",
+            "full_name_en": "Abdullah Al Ismaili",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "850f5857-6ba8-419b-95c5-b847119389c9",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "علي المعيني",
+            "full_name_en": "Ali Al Mani",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "a0590f17-691a-49a6-b0b5-f89ae7597aef",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "ابراهيم اليعربي",
+            "full_name_en": "Ibrahim Al Yarubi",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "3c22a8ca-10a3-4a6f-ac94-ba4d3f97c663",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "صلاح الزكواني",
+            "full_name_en": "Salah Al Zakwani",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "4ff3eab9-eb5b-427e-adc4-ce8d19a24f56",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "سيف المعمري",
+            "full_name_en": "Saif Al Mamari",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "d646d0cb-35ea-43eb-92dc-9b2ca30d266e",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "سلطان الجهوري",
+            "full_name_en": "Sultan Al Jahwari",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          },
+          {
+            "id": "087b3932-b732-4fde-af5f-5e4963cd6f0f",
+            "visit_id": "8d1b9ade-096f-4d58-9d83-af4dd33efb8b",
+            "created_at": "2026-11-10T10:51:57.758552+00:00",
+            "full_name_ar": "سلطان الجهوري",
+            "full_name_en": "Sultan Al Jahwari",
+            "phone_number": null,
+            "organization_ar": "إكترون",
+            "organization_en": "Ectron"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "visit-42",
-    "visit_number": "VIS-2025-0042",
+    "id": "3dacdefb-ada2-44f9-bf13-89e9b2959cbe",
+    "visit_number": "VIS-2025-0048",
     "visit_date": "2025-11-19",
     "time_in": "10:00",
     "time_out": "11:10",
@@ -1445,23 +714,55 @@
     "visit_reason": "To check Robot",
     "notes": "",
     "registration_source": "import",
-    "created_at": "2025-11-19T00:00:00.000Z",
-    "updated_at": "2025-11-19T00:00:00.000Z",
-    "visitors": [
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:49.007074+00:00",
+    "updated_at": "2026-11-11T05:54:49.007074+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-42-1",
-        "visit_id": "visit-42",
-        "full_name_en": "Ahmed Hatata",
+        "id": "888266e8-532c-447e-837c-627e59851fcb",
+        "visit_id": "3dacdefb-ada2-44f9-bf13-89e9b2959cbe",
+        "created_at": "2026-11-11T05:54:49.007074+00:00",
         "full_name_ar": "أحمد هتات",
-        "phone_number": "971 (0)505860264",
-        "created_at": "2025-11-19T00:00:00.000Z"
+        "full_name_en": "Ahmed Hatata",
+        "phone_number": "971 (0)505860264"
       }
     ],
-    "coordination_by": "Ectron"
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "888266e8-532c-447e-837c-627e59851fcb",
+        "visit_id": "3dacdefb-ada2-44f9-bf13-89e9b2959cbe",
+        "created_at": "2026-11-11T05:54:49.007074+00:00",
+        "full_name_ar": "أحمد هتات",
+        "full_name_en": "Ahmed Hatata",
+        "phone_number": "971 (0)505860264",
+        "organization_ar": "مجموعة ABB",
+        "organization_en": "ABB Group"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "ABB Group",
+        "organization_ar": "مجموعة ABB",
+        "visitors": [
+          {
+            "id": "888266e8-532c-447e-837c-627e59851fcb",
+            "visit_id": "3dacdefb-ada2-44f9-bf13-89e9b2959cbe",
+            "created_at": "2026-11-11T05:54:49.007074+00:00",
+            "full_name_ar": "أحمد هتات",
+            "full_name_en": "Ahmed Hatata",
+            "phone_number": "971 (0)505860264",
+            "organization_en": "ABB Group",
+            "organization_ar": "مجموعة ABB"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "visit-43",
-    "visit_number": "VIS-2025-0043",
+    "id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+    "visit_number": "VIS-2025-0049",
     "visit_date": "2025-11-19",
     "time_in": "08:30",
     "time_out": "02:00",
@@ -1471,26 +772,3210 @@
     "visit_reason": "Planning & Finalize the line",
     "notes": "",
     "registration_source": "import",
-    "created_at": "2025-11-19T00:00:00.000Z",
-    "updated_at": "2025-11-19T00:00:00.000Z",
-    "visitors": [
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:49.532061+00:00",
+    "updated_at": "2026-11-11T05:54:49.532061+00:00",
+    "visit_visitors": [
       {
-        "id": "vis-43-1",
-        "visit_id": "visit-43",
-        "full_name_en": "Charlie",
+        "id": "b204346d-3300-43b5-8206-a39cf5fc07b9",
+        "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+        "created_at": "2026-11-11T05:54:49.532061+00:00",
         "full_name_ar": "تشارلي",
-        "phone_number": "",
-        "created_at": "2025-11-19T00:00:00.000Z"
+        "full_name_en": "Charlie",
+        "phone_number": null
       },
       {
-        "id": "vis-43-2",
-        "visit_id": "visit-43",
-        "full_name_en": "Simon",
+        "id": "1b75fd5b-301d-4882-9579-347abb2fe2a0",
+        "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+        "created_at": "2026-11-11T05:54:49.532061+00:00",
         "full_name_ar": "سايمون",
-        "phone_number": "",
-        "created_at": "2025-11-19T00:00:00.000Z"
+        "full_name_en": "Simon",
+        "phone_number": null
       }
     ],
-    "coordination_by": "Ectron"
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "b204346d-3300-43b5-8206-a39cf5fc07b9",
+        "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+        "created_at": "2026-11-11T05:54:49.532061+00:00",
+        "full_name_ar": "تشارلي",
+        "full_name_en": "Charlie",
+        "phone_number": null,
+        "organization_ar": "فريق ويلفار",
+        "organization_en": "Willfar Team"
+      },
+      {
+        "id": "1b75fd5b-301d-4882-9579-347abb2fe2a0",
+        "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+        "created_at": "2026-11-11T05:54:49.532061+00:00",
+        "full_name_ar": "سايمون",
+        "full_name_en": "Simon",
+        "phone_number": null,
+        "organization_ar": "فريق ويلفار",
+        "organization_en": "Willfar Team"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Willfar Team",
+        "organization_ar": "فريق ويلفار",
+        "visitors": [
+          {
+            "id": "b204346d-3300-43b5-8206-a39cf5fc07b9",
+            "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+            "created_at": "2026-11-11T05:54:49.532061+00:00",
+            "full_name_ar": "تشارلي",
+            "full_name_en": "Charlie",
+            "phone_number": null,
+            "organization_en": "Willfar Team",
+            "organization_ar": "فريق ويلفار"
+          },
+          {
+            "id": "1b75fd5b-301d-4882-9579-347abb2fe2a0",
+            "visit_id": "9b99088a-0ebe-4125-a4ae-4ef4b00afa33",
+            "created_at": "2026-11-11T05:54:49.532061+00:00",
+            "full_name_ar": "سايمون",
+            "full_name_en": "Simon",
+            "phone_number": null,
+            "organization_en": "Willfar Team",
+            "organization_ar": "فريق ويلفار"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "120a959f-deb9-4b4c-91fb-3b5f94e09e91",
+    "visit_number": "VIS-2025-0047",
+    "visit_date": "2025-10-13",
+    "time_in": "09:00",
+    "time_out": null,
+    "organization_en": "Maksan",
+    "organization_ar": "ماكسان",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:48.426305+00:00",
+    "updated_at": "2026-11-11T05:54:48.426305+00:00",
+    "visit_visitors": [
+      {
+        "id": "6869bd06-53ed-4a95-aab4-f25fb29f54b8",
+        "visit_id": "120a959f-deb9-4b4c-91fb-3b5f94e09e91",
+        "created_at": "2026-11-11T05:54:48.426305+00:00",
+        "full_name_ar": "بوراك",
+        "full_name_en": "Burak",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "6869bd06-53ed-4a95-aab4-f25fb29f54b8",
+        "visit_id": "120a959f-deb9-4b4c-91fb-3b5f94e09e91",
+        "created_at": "2026-11-11T05:54:48.426305+00:00",
+        "full_name_ar": "بوراك",
+        "full_name_en": "Burak",
+        "phone_number": null,
+        "organization_ar": "ماكسان",
+        "organization_en": "Maksan"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Maksan",
+        "organization_ar": "ماكسان",
+        "visitors": [
+          {
+            "id": "6869bd06-53ed-4a95-aab4-f25fb29f54b8",
+            "visit_id": "120a959f-deb9-4b4c-91fb-3b5f94e09e91",
+            "created_at": "2026-11-11T05:54:48.426305+00:00",
+            "full_name_ar": "بوراك",
+            "full_name_en": "Burak",
+            "phone_number": null,
+            "organization_en": "Maksan",
+            "organization_ar": "ماكسان"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "35272f1e-87e7-449f-b9bf-da813e9b2010",
+    "visit_number": "VIS-2025-0046",
+    "visit_date": "2025-10-12",
+    "time_in": "09:00",
+    "time_out": null,
+    "organization_en": "KEMA Lab",
+    "organization_ar": "مختبر كيما",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:47.924708+00:00",
+    "updated_at": "2026-11-11T05:54:47.924708+00:00",
+    "visit_visitors": [
+      {
+        "id": "6d3b6366-acaf-4af4-bcc5-df01b221cd2b",
+        "visit_id": "35272f1e-87e7-449f-b9bf-da813e9b2010",
+        "created_at": "2026-11-11T05:54:47.924708+00:00",
+        "full_name_ar": "ليفينت",
+        "full_name_en": "Levent",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "6d3b6366-acaf-4af4-bcc5-df01b221cd2b",
+        "visit_id": "35272f1e-87e7-449f-b9bf-da813e9b2010",
+        "created_at": "2026-11-11T05:54:47.924708+00:00",
+        "full_name_ar": "ليفينت",
+        "full_name_en": "Levent",
+        "phone_number": null,
+        "organization_ar": "مختبر كيما",
+        "organization_en": "KEMA Lab"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "KEMA Lab",
+        "organization_ar": "مختبر كيما",
+        "visitors": [
+          {
+            "id": "6d3b6366-acaf-4af4-bcc5-df01b221cd2b",
+            "visit_id": "35272f1e-87e7-449f-b9bf-da813e9b2010",
+            "created_at": "2026-11-11T05:54:47.924708+00:00",
+            "full_name_ar": "ليفينت",
+            "full_name_en": "Levent",
+            "phone_number": null,
+            "organization_en": "KEMA Lab",
+            "organization_ar": "مختبر كيما"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1adb1ec5-0de7-4b04-80a9-81c512945b76",
+    "visit_number": "VIS-2025-0045",
+    "visit_date": "2025-03-16",
+    "time_in": "10:00",
+    "time_out": "11:00",
+    "organization_en": "Development Bank",
+    "organization_ar": "بنك التنمية",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:47.389506+00:00",
+    "updated_at": "2026-11-11T05:54:47.389506+00:00",
+    "visit_visitors": [
+      {
+        "id": "684c68b5-e625-4407-9fd8-62c0e7398782",
+        "visit_id": "1adb1ec5-0de7-4b04-80a9-81c512945b76",
+        "created_at": "2026-11-11T05:54:47.389506+00:00",
+        "full_name_ar": "ماجد الرحبي",
+        "full_name_en": "Majed Al Rahbi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "684c68b5-e625-4407-9fd8-62c0e7398782",
+        "visit_id": "1adb1ec5-0de7-4b04-80a9-81c512945b76",
+        "created_at": "2026-11-11T05:54:47.389506+00:00",
+        "full_name_ar": "ماجد الرحبي",
+        "full_name_en": "Majed Al Rahbi",
+        "phone_number": null,
+        "organization_ar": "بنك التنمية",
+        "organization_en": "Development Bank"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Development Bank",
+        "organization_ar": "بنك التنمية",
+        "visitors": [
+          {
+            "id": "684c68b5-e625-4407-9fd8-62c0e7398782",
+            "visit_id": "1adb1ec5-0de7-4b04-80a9-81c512945b76",
+            "created_at": "2026-11-11T05:54:47.389506+00:00",
+            "full_name_ar": "ماجد الرحبي",
+            "full_name_en": "Majed Al Rahbi",
+            "phone_number": null,
+            "organization_en": "Development Bank",
+            "organization_ar": "بنك التنمية"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+    "visit_number": "VIS-2025-0044",
+    "visit_date": "2025-02-06",
+    "time_in": "03:00",
+    "time_out": "05:00",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Bahrain",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:46.855419+00:00",
+    "updated_at": "2026-11-11T05:54:46.855419+00:00",
+    "visit_visitors": [
+      {
+        "id": "3cffadaa-650f-4f47-95fe-3ed0d8deaea3",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "جابر الغنبري",
+        "full_name_en": "Jabir Al Ghanbari",
+        "phone_number": null
+      },
+      {
+        "id": "cdd1ecf8-ab65-4f54-ba5d-e0a08fea7368",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "ورضا كـمشكي",
+        "full_name_en": "Ridha Kamshki",
+        "phone_number": null
+      },
+      {
+        "id": "d8a53855-dbb3-4fa9-96de-463a733495c8",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "حسن",
+        "full_name_en": "Hasan",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "3cffadaa-650f-4f47-95fe-3ed0d8deaea3",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "جابر الغنبري",
+        "full_name_en": "Jabir Al Ghanbari",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "cdd1ecf8-ab65-4f54-ba5d-e0a08fea7368",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "ورضا كـمشكي",
+        "full_name_en": "Ridha Kamshki",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "d8a53855-dbb3-4fa9-96de-463a733495c8",
+        "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+        "created_at": "2026-11-11T05:54:46.855419+00:00",
+        "full_name_ar": "حسن",
+        "full_name_en": "Hasan",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "3cffadaa-650f-4f47-95fe-3ed0d8deaea3",
+            "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+            "created_at": "2026-11-11T05:54:46.855419+00:00",
+            "full_name_ar": "جابر الغنبري",
+            "full_name_en": "Jabir Al Ghanbari",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "cdd1ecf8-ab65-4f54-ba5d-e0a08fea7368",
+            "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+            "created_at": "2026-11-11T05:54:46.855419+00:00",
+            "full_name_ar": "ورضا كـمشكي",
+            "full_name_en": "Ridha Kamshki",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "d8a53855-dbb3-4fa9-96de-463a733495c8",
+            "visit_id": "2e19e6bb-bf3d-44fe-b14d-4e0fdde78e9d",
+            "created_at": "2026-11-11T05:54:46.855419+00:00",
+            "full_name_ar": "حسن",
+            "full_name_en": "Hasan",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "89d71802-9c55-4928-903f-8b80e8efce49",
+    "visit_number": "VIS-2024-0072",
+    "visit_date": "2024-12-22",
+    "time_in": "12:00",
+    "time_out": "01:50",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:45.856478+00:00",
+    "updated_at": "2026-11-11T05:54:45.856478+00:00",
+    "visit_visitors": [
+      {
+        "id": "e3863947-c448-41af-a433-cb6c545e2cc4",
+        "visit_id": "89d71802-9c55-4928-903f-8b80e8efce49",
+        "created_at": "2026-11-11T05:54:45.856478+00:00",
+        "full_name_ar": "مهندس عبدالله البادي",
+        "full_name_en": "Eng Abdullah Al Badi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "e3863947-c448-41af-a433-cb6c545e2cc4",
+        "visit_id": "89d71802-9c55-4928-903f-8b80e8efce49",
+        "created_at": "2026-11-11T05:54:45.856478+00:00",
+        "full_name_ar": "مهندس عبدالله البادي",
+        "full_name_en": "Eng Abdullah Al Badi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "e3863947-c448-41af-a433-cb6c545e2cc4",
+            "visit_id": "89d71802-9c55-4928-903f-8b80e8efce49",
+            "created_at": "2026-11-11T05:54:45.856478+00:00",
+            "full_name_ar": "مهندس عبدالله البادي",
+            "full_name_en": "Eng Abdullah Al Badi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+    "visit_number": "VIS-2024-0073",
+    "visit_date": "2024-12-22",
+    "time_in": "09:00",
+    "time_out": null,
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:46.354292+00:00",
+    "updated_at": "2026-11-11T05:54:46.354292+00:00",
+    "visit_visitors": [
+      {
+        "id": "8ba683bd-7116-4c16-b92f-b8984265b712",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "إبراهيم الحارثي",
+        "full_name_en": "Ibrahim Al Harthi",
+        "phone_number": null
+      },
+      {
+        "id": "fe79cceb-a5d6-481e-a7bc-c410e8c2872e",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "احمد الحجري",
+        "full_name_en": "Ahmed Al Hajri",
+        "phone_number": null
+      },
+      {
+        "id": "18c0055f-6b7f-4ae7-8fd7-901a5b71afef",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "سامي العيشبي",
+        "full_name_en": "Sami Al Ayshi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "8ba683bd-7116-4c16-b92f-b8984265b712",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "إبراهيم الحارثي",
+        "full_name_en": "Ibrahim Al Harthi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "fe79cceb-a5d6-481e-a7bc-c410e8c2872e",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "احمد الحجري",
+        "full_name_en": "Ahmed Al Hajri",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "18c0055f-6b7f-4ae7-8fd7-901a5b71afef",
+        "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+        "created_at": "2026-11-11T05:54:46.354292+00:00",
+        "full_name_ar": "سامي العيشبي",
+        "full_name_en": "Sami Al Ayshi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "8ba683bd-7116-4c16-b92f-b8984265b712",
+            "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+            "created_at": "2026-11-11T05:54:46.354292+00:00",
+            "full_name_ar": "إبراهيم الحارثي",
+            "full_name_en": "Ibrahim Al Harthi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "fe79cceb-a5d6-481e-a7bc-c410e8c2872e",
+            "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+            "created_at": "2026-11-11T05:54:46.354292+00:00",
+            "full_name_ar": "احمد الحجري",
+            "full_name_en": "Ahmed Al Hajri",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "18c0055f-6b7f-4ae7-8fd7-901a5b71afef",
+            "visit_id": "43f14257-46ac-4d7f-95f4-340b11ae226e",
+            "created_at": "2026-11-11T05:54:46.354292+00:00",
+            "full_name_ar": "سامي العيشبي",
+            "full_name_en": "Sami Al Ayshi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "570ad38e-acc7-40a7-ba62-05a2e7dfefb3",
+    "visit_number": "VIS-2024-0070",
+    "visit_date": "2024-12-11",
+    "time_in": "11:00",
+    "time_out": "01:00",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Saudia Arabia",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:44.838037+00:00",
+    "updated_at": "2026-11-11T05:54:44.838037+00:00",
+    "visit_visitors": [
+      {
+        "id": "97b6cc9d-26d9-48e6-a703-c607a1e3ccd4",
+        "visit_id": "570ad38e-acc7-40a7-ba62-05a2e7dfefb3",
+        "created_at": "2026-11-11T05:54:44.838037+00:00",
+        "full_name_ar": "مهندس مصطفى الهنائي",
+        "full_name_en": "Eng Mustafa Al Hinai",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "97b6cc9d-26d9-48e6-a703-c607a1e3ccd4",
+        "visit_id": "570ad38e-acc7-40a7-ba62-05a2e7dfefb3",
+        "created_at": "2026-11-11T05:54:44.838037+00:00",
+        "full_name_ar": "مهندس مصطفى الهنائي",
+        "full_name_en": "Eng Mustafa Al Hinai",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "97b6cc9d-26d9-48e6-a703-c607a1e3ccd4",
+            "visit_id": "570ad38e-acc7-40a7-ba62-05a2e7dfefb3",
+            "created_at": "2026-11-11T05:54:44.838037+00:00",
+            "full_name_ar": "مهندس مصطفى الهنائي",
+            "full_name_en": "Eng Mustafa Al Hinai",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a61498d0-4bcf-44ad-988d-ed3df3024dfd",
+    "visit_number": "VIS-2024-0066",
+    "visit_date": "2024-12-11",
+    "time_in": "09:30",
+    "time_out": "12:00",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:42.811444+00:00",
+    "updated_at": "2026-11-11T05:54:42.811444+00:00",
+    "visit_visitors": [
+      {
+        "id": "4bf80072-6d90-464c-8d81-f0612e0a73b7",
+        "visit_id": "a61498d0-4bcf-44ad-988d-ed3df3024dfd",
+        "created_at": "2026-11-11T05:54:42.811444+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "4bf80072-6d90-464c-8d81-f0612e0a73b7",
+        "visit_id": "a61498d0-4bcf-44ad-988d-ed3df3024dfd",
+        "created_at": "2026-11-11T05:54:42.811444+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "4bf80072-6d90-464c-8d81-f0612e0a73b7",
+            "visit_id": "a61498d0-4bcf-44ad-988d-ed3df3024dfd",
+            "created_at": "2026-11-11T05:54:42.811444+00:00",
+            "full_name_ar": "كريستوفر",
+            "full_name_en": "Christopher",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "3b511d1d-7c82-4ea1-984b-e54d5aaf6b84",
+    "visit_number": "VIS-2024-0071",
+    "visit_date": "2024-11-16",
+    "time_in": "12:00",
+    "time_out": "01:00",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Oman",
+    "visit_reason": "Visit",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:45.342404+00:00",
+    "updated_at": "2026-11-11T05:54:45.342404+00:00",
+    "visit_visitors": [
+      {
+        "id": "7ba2d6a1-1d54-4075-bbc5-950e23995a3b",
+        "visit_id": "3b511d1d-7c82-4ea1-984b-e54d5aaf6b84",
+        "created_at": "2026-11-11T05:54:45.342404+00:00",
+        "full_name_ar": "مهندس عبدالله البادي",
+        "full_name_en": "Eng Abdullah Al Badi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "7ba2d6a1-1d54-4075-bbc5-950e23995a3b",
+        "visit_id": "3b511d1d-7c82-4ea1-984b-e54d5aaf6b84",
+        "created_at": "2026-11-11T05:54:45.342404+00:00",
+        "full_name_ar": "مهندس عبدالله البادي",
+        "full_name_en": "Eng Abdullah Al Badi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "7ba2d6a1-1d54-4075-bbc5-950e23995a3b",
+            "visit_id": "3b511d1d-7c82-4ea1-984b-e54d5aaf6b84",
+            "created_at": "2026-11-11T05:54:45.342404+00:00",
+            "full_name_ar": "مهندس عبدالله البادي",
+            "full_name_en": "Eng Abdullah Al Badi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "0e3d4a85-20ad-4bc3-a35d-5bd752b950ae",
+    "visit_number": "VIS-2024-0069",
+    "visit_date": "2024-11-14",
+    "time_in": "11:40",
+    "time_out": "04:00",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:44.336343+00:00",
+    "updated_at": "2026-11-11T05:54:44.336343+00:00",
+    "visit_visitors": [
+      {
+        "id": "20b46f3f-580a-4d38-bd65-bd195646cfb9",
+        "visit_id": "0e3d4a85-20ad-4bc3-a35d-5bd752b950ae",
+        "created_at": "2026-11-11T05:54:44.336343+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "20b46f3f-580a-4d38-bd65-bd195646cfb9",
+        "visit_id": "0e3d4a85-20ad-4bc3-a35d-5bd752b950ae",
+        "created_at": "2026-11-11T05:54:44.336343+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "20b46f3f-580a-4d38-bd65-bd195646cfb9",
+            "visit_id": "0e3d4a85-20ad-4bc3-a35d-5bd752b950ae",
+            "created_at": "2026-11-11T05:54:44.336343+00:00",
+            "full_name_ar": "كريستوفر",
+            "full_name_en": "Christopher",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "00239edb-eaaa-463a-990f-a1b5be95836a",
+    "visit_number": "VIS-2024-0068",
+    "visit_date": "2024-11-14",
+    "time_in": "09:50",
+    "time_out": "02:00",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:43.840864+00:00",
+    "updated_at": "2026-11-11T05:54:43.840864+00:00",
+    "visit_visitors": [
+      {
+        "id": "dc0387a6-ae0a-4874-a2fc-15ecfdbc704d",
+        "visit_id": "00239edb-eaaa-463a-990f-a1b5be95836a",
+        "created_at": "2026-11-11T05:54:43.840864+00:00",
+        "full_name_ar": "سالم البدري",
+        "full_name_en": "Salim Al Badri",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "dc0387a6-ae0a-4874-a2fc-15ecfdbc704d",
+        "visit_id": "00239edb-eaaa-463a-990f-a1b5be95836a",
+        "created_at": "2026-11-11T05:54:43.840864+00:00",
+        "full_name_ar": "سالم البدري",
+        "full_name_en": "Salim Al Badri",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "dc0387a6-ae0a-4874-a2fc-15ecfdbc704d",
+            "visit_id": "00239edb-eaaa-463a-990f-a1b5be95836a",
+            "created_at": "2026-11-11T05:54:43.840864+00:00",
+            "full_name_ar": "سالم البدري",
+            "full_name_en": "Salim Al Badri",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+    "visit_number": "VIS-2024-0067",
+    "visit_date": "2024-11-13",
+    "time_in": "10:00",
+    "time_out": "10:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:43.319471+00:00",
+    "updated_at": "2026-11-11T05:54:43.319471+00:00",
+    "visit_visitors": [
+      {
+        "id": "a2d3caeb-3711-43ba-882f-573206f96e8e",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "عزيز الحارثي",
+        "full_name_en": "Aziz Al Harthi",
+        "phone_number": null
+      },
+      {
+        "id": "acd239d1-887b-44a5-96a9-945a367b389f",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "علي الشيباني",
+        "full_name_en": "Ali Al Shaibani",
+        "phone_number": null
+      },
+      {
+        "id": "dd2e6695-61c8-45e5-8d8c-b0d48aff039c",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "أحمد الكازروني",
+        "full_name_en": "Ahmed Al Kazroni",
+        "phone_number": null
+      },
+      {
+        "id": "ffc0c1e1-c978-4d64-958d-e3e48a451d5b",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "الهنائي",
+        "full_name_en": "Al Hinai",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a2d3caeb-3711-43ba-882f-573206f96e8e",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "عزيز الحارثي",
+        "full_name_en": "Aziz Al Harthi",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "acd239d1-887b-44a5-96a9-945a367b389f",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "علي الشيباني",
+        "full_name_en": "Ali Al Shaibani",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "dd2e6695-61c8-45e5-8d8c-b0d48aff039c",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "أحمد الكازروني",
+        "full_name_en": "Ahmed Al Kazroni",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "ffc0c1e1-c978-4d64-958d-e3e48a451d5b",
+        "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+        "created_at": "2026-11-11T05:54:43.319471+00:00",
+        "full_name_ar": "الهنائي",
+        "full_name_en": "Al Hinai",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "a2d3caeb-3711-43ba-882f-573206f96e8e",
+            "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+            "created_at": "2026-11-11T05:54:43.319471+00:00",
+            "full_name_ar": "عزيز الحارثي",
+            "full_name_en": "Aziz Al Harthi",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "acd239d1-887b-44a5-96a9-945a367b389f",
+            "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+            "created_at": "2026-11-11T05:54:43.319471+00:00",
+            "full_name_ar": "علي الشيباني",
+            "full_name_en": "Ali Al Shaibani",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "dd2e6695-61c8-45e5-8d8c-b0d48aff039c",
+            "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+            "created_at": "2026-11-11T05:54:43.319471+00:00",
+            "full_name_ar": "أحمد الكازروني",
+            "full_name_en": "Ahmed Al Kazroni",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "ffc0c1e1-c978-4d64-958d-e3e48a451d5b",
+            "visit_id": "b756c893-26de-46b9-845d-8fd6b9115d7a",
+            "created_at": "2026-11-11T05:54:43.319471+00:00",
+            "full_name_ar": "الهنائي",
+            "full_name_en": "Al Hinai",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "228b4bc9-2322-4800-88d1-e54bc3320785",
+    "visit_number": "VIS-2024-0065",
+    "visit_date": "2024-11-10",
+    "time_in": "02:30",
+    "time_out": "03:40",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:42.291032+00:00",
+    "updated_at": "2026-11-11T05:54:42.291032+00:00",
+    "visit_visitors": [
+      {
+        "id": "a379672f-a3de-42d1-a3b8-919e27ad0db0",
+        "visit_id": "228b4bc9-2322-4800-88d1-e54bc3320785",
+        "created_at": "2026-11-11T05:54:42.291032+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a379672f-a3de-42d1-a3b8-919e27ad0db0",
+        "visit_id": "228b4bc9-2322-4800-88d1-e54bc3320785",
+        "created_at": "2026-11-11T05:54:42.291032+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "a379672f-a3de-42d1-a3b8-919e27ad0db0",
+            "visit_id": "228b4bc9-2322-4800-88d1-e54bc3320785",
+            "created_at": "2026-11-11T05:54:42.291032+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2e9f48fc-e005-4078-867b-1fbfa3497cd2",
+    "visit_number": "VIS-2024-0051",
+    "visit_date": "2024-11-08",
+    "time_in": "09:00",
+    "time_out": "12:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:34.7182+00:00",
+    "updated_at": "2026-11-11T05:54:34.7182+00:00",
+    "visit_visitors": [
+      {
+        "id": "9e3654a7-7452-43e8-8ed1-61872e1f60f2",
+        "visit_id": "2e9f48fc-e005-4078-867b-1fbfa3497cd2",
+        "created_at": "2026-11-11T05:54:34.7182+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "9e3654a7-7452-43e8-8ed1-61872e1f60f2",
+        "visit_id": "2e9f48fc-e005-4078-867b-1fbfa3497cd2",
+        "created_at": "2026-11-11T05:54:34.7182+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "9e3654a7-7452-43e8-8ed1-61872e1f60f2",
+            "visit_id": "2e9f48fc-e005-4078-867b-1fbfa3497cd2",
+            "created_at": "2026-11-11T05:54:34.7182+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e463881c-5890-4fc8-baa7-60af479fee68",
+    "visit_number": "VIS-2024-0064",
+    "visit_date": "2024-10-11",
+    "time_in": "09:30",
+    "time_out": "10:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:41.759096+00:00",
+    "updated_at": "2026-11-11T05:54:41.759096+00:00",
+    "visit_visitors": [
+      {
+        "id": "375e8df6-58b9-4651-a8a3-7229a581c809",
+        "visit_id": "e463881c-5890-4fc8-baa7-60af479fee68",
+        "created_at": "2026-11-11T05:54:41.759096+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "375e8df6-58b9-4651-a8a3-7229a581c809",
+        "visit_id": "e463881c-5890-4fc8-baa7-60af479fee68",
+        "created_at": "2026-11-11T05:54:41.759096+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "375e8df6-58b9-4651-a8a3-7229a581c809",
+            "visit_id": "e463881c-5890-4fc8-baa7-60af479fee68",
+            "created_at": "2026-11-11T05:54:41.759096+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "12409210-9439-47c8-9339-1136725f3834",
+    "visit_number": "VIS-2024-0063",
+    "visit_date": "2024-10-10",
+    "time_in": "12:30",
+    "time_out": "01:30",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "China",
+    "visit_reason": "Visit from China with Murli",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:41.223918+00:00",
+    "updated_at": "2026-11-11T05:54:41.223918+00:00",
+    "visit_visitors": [
+      {
+        "id": "9370d4c4-c91b-441b-a362-9bfcb46c2280",
+        "visit_id": "12409210-9439-47c8-9339-1136725f3834",
+        "created_at": "2026-11-11T05:54:41.223918+00:00",
+        "full_name_ar": "مورلي",
+        "full_name_en": "Murali",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "9370d4c4-c91b-441b-a362-9bfcb46c2280",
+        "visit_id": "12409210-9439-47c8-9339-1136725f3834",
+        "created_at": "2026-11-11T05:54:41.223918+00:00",
+        "full_name_ar": "مورلي",
+        "full_name_en": "Murali",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "9370d4c4-c91b-441b-a362-9bfcb46c2280",
+            "visit_id": "12409210-9439-47c8-9339-1136725f3834",
+            "created_at": "2026-11-11T05:54:41.223918+00:00",
+            "full_name_ar": "مورلي",
+            "full_name_en": "Murali",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "6320abcb-cc6e-4f5b-aaa7-743d58677735",
+    "visit_number": "VIS-2024-0060",
+    "visit_date": "2024-10-09",
+    "time_in": "08:30",
+    "time_out": "11:00",
+    "organization_en": "",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:39.558907+00:00",
+    "updated_at": "2026-11-11T05:54:39.558907+00:00",
+    "visit_visitors": [
+      {
+        "id": "29a52a10-d3f2-4190-93b2-cf7c94ab7023",
+        "visit_id": "6320abcb-cc6e-4f5b-aaa7-743d58677735",
+        "created_at": "2026-11-11T05:54:39.558907+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "29a52a10-d3f2-4190-93b2-cf7c94ab7023",
+        "visit_id": "6320abcb-cc6e-4f5b-aaa7-743d58677735",
+        "created_at": "2026-11-11T05:54:39.558907+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "29a52a10-d3f2-4190-93b2-cf7c94ab7023",
+            "visit_id": "6320abcb-cc6e-4f5b-aaa7-743d58677735",
+            "created_at": "2026-11-11T05:54:39.558907+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "7d4d6892-c752-4d81-acc5-39f4a8850423",
+    "visit_number": "VIS-2024-0061",
+    "visit_date": "2024-09-22",
+    "time_in": "08:50",
+    "time_out": "10:00",
+    "organization_en": "",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:40.113285+00:00",
+    "updated_at": "2026-11-11T05:54:40.113285+00:00",
+    "visit_visitors": [
+      {
+        "id": "68b1152a-7d2d-4f37-8c6c-52d94da5bafa",
+        "visit_id": "7d4d6892-c752-4d81-acc5-39f4a8850423",
+        "created_at": "2026-11-11T05:54:40.113285+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "68b1152a-7d2d-4f37-8c6c-52d94da5bafa",
+        "visit_id": "7d4d6892-c752-4d81-acc5-39f4a8850423",
+        "created_at": "2026-11-11T05:54:40.113285+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "68b1152a-7d2d-4f37-8c6c-52d94da5bafa",
+            "visit_id": "7d4d6892-c752-4d81-acc5-39f4a8850423",
+            "created_at": "2026-11-11T05:54:40.113285+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f2b5b935-3c83-4128-a811-83d8d8c3b505",
+    "visit_number": "VIS-2024-0059",
+    "visit_date": "2024-09-09",
+    "time_in": "11:25",
+    "time_out": "11:30",
+    "organization_en": "International Heavy Equipment",
+    "organization_ar": "شركة المعدات الثقيلة الدولية",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:39.00782+00:00",
+    "updated_at": "2026-11-11T05:54:39.00782+00:00",
+    "visit_visitors": [
+      {
+        "id": "a666b8b9-b713-4913-93d3-75fc728b5026",
+        "visit_id": "f2b5b935-3c83-4128-a811-83d8d8c3b505",
+        "created_at": "2026-11-11T05:54:39.00782+00:00",
+        "full_name_ar": "فيجنيش",
+        "full_name_en": "Vignesh",
+        "phone_number": "98993972"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a666b8b9-b713-4913-93d3-75fc728b5026",
+        "visit_id": "f2b5b935-3c83-4128-a811-83d8d8c3b505",
+        "created_at": "2026-11-11T05:54:39.00782+00:00",
+        "full_name_ar": "فيجنيش",
+        "full_name_en": "Vignesh",
+        "phone_number": "98993972",
+        "organization_ar": "شركة المعدات الثقيلة الدولية",
+        "organization_en": "International Heavy Equipment"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "International Heavy Equipment",
+        "organization_ar": "شركة المعدات الثقيلة الدولية",
+        "visitors": [
+          {
+            "id": "a666b8b9-b713-4913-93d3-75fc728b5026",
+            "visit_id": "f2b5b935-3c83-4128-a811-83d8d8c3b505",
+            "created_at": "2026-11-11T05:54:39.00782+00:00",
+            "full_name_ar": "فيجنيش",
+            "full_name_en": "Vignesh",
+            "phone_number": "98993972",
+            "organization_en": "International Heavy Equipment",
+            "organization_ar": "شركة المعدات الثقيلة الدولية"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+    "visit_number": "VIS-2024-0041",
+    "visit_date": "2024-09-05",
+    "time_in": "12:30",
+    "time_out": "02:00",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Oman",
+    "visit_reason": "Visit for equipment supply",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:28.809705+00:00",
+    "updated_at": "2026-11-11T05:54:28.809705+00:00",
+    "visit_visitors": [
+      {
+        "id": "c5f05831-e9e9-46ce-810b-ab454c613685",
+        "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+        "created_at": "2026-11-11T05:54:28.809705+00:00",
+        "full_name_ar": "أحمد المعمري",
+        "full_name_en": "Ahmed AL Mamari",
+        "phone_number": null
+      },
+      {
+        "id": "98196034-6cc3-40d1-8de4-849d07332a83",
+        "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+        "created_at": "2026-11-11T05:54:28.809705+00:00",
+        "full_name_ar": "راشد المسيري",
+        "full_name_en": "Rashid AL Masiri",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "c5f05831-e9e9-46ce-810b-ab454c613685",
+        "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+        "created_at": "2026-11-11T05:54:28.809705+00:00",
+        "full_name_ar": "أحمد المعمري",
+        "full_name_en": "Ahmed AL Mamari",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "98196034-6cc3-40d1-8de4-849d07332a83",
+        "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+        "created_at": "2026-11-11T05:54:28.809705+00:00",
+        "full_name_ar": "راشد المسيري",
+        "full_name_en": "Rashid AL Masiri",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "c5f05831-e9e9-46ce-810b-ab454c613685",
+            "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+            "created_at": "2026-11-11T05:54:28.809705+00:00",
+            "full_name_ar": "أحمد المعمري",
+            "full_name_en": "Ahmed AL Mamari",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "98196034-6cc3-40d1-8de4-849d07332a83",
+            "visit_id": "d050bf77-c7df-4f57-8555-15303ff3bb24",
+            "created_at": "2026-11-11T05:54:28.809705+00:00",
+            "full_name_ar": "راشد المسيري",
+            "full_name_en": "Rashid AL Masiri",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fc872bf8-c2ad-4c90-8528-09bc48ed94b9",
+    "visit_number": "VIS-2024-0040",
+    "visit_date": "2024-09-05",
+    "time_in": "11:00",
+    "time_out": "11:10",
+    "organization_en": "Vodafone Center",
+    "organization_ar": "مركز فودافير",
+    "country": "Oman",
+    "visit_reason": "Shipment of Gloves Arraived",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:28.246198+00:00",
+    "updated_at": "2026-11-11T05:54:28.246198+00:00",
+    "visit_visitors": [
+      {
+        "id": "80fa6cd9-0ff7-42c9-8f74-01ee2325a80c",
+        "visit_id": "fc872bf8-c2ad-4c90-8528-09bc48ed94b9",
+        "created_at": "2026-11-11T05:54:28.246198+00:00",
+        "full_name_ar": "ممثل (مركز فودافير)",
+        "full_name_en": "Representative (Vodafone Center)",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "80fa6cd9-0ff7-42c9-8f74-01ee2325a80c",
+        "visit_id": "fc872bf8-c2ad-4c90-8528-09bc48ed94b9",
+        "created_at": "2026-11-11T05:54:28.246198+00:00",
+        "full_name_ar": "ممثل (مركز فودافير)",
+        "full_name_en": "Representative (Vodafone Center)",
+        "phone_number": null,
+        "organization_ar": "مركز فودافير",
+        "organization_en": "Vodafone Center"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Vodafone Center",
+        "organization_ar": "مركز فودافير",
+        "visitors": [
+          {
+            "id": "80fa6cd9-0ff7-42c9-8f74-01ee2325a80c",
+            "visit_id": "fc872bf8-c2ad-4c90-8528-09bc48ed94b9",
+            "created_at": "2026-11-11T05:54:28.246198+00:00",
+            "full_name_ar": "ممثل (مركز فودافير)",
+            "full_name_en": "Representative (Vodafone Center)",
+            "phone_number": null,
+            "organization_en": "Vodafone Center",
+            "organization_ar": "مركز فودافير"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "8d38b1e7-f379-4c1a-b714-275a1550b0f0",
+    "visit_number": "VIS-2024-0039",
+    "visit_date": "2024-09-05",
+    "time_in": "10:00",
+    "time_out": "11:00",
+    "organization_en": "ikea",
+    "organization_ar": "أيكيا",
+    "country": "Oman",
+    "visit_reason": "Shipment of Tabels Arraived",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:27.646586+00:00",
+    "updated_at": "2026-11-11T05:54:27.646586+00:00",
+    "visit_visitors": [
+      {
+        "id": "4b0edf26-6064-4f2d-b13b-ad42b3a6b165",
+        "visit_id": "8d38b1e7-f379-4c1a-b714-275a1550b0f0",
+        "created_at": "2026-11-11T05:54:27.646586+00:00",
+        "full_name_ar": "أيكيا",
+        "full_name_en": "ikea",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "4b0edf26-6064-4f2d-b13b-ad42b3a6b165",
+        "visit_id": "8d38b1e7-f379-4c1a-b714-275a1550b0f0",
+        "created_at": "2026-11-11T05:54:27.646586+00:00",
+        "full_name_ar": "أيكيا",
+        "full_name_en": "ikea",
+        "phone_number": null,
+        "organization_ar": "أيكيا",
+        "organization_en": "ikea"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "ikea",
+        "organization_ar": "أيكيا",
+        "visitors": [
+          {
+            "id": "4b0edf26-6064-4f2d-b13b-ad42b3a6b165",
+            "visit_id": "8d38b1e7-f379-4c1a-b714-275a1550b0f0",
+            "created_at": "2026-11-11T05:54:27.646586+00:00",
+            "full_name_ar": "أيكيا",
+            "full_name_en": "ikea",
+            "phone_number": null,
+            "organization_en": "ikea",
+            "organization_ar": "أيكيا"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+    "visit_number": "VIS-2024-0054",
+    "visit_date": "2024-08-21",
+    "time_in": "02:30",
+    "time_out": "03:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:36.350893+00:00",
+    "updated_at": "2026-11-11T05:54:36.350893+00:00",
+    "visit_visitors": [
+      {
+        "id": "a53c0ff2-7d48-41cf-91e9-97824eb0b53b",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "سالم الحميري",
+        "full_name_en": "Salim Al Hamiri",
+        "phone_number": null
+      },
+      {
+        "id": "ee1ef4da-6a8d-4ac9-9c4b-5e2fc4218c6a",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "Christopher",
+        "phone_number": null
+      },
+      {
+        "id": "8b97b7d0-b7e8-4230-b930-bc2fb48068d7",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Chris",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a53c0ff2-7d48-41cf-91e9-97824eb0b53b",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "سالم الحميري",
+        "full_name_en": "Salim Al Hamiri",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "ee1ef4da-6a8d-4ac9-9c4b-5e2fc4218c6a",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "Christopher",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "8b97b7d0-b7e8-4230-b930-bc2fb48068d7",
+        "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+        "created_at": "2026-11-11T05:54:36.350893+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Chris",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "a53c0ff2-7d48-41cf-91e9-97824eb0b53b",
+            "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+            "created_at": "2026-11-11T05:54:36.350893+00:00",
+            "full_name_ar": "سالم الحميري",
+            "full_name_en": "Salim Al Hamiri",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "ee1ef4da-6a8d-4ac9-9c4b-5e2fc4218c6a",
+            "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+            "created_at": "2026-11-11T05:54:36.350893+00:00",
+            "full_name_ar": "كريس",
+            "full_name_en": "Christopher",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "8b97b7d0-b7e8-4230-b930-bc2fb48068d7",
+            "visit_id": "84053b50-8bdc-4799-aa48-fcb978e0a486",
+            "created_at": "2026-11-11T05:54:36.350893+00:00",
+            "full_name_ar": "كريستوفر",
+            "full_name_en": "Chris",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+    "visit_number": "VIS-2024-0053",
+    "visit_date": "2024-08-20",
+    "time_in": "11:30",
+    "time_out": "12:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:35.776035+00:00",
+    "updated_at": "2026-11-11T05:54:35.776035+00:00",
+    "visit_visitors": [
+      {
+        "id": "a149ea70-30ca-4b41-b6ce-69529062e8de",
+        "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+        "created_at": "2026-11-11T05:54:35.776035+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "christopher",
+        "phone_number": null
+      },
+      {
+        "id": "2b261949-7812-43a7-8972-9cfea47a517c",
+        "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+        "created_at": "2026-11-11T05:54:35.776035+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "chris",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a149ea70-30ca-4b41-b6ce-69529062e8de",
+        "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+        "created_at": "2026-11-11T05:54:35.776035+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "christopher",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "2b261949-7812-43a7-8972-9cfea47a517c",
+        "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+        "created_at": "2026-11-11T05:54:35.776035+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "chris",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "a149ea70-30ca-4b41-b6ce-69529062e8de",
+            "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+            "created_at": "2026-11-11T05:54:35.776035+00:00",
+            "full_name_ar": "كريستوفر",
+            "full_name_en": "christopher",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "2b261949-7812-43a7-8972-9cfea47a517c",
+            "visit_id": "83cf73f5-1e07-4af1-8d57-d7d926fa4127",
+            "created_at": "2026-11-11T05:54:35.776035+00:00",
+            "full_name_ar": "كريس",
+            "full_name_en": "chris",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b94d54c8-8b66-486f-8c1f-94e2df187980",
+    "visit_number": "VIS-2024-0052",
+    "visit_date": "2024-08-19",
+    "time_in": "03:00",
+    "time_out": "05:18",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:35.235692+00:00",
+    "updated_at": "2026-11-11T05:54:35.235692+00:00",
+    "visit_visitors": [
+      {
+        "id": "d8294f7c-39db-4e0c-b731-6648eb0456bc",
+        "visit_id": "b94d54c8-8b66-486f-8c1f-94e2df187980",
+        "created_at": "2026-11-11T05:54:35.235692+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "d8294f7c-39db-4e0c-b731-6648eb0456bc",
+        "visit_id": "b94d54c8-8b66-486f-8c1f-94e2df187980",
+        "created_at": "2026-11-11T05:54:35.235692+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "d8294f7c-39db-4e0c-b731-6648eb0456bc",
+            "visit_id": "b94d54c8-8b66-486f-8c1f-94e2df187980",
+            "created_at": "2026-11-11T05:54:35.235692+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "e827738a-d0ce-45c4-8700-76ba39804d4b",
+    "visit_number": "VIS-2024-0058",
+    "visit_date": "2024-08-09",
+    "time_in": "08:50",
+    "time_out": "09:50",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:38.486931+00:00",
+    "updated_at": "2026-11-11T05:54:38.486931+00:00",
+    "visit_visitors": [
+      {
+        "id": "4ed62b01-f28a-45bb-adbd-9de93f2f127f",
+        "visit_id": "e827738a-d0ce-45c4-8700-76ba39804d4b",
+        "created_at": "2026-11-11T05:54:38.486931+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "4ed62b01-f28a-45bb-adbd-9de93f2f127f",
+        "visit_id": "e827738a-d0ce-45c4-8700-76ba39804d4b",
+        "created_at": "2026-11-11T05:54:38.486931+00:00",
+        "full_name_ar": "عزان الرويشدي",
+        "full_name_en": "Azzan Al Roishdi",
+        "phone_number": "96006428",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "4ed62b01-f28a-45bb-adbd-9de93f2f127f",
+            "visit_id": "e827738a-d0ce-45c4-8700-76ba39804d4b",
+            "created_at": "2026-11-11T05:54:38.486931+00:00",
+            "full_name_ar": "عزان الرويشدي",
+            "full_name_en": "Azzan Al Roishdi",
+            "phone_number": "96006428",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+    "visit_number": "VIS-2024-0056",
+    "visit_date": "2024-08-08",
+    "time_in": "11:30",
+    "time_out": "01:00",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:37.391594+00:00",
+    "updated_at": "2026-11-11T05:54:37.391594+00:00",
+    "visit_visitors": [
+      {
+        "id": "2a2eca01-89b1-4990-8422-6c7895773c31",
+        "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+        "created_at": "2026-11-11T05:54:37.391594+00:00",
+        "full_name_ar": "فاطمة القاسمي",
+        "full_name_en": "Fatima Al Qasmi",
+        "phone_number": "97004470\r\n99669995"
+      },
+      {
+        "id": "e21dc6d3-66bd-41cc-a9b3-1caec5c972ae",
+        "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+        "created_at": "2026-11-11T05:54:37.391594+00:00",
+        "full_name_ar": "وفاء المنذري",
+        "full_name_en": "Wafa Al Mandhari",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "2a2eca01-89b1-4990-8422-6c7895773c31",
+        "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+        "created_at": "2026-11-11T05:54:37.391594+00:00",
+        "full_name_ar": "فاطمة القاسمي",
+        "full_name_en": "Fatima Al Qasmi",
+        "phone_number": "97004470\r\n99669995",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "e21dc6d3-66bd-41cc-a9b3-1caec5c972ae",
+        "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+        "created_at": "2026-11-11T05:54:37.391594+00:00",
+        "full_name_ar": "وفاء المنذري",
+        "full_name_en": "Wafa Al Mandhari",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "2a2eca01-89b1-4990-8422-6c7895773c31",
+            "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+            "created_at": "2026-11-11T05:54:37.391594+00:00",
+            "full_name_ar": "فاطمة القاسمي",
+            "full_name_en": "Fatima Al Qasmi",
+            "phone_number": "97004470\r\n99669995",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "e21dc6d3-66bd-41cc-a9b3-1caec5c972ae",
+            "visit_id": "25a4471c-45eb-4544-9daf-b2933beaf3d7",
+            "created_at": "2026-11-11T05:54:37.391594+00:00",
+            "full_name_ar": "وفاء المنذري",
+            "full_name_en": "Wafa Al Mandhari",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+    "visit_number": "VIS-2024-0055",
+    "visit_date": "2024-08-08",
+    "time_in": "10:10",
+    "time_out": "02:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:36.876532+00:00",
+    "updated_at": "2026-11-11T05:54:36.876532+00:00",
+    "visit_visitors": [
+      {
+        "id": "b1470f5a-0d1b-42bc-8ef6-2826bead6777",
+        "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+        "created_at": "2026-11-11T05:54:36.876532+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null
+      },
+      {
+        "id": "ad8c9f78-f219-45f7-80d5-639e6ce996f8",
+        "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+        "created_at": "2026-11-11T05:54:36.876532+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "Chris",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "b1470f5a-0d1b-42bc-8ef6-2826bead6777",
+        "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+        "created_at": "2026-11-11T05:54:36.876532+00:00",
+        "full_name_ar": "كريستوفر",
+        "full_name_en": "Christopher",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "ad8c9f78-f219-45f7-80d5-639e6ce996f8",
+        "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+        "created_at": "2026-11-11T05:54:36.876532+00:00",
+        "full_name_ar": "كريس",
+        "full_name_en": "Chris",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "b1470f5a-0d1b-42bc-8ef6-2826bead6777",
+            "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+            "created_at": "2026-11-11T05:54:36.876532+00:00",
+            "full_name_ar": "كريستوفر",
+            "full_name_en": "Christopher",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "ad8c9f78-f219-45f7-80d5-639e6ce996f8",
+            "visit_id": "4bbc837d-e52c-4fc3-a26c-ae6bb0ccad0d",
+            "created_at": "2026-11-11T05:54:36.876532+00:00",
+            "full_name_ar": "كريس",
+            "full_name_en": "Chris",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b971215c-850b-4946-8b69-676892b13fda",
+    "visit_number": "VIS-2024-0049",
+    "visit_date": "2024-07-18",
+    "time_in": "08:30",
+    "time_out": "01:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:33.380716+00:00",
+    "updated_at": "2026-11-11T05:54:33.380716+00:00",
+    "visit_visitors": [
+      {
+        "id": "8470a396-3a0c-4404-b0d3-90bc8f3181fb",
+        "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+        "created_at": "2026-11-11T05:54:33.380716+00:00",
+        "full_name_ar": "خليفة المسكري",
+        "full_name_en": "Khalifa Al Maskari",
+        "phone_number": "92926268"
+      },
+      {
+        "id": "630a5f2c-f847-45f9-abeb-933fe679e7ef",
+        "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+        "created_at": "2026-11-11T05:54:33.380716+00:00",
+        "full_name_ar": "منصر العوفي",
+        "full_name_en": null,
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "8470a396-3a0c-4404-b0d3-90bc8f3181fb",
+        "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+        "created_at": "2026-11-11T05:54:33.380716+00:00",
+        "full_name_ar": "خليفة المسكري",
+        "full_name_en": "Khalifa Al Maskari",
+        "phone_number": "92926268",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "630a5f2c-f847-45f9-abeb-933fe679e7ef",
+        "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+        "created_at": "2026-11-11T05:54:33.380716+00:00",
+        "full_name_ar": "منصر العوفي",
+        "full_name_en": null,
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "8470a396-3a0c-4404-b0d3-90bc8f3181fb",
+            "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+            "created_at": "2026-11-11T05:54:33.380716+00:00",
+            "full_name_ar": "خليفة المسكري",
+            "full_name_en": "Khalifa Al Maskari",
+            "phone_number": "92926268",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "630a5f2c-f847-45f9-abeb-933fe679e7ef",
+            "visit_id": "b971215c-850b-4946-8b69-676892b13fda",
+            "created_at": "2026-11-11T05:54:33.380716+00:00",
+            "full_name_ar": "منصر العوفي",
+            "full_name_en": null,
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "5d48a32b-d192-4c79-90c9-13943de26017",
+    "visit_number": "VIS-2024-0047",
+    "visit_date": "2024-07-15",
+    "time_in": "11:30",
+    "time_out": "12:17",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:32.163412+00:00",
+    "updated_at": "2026-11-11T05:54:32.163412+00:00",
+    "visit_visitors": [
+      {
+        "id": "5e86f0bc-e459-4e16-b308-0f7c19a845bb",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "يحيى الناعبي",
+        "full_name_en": "Yahya AL Naabi",
+        "phone_number": null
+      },
+      {
+        "id": "a5ba8cd6-6526-4ec2-8ded-17788de721f8",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "سعيد السبخي",
+        "full_name_en": "Said Al Sabkhi",
+        "phone_number": null
+      },
+      {
+        "id": "8845fb9e-686c-4d4f-94c6-40d7a2c8c059",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "سعيد المعمري",
+        "full_name_en": "Said Al Maamari",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "5e86f0bc-e459-4e16-b308-0f7c19a845bb",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "يحيى الناعبي",
+        "full_name_en": "Yahya AL Naabi",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "a5ba8cd6-6526-4ec2-8ded-17788de721f8",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "سعيد السبخي",
+        "full_name_en": "Said Al Sabkhi",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "8845fb9e-686c-4d4f-94c6-40d7a2c8c059",
+        "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+        "created_at": "2026-11-11T05:54:32.163412+00:00",
+        "full_name_ar": "سعيد المعمري",
+        "full_name_en": "Said Al Maamari",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "5e86f0bc-e459-4e16-b308-0f7c19a845bb",
+            "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+            "created_at": "2026-11-11T05:54:32.163412+00:00",
+            "full_name_ar": "يحيى الناعبي",
+            "full_name_en": "Yahya AL Naabi",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "a5ba8cd6-6526-4ec2-8ded-17788de721f8",
+            "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+            "created_at": "2026-11-11T05:54:32.163412+00:00",
+            "full_name_ar": "سعيد السبخي",
+            "full_name_en": "Said Al Sabkhi",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "8845fb9e-686c-4d4f-94c6-40d7a2c8c059",
+            "visit_id": "5d48a32b-d192-4c79-90c9-13943de26017",
+            "created_at": "2026-11-11T05:54:32.163412+00:00",
+            "full_name_ar": "سعيد المعمري",
+            "full_name_en": "Said Al Maamari",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+    "visit_number": "VIS-2024-0048",
+    "visit_date": "2024-07-15",
+    "time_in": "02:00",
+    "time_out": "04:00",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:32.724352+00:00",
+    "updated_at": "2026-11-11T05:54:32.724352+00:00",
+    "visit_visitors": [
+      {
+        "id": "8e45c6c3-f917-4f86-a671-297fbba9b5b9",
+        "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+        "created_at": "2026-11-11T05:54:32.724352+00:00",
+        "full_name_ar": "منصر العوفي",
+        "full_name_en": "Saif Al Dughaishi",
+        "phone_number": null
+      },
+      {
+        "id": "91da93f9-677d-406a-96ff-ebcc7a7b2ea7",
+        "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+        "created_at": "2026-11-11T05:54:32.724352+00:00",
+        "full_name_ar": "سيف الدغيشي",
+        "full_name_en": null,
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "8e45c6c3-f917-4f86-a671-297fbba9b5b9",
+        "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+        "created_at": "2026-11-11T05:54:32.724352+00:00",
+        "full_name_ar": "منصر العوفي",
+        "full_name_en": "Saif Al Dughaishi",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "91da93f9-677d-406a-96ff-ebcc7a7b2ea7",
+        "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+        "created_at": "2026-11-11T05:54:32.724352+00:00",
+        "full_name_ar": "سيف الدغيشي",
+        "full_name_en": null,
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "8e45c6c3-f917-4f86-a671-297fbba9b5b9",
+            "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+            "created_at": "2026-11-11T05:54:32.724352+00:00",
+            "full_name_ar": "منصر العوفي",
+            "full_name_en": "Saif Al Dughaishi",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "91da93f9-677d-406a-96ff-ebcc7a7b2ea7",
+            "visit_id": "2249a786-d8cb-4f89-8f01-17e2b24c325c",
+            "created_at": "2026-11-11T05:54:32.724352+00:00",
+            "full_name_ar": "سيف الدغيشي",
+            "full_name_en": null,
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f1a51516-26d9-453a-8878-4987d7125623",
+    "visit_number": "VIS-2024-0046",
+    "visit_date": "2024-07-14",
+    "time_in": "08:00",
+    "time_out": "10:30",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:31.628887+00:00",
+    "updated_at": "2026-11-11T05:54:31.628887+00:00",
+    "visit_visitors": [
+      {
+        "id": "1e6c7389-e07d-45c5-bfc6-f7bcbc010498",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "خالد اللاقو",
+        "full_name_en": "Khalid",
+        "phone_number": null
+      },
+      {
+        "id": "dc8fee4f-29dd-417d-92a2-d0fefdc946ef",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "سيف الكنكي",
+        "full_name_en": "Saif Al Kanki",
+        "phone_number": null
+      },
+      {
+        "id": "28956519-1690-43ff-968f-3074e9054a68",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "طلال القاسمي",
+        "full_name_en": "Talal AL Qasmi",
+        "phone_number": null
+      },
+      {
+        "id": "ca2d16da-b8e4-4068-a8d6-df39ba5158ec",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "سالم المعمري",
+        "full_name_en": "Salim Al Maamari",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "1e6c7389-e07d-45c5-bfc6-f7bcbc010498",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "خالد اللاقو",
+        "full_name_en": "Khalid",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "dc8fee4f-29dd-417d-92a2-d0fefdc946ef",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "سيف الكنكي",
+        "full_name_en": "Saif Al Kanki",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "28956519-1690-43ff-968f-3074e9054a68",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "طلال القاسمي",
+        "full_name_en": "Talal AL Qasmi",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "ca2d16da-b8e4-4068-a8d6-df39ba5158ec",
+        "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+        "created_at": "2026-11-11T05:54:31.628887+00:00",
+        "full_name_ar": "سالم المعمري",
+        "full_name_en": "Salim Al Maamari",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "1e6c7389-e07d-45c5-bfc6-f7bcbc010498",
+            "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+            "created_at": "2026-11-11T05:54:31.628887+00:00",
+            "full_name_ar": "خالد اللاقو",
+            "full_name_en": "Khalid",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "dc8fee4f-29dd-417d-92a2-d0fefdc946ef",
+            "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+            "created_at": "2026-11-11T05:54:31.628887+00:00",
+            "full_name_ar": "سيف الكنكي",
+            "full_name_en": "Saif Al Kanki",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "28956519-1690-43ff-968f-3074e9054a68",
+            "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+            "created_at": "2026-11-11T05:54:31.628887+00:00",
+            "full_name_ar": "طلال القاسمي",
+            "full_name_en": "Talal AL Qasmi",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "ca2d16da-b8e4-4068-a8d6-df39ba5158ec",
+            "visit_id": "f1a51516-26d9-453a-8878-4987d7125623",
+            "created_at": "2026-11-11T05:54:31.628887+00:00",
+            "full_name_ar": "سالم المعمري",
+            "full_name_en": "Salim Al Maamari",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+    "visit_number": "VIS-2024-0062",
+    "visit_date": "2024-06-10",
+    "time_in": "09:00",
+    "time_out": "01:20",
+    "organization_en": "",
+    "organization_ar": "",
+    "country": "Eygept\r\nOman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:40.652476+00:00",
+    "updated_at": "2026-11-11T05:54:40.652476+00:00",
+    "visit_visitors": [
+      {
+        "id": "4c24301a-8596-4b47-85c5-8044b69b7276",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "وفية مضوي",
+        "full_name_en": "Waffiya Mudhwi",
+        "phone_number": null
+      },
+      {
+        "id": "e0cc84e7-b6fb-44f4-ac9f-948c65ec5a53",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "عبدالله الراشدي",
+        "full_name_en": "Abdullah Al Rashdi",
+        "phone_number": null
+      },
+      {
+        "id": "68801efd-dd54-4e30-828a-808c54172820",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "سعادة محمد الحجري",
+        "full_name_en": "Mohammed Al Hajri",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "4c24301a-8596-4b47-85c5-8044b69b7276",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "وفية مضوي",
+        "full_name_en": "Waffiya Mudhwi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "e0cc84e7-b6fb-44f4-ac9f-948c65ec5a53",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "عبدالله الراشدي",
+        "full_name_en": "Abdullah Al Rashdi",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      },
+      {
+        "id": "68801efd-dd54-4e30-828a-808c54172820",
+        "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+        "created_at": "2026-11-11T05:54:40.652476+00:00",
+        "full_name_ar": "سعادة محمد الحجري",
+        "full_name_en": "Mohammed Al Hajri",
+        "phone_number": null,
+        "organization_ar": "",
+        "organization_en": ""
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "4c24301a-8596-4b47-85c5-8044b69b7276",
+            "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+            "created_at": "2026-11-11T05:54:40.652476+00:00",
+            "full_name_ar": "وفية مضوي",
+            "full_name_en": "Waffiya Mudhwi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "e0cc84e7-b6fb-44f4-ac9f-948c65ec5a53",
+            "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+            "created_at": "2026-11-11T05:54:40.652476+00:00",
+            "full_name_ar": "عبدالله الراشدي",
+            "full_name_en": "Abdullah Al Rashdi",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          },
+          {
+            "id": "68801efd-dd54-4e30-828a-808c54172820",
+            "visit_id": "013d2c7a-f984-4bbb-837d-f7c82ae1fea5",
+            "created_at": "2026-11-11T05:54:40.652476+00:00",
+            "full_name_ar": "سعادة محمد الحجري",
+            "full_name_en": "Mohammed Al Hajri",
+            "phone_number": null,
+            "organization_en": "",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+    "visit_number": "VIS-2024-0045",
+    "visit_date": "2024-06-06",
+    "time_in": "11:00",
+    "time_out": "01:00",
+    "organization_en": "Mikrotik",
+    "organization_ar": "ميكروتيك",
+    "country": "Qatar",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:31.081133+00:00",
+    "updated_at": "2026-11-11T05:54:31.081133+00:00",
+    "visit_visitors": [
+      {
+        "id": "3cbeae2e-cd63-4fcc-9f2b-ab25aa94c620",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "أحمد عبدالله",
+        "full_name_en": "Ahmed Abdullah",
+        "phone_number": null
+      },
+      {
+        "id": "775ef095-db73-45f2-a45d-c50c5e8e67aa",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "سعادة محمد الحرقوق",
+        "full_name_en": "Mohammed Al Harqouq",
+        "phone_number": null
+      },
+      {
+        "id": "475e69f8-b9bd-424f-adf0-b888006674ac",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "مصطفى",
+        "full_name_en": "Mustafa",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "3cbeae2e-cd63-4fcc-9f2b-ab25aa94c620",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "أحمد عبدالله",
+        "full_name_en": "Ahmed Abdullah",
+        "phone_number": null,
+        "organization_ar": "ميكروتيك",
+        "organization_en": "Mikrotik"
+      },
+      {
+        "id": "775ef095-db73-45f2-a45d-c50c5e8e67aa",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "سعادة محمد الحرقوق",
+        "full_name_en": "Mohammed Al Harqouq",
+        "phone_number": null,
+        "organization_ar": "ميكروتيك",
+        "organization_en": "Mikrotik"
+      },
+      {
+        "id": "475e69f8-b9bd-424f-adf0-b888006674ac",
+        "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+        "created_at": "2026-11-11T05:54:31.081133+00:00",
+        "full_name_ar": "مصطفى",
+        "full_name_en": "Mustafa",
+        "phone_number": null,
+        "organization_ar": "ميكروتيك",
+        "organization_en": "Mikrotik"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Mikrotik",
+        "organization_ar": "ميكروتيك",
+        "visitors": [
+          {
+            "id": "3cbeae2e-cd63-4fcc-9f2b-ab25aa94c620",
+            "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+            "created_at": "2026-11-11T05:54:31.081133+00:00",
+            "full_name_ar": "أحمد عبدالله",
+            "full_name_en": "Ahmed Abdullah",
+            "phone_number": null,
+            "organization_en": "Mikrotik",
+            "organization_ar": "ميكروتيك"
+          },
+          {
+            "id": "775ef095-db73-45f2-a45d-c50c5e8e67aa",
+            "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+            "created_at": "2026-11-11T05:54:31.081133+00:00",
+            "full_name_ar": "سعادة محمد الحرقوق",
+            "full_name_en": "Mohammed Al Harqouq",
+            "phone_number": null,
+            "organization_en": "Mikrotik",
+            "organization_ar": "ميكروتيك"
+          },
+          {
+            "id": "475e69f8-b9bd-424f-adf0-b888006674ac",
+            "visit_id": "67d7f818-f12a-4a13-8e3a-4c6e8703780d",
+            "created_at": "2026-11-11T05:54:31.081133+00:00",
+            "full_name_ar": "مصطفى",
+            "full_name_en": "Mustafa",
+            "phone_number": null,
+            "organization_en": "Mikrotik",
+            "organization_ar": "ميكروتيك"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+    "visit_number": "VIS-2024-0043",
+    "visit_date": "2024-05-30",
+    "time_in": "10:00",
+    "time_out": "10:30",
+    "organization_en": "Environment Authority",
+    "organization_ar": "هيئة البيئة",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:29.954565+00:00",
+    "updated_at": "2026-11-11T05:54:29.954565+00:00",
+    "visit_visitors": [
+      {
+        "id": "8320f63a-c617-4396-9091-dc1fc3d8de7c",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "نبيلة الخروصي",
+        "full_name_en": "Nabila Al Kharousi",
+        "phone_number": "99256160"
+      },
+      {
+        "id": "0be060de-eb33-430c-bdda-ff7f06f0799b",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "أسماء العاصري",
+        "full_name_en": "Asma AL Aasri",
+        "phone_number": null
+      },
+      {
+        "id": "3b5b1bed-099a-4761-b8e2-9426cf913efc",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "أحمد",
+        "full_name_en": "Ahmed",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "8320f63a-c617-4396-9091-dc1fc3d8de7c",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "نبيلة الخروصي",
+        "full_name_en": "Nabila Al Kharousi",
+        "phone_number": "99256160",
+        "organization_ar": "هيئة البيئة",
+        "organization_en": "Environment Authority"
+      },
+      {
+        "id": "0be060de-eb33-430c-bdda-ff7f06f0799b",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "أسماء العاصري",
+        "full_name_en": "Asma AL Aasri",
+        "phone_number": null,
+        "organization_ar": "هيئة البيئة",
+        "organization_en": "Environment Authority"
+      },
+      {
+        "id": "3b5b1bed-099a-4761-b8e2-9426cf913efc",
+        "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+        "created_at": "2026-11-11T05:54:29.954565+00:00",
+        "full_name_ar": "أحمد",
+        "full_name_en": "Ahmed",
+        "phone_number": null,
+        "organization_ar": "هيئة البيئة",
+        "organization_en": "Environment Authority"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Environment Authority",
+        "organization_ar": "هيئة البيئة",
+        "visitors": [
+          {
+            "id": "8320f63a-c617-4396-9091-dc1fc3d8de7c",
+            "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+            "created_at": "2026-11-11T05:54:29.954565+00:00",
+            "full_name_ar": "نبيلة الخروصي",
+            "full_name_en": "Nabila Al Kharousi",
+            "phone_number": "99256160",
+            "organization_en": "Environment Authority",
+            "organization_ar": "هيئة البيئة"
+          },
+          {
+            "id": "0be060de-eb33-430c-bdda-ff7f06f0799b",
+            "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+            "created_at": "2026-11-11T05:54:29.954565+00:00",
+            "full_name_ar": "أسماء العاصري",
+            "full_name_en": "Asma AL Aasri",
+            "phone_number": null,
+            "organization_en": "Environment Authority",
+            "organization_ar": "هيئة البيئة"
+          },
+          {
+            "id": "3b5b1bed-099a-4761-b8e2-9426cf913efc",
+            "visit_id": "fdcb1402-f239-4f35-8673-1e40e8ede0bd",
+            "created_at": "2026-11-11T05:54:29.954565+00:00",
+            "full_name_ar": "أحمد",
+            "full_name_en": "Ahmed",
+            "phone_number": null,
+            "organization_en": "Environment Authority",
+            "organization_ar": "هيئة البيئة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a5e854b4-1b97-452c-b55e-0cb572826519",
+    "visit_number": "VIS-2024-0042",
+    "visit_date": "2024-05-20",
+    "time_in": "11:30",
+    "time_out": "12:05",
+    "organization_en": "Companionship for Business and Services",
+    "organization_ar": "الرفقة للأعمال والخدمات",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:29.414615+00:00",
+    "updated_at": "2026-11-11T05:54:29.414615+00:00",
+    "visit_visitors": [
+      {
+        "id": "9f4dd74b-c43a-41e7-9904-11c8f0eb1f58",
+        "visit_id": "a5e854b4-1b97-452c-b55e-0cb572826519",
+        "created_at": "2026-11-11T05:54:29.414615+00:00",
+        "full_name_ar": "أحمد السعدي",
+        "full_name_en": "Ahmed AL Saadi",
+        "phone_number": "96059593"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "9f4dd74b-c43a-41e7-9904-11c8f0eb1f58",
+        "visit_id": "a5e854b4-1b97-452c-b55e-0cb572826519",
+        "created_at": "2026-11-11T05:54:29.414615+00:00",
+        "full_name_ar": "أحمد السعدي",
+        "full_name_en": "Ahmed AL Saadi",
+        "phone_number": "96059593",
+        "organization_ar": "الرفقة للأعمال والخدمات",
+        "organization_en": "Companionship for Business and Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Companionship for Business and Services",
+        "organization_ar": "الرفقة للأعمال والخدمات",
+        "visitors": [
+          {
+            "id": "9f4dd74b-c43a-41e7-9904-11c8f0eb1f58",
+            "visit_id": "a5e854b4-1b97-452c-b55e-0cb572826519",
+            "created_at": "2026-11-11T05:54:29.414615+00:00",
+            "full_name_ar": "أحمد السعدي",
+            "full_name_en": "Ahmed AL Saadi",
+            "phone_number": "96059593",
+            "organization_en": "Companionship for Business and Services",
+            "organization_ar": "الرفقة للأعمال والخدمات"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "274894f2-026b-41c0-9e85-af332d5ccf1b",
+    "visit_number": "VIS-2024-0050",
+    "visit_date": "2024-05-08",
+    "time_in": "11:00",
+    "time_out": "11:50",
+    "organization_en": "jasubhai",
+    "organization_ar": "",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:34.18404+00:00",
+    "updated_at": "2026-11-11T05:54:34.18404+00:00",
+    "visit_visitors": [
+      {
+        "id": "b68b516e-1062-4324-a9db-43c444c9d045",
+        "visit_id": "274894f2-026b-41c0-9e85-af332d5ccf1b",
+        "created_at": "2026-11-11T05:54:34.18404+00:00",
+        "full_name_ar": "أمل المحبشي",
+        "full_name_en": "Amal Al Mahbashi",
+        "phone_number": "92204808"
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "b68b516e-1062-4324-a9db-43c444c9d045",
+        "visit_id": "274894f2-026b-41c0-9e85-af332d5ccf1b",
+        "created_at": "2026-11-11T05:54:34.18404+00:00",
+        "full_name_ar": "أمل المحبشي",
+        "full_name_en": "Amal Al Mahbashi",
+        "phone_number": "92204808",
+        "organization_ar": "",
+        "organization_en": "jasubhai"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "jasubhai",
+        "organization_ar": "",
+        "visitors": [
+          {
+            "id": "b68b516e-1062-4324-a9db-43c444c9d045",
+            "visit_id": "274894f2-026b-41c0-9e85-af332d5ccf1b",
+            "created_at": "2026-11-11T05:54:34.18404+00:00",
+            "full_name_ar": "أمل المحبشي",
+            "full_name_en": "Amal Al Mahbashi",
+            "phone_number": "92204808",
+            "organization_en": "jasubhai",
+            "organization_ar": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+    "visit_number": "VIS-2024-0044",
+    "visit_date": "2024-05-06",
+    "time_in": "10:00",
+    "time_out": "10:47",
+    "organization_en": "Ministry of Trade and Industry",
+    "organization_ar": "وزارة التجارة والصناعة",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:30.536407+00:00",
+    "updated_at": "2026-11-11T05:54:30.536407+00:00",
+    "visit_visitors": [
+      {
+        "id": "921a143e-900a-4647-b4f0-6082925b14b3",
+        "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+        "created_at": "2026-11-11T05:54:30.536407+00:00",
+        "full_name_ar": "محمود الصوقي",
+        "full_name_en": "Mahmood Al Soqi",
+        "phone_number": "98993499"
+      },
+      {
+        "id": "1566cf02-d22f-4665-8be3-e561b95a1029",
+        "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+        "created_at": "2026-11-11T05:54:30.536407+00:00",
+        "full_name_ar": "أحمد الهادي",
+        "full_name_en": "Ahmed Al Hadi",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "921a143e-900a-4647-b4f0-6082925b14b3",
+        "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+        "created_at": "2026-11-11T05:54:30.536407+00:00",
+        "full_name_ar": "محمود الصوقي",
+        "full_name_en": "Mahmood Al Soqi",
+        "phone_number": "98993499",
+        "organization_ar": "وزارة التجارة والصناعة",
+        "organization_en": "Ministry of Trade and Industry"
+      },
+      {
+        "id": "1566cf02-d22f-4665-8be3-e561b95a1029",
+        "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+        "created_at": "2026-11-11T05:54:30.536407+00:00",
+        "full_name_ar": "أحمد الهادي",
+        "full_name_en": "Ahmed Al Hadi",
+        "phone_number": null,
+        "organization_ar": "وزارة التجارة والصناعة",
+        "organization_en": "Ministry of Trade and Industry"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Ministry of Trade and Industry",
+        "organization_ar": "وزارة التجارة والصناعة",
+        "visitors": [
+          {
+            "id": "921a143e-900a-4647-b4f0-6082925b14b3",
+            "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+            "created_at": "2026-11-11T05:54:30.536407+00:00",
+            "full_name_ar": "محمود الصوقي",
+            "full_name_en": "Mahmood Al Soqi",
+            "phone_number": "98993499",
+            "organization_en": "Ministry of Trade and Industry",
+            "organization_ar": "وزارة التجارة والصناعة"
+          },
+          {
+            "id": "1566cf02-d22f-4665-8be3-e561b95a1029",
+            "visit_id": "39bafa7e-781a-48b5-a0f9-69598974c46f",
+            "created_at": "2026-11-11T05:54:30.536407+00:00",
+            "full_name_ar": "أحمد الهادي",
+            "full_name_en": "Ahmed Al Hadi",
+            "phone_number": null,
+            "organization_en": "Ministry of Trade and Industry",
+            "organization_ar": "وزارة التجارة والصناعة"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+    "visit_number": "VIS-2024-0038",
+    "visit_date": "2024-05-05",
+    "time_in": "11:30",
+    "time_out": "12:15",
+    "organization_en": "Ministry of Labor",
+    "organization_ar": "وزارة العمل",
+    "country": "Oman",
+    "visit_reason": "Visit",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:27.072877+00:00",
+    "updated_at": "2026-11-11T05:54:27.072877+00:00",
+    "visit_visitors": [
+      {
+        "id": "4c106943-67df-475b-b0ed-7b01c996a6ad",
+        "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+        "created_at": "2026-11-11T05:54:27.072877+00:00",
+        "full_name_ar": "خالد الحسني",
+        "full_name_en": "Khalid Al Hasani",
+        "phone_number": "92396526"
+      },
+      {
+        "id": "b841186f-73ba-4f20-9971-c3f865e8f468",
+        "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+        "created_at": "2026-11-11T05:54:27.072877+00:00",
+        "full_name_ar": "وليد الصباغ",
+        "full_name_en": "Waleed AL Sabagh",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "4c106943-67df-475b-b0ed-7b01c996a6ad",
+        "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+        "created_at": "2026-11-11T05:54:27.072877+00:00",
+        "full_name_ar": "خالد الحسني",
+        "full_name_en": "Khalid Al Hasani",
+        "phone_number": "92396526",
+        "organization_ar": "وزارة العمل",
+        "organization_en": "Ministry of Labor"
+      },
+      {
+        "id": "b841186f-73ba-4f20-9971-c3f865e8f468",
+        "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+        "created_at": "2026-11-11T05:54:27.072877+00:00",
+        "full_name_ar": "وليد الصباغ",
+        "full_name_en": "Waleed AL Sabagh",
+        "phone_number": null,
+        "organization_ar": "وزارة العمل",
+        "organization_en": "Ministry of Labor"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Ministry of Labor",
+        "organization_ar": "وزارة العمل",
+        "visitors": [
+          {
+            "id": "4c106943-67df-475b-b0ed-7b01c996a6ad",
+            "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+            "created_at": "2026-11-11T05:54:27.072877+00:00",
+            "full_name_ar": "خالد الحسني",
+            "full_name_en": "Khalid Al Hasani",
+            "phone_number": "92396526",
+            "organization_en": "Ministry of Labor",
+            "organization_ar": "وزارة العمل"
+          },
+          {
+            "id": "b841186f-73ba-4f20-9971-c3f865e8f468",
+            "visit_id": "538ff10d-6597-4ec4-a045-6a53fbfc76d6",
+            "created_at": "2026-11-11T05:54:27.072877+00:00",
+            "full_name_ar": "وليد الصباغ",
+            "full_name_en": "Waleed AL Sabagh",
+            "phone_number": null,
+            "organization_en": "Ministry of Labor",
+            "organization_ar": "وزارة العمل"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+    "visit_number": "VIS-2024-0057",
+    "visit_date": "2024-02-09",
+    "time_in": "04:20",
+    "time_out": "04:31",
+    "organization_en": "Nama Water Services",
+    "organization_ar": "نماء لخدمات المياه",
+    "country": "Oman",
+    "visit_reason": "",
+    "notes": "",
+    "registration_source": "import",
+    "created_by": null,
+    "created_at": "2026-11-11T05:54:37.958492+00:00",
+    "updated_at": "2026-11-11T05:54:37.958492+00:00",
+    "visit_visitors": [
+      {
+        "id": "a0fd25f3-1243-49f8-971f-e131e302853b",
+        "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+        "created_at": "2026-11-11T05:54:37.958492+00:00",
+        "full_name_ar": "خليل المسلمي",
+        "full_name_en": "Khalil Al Musallami",
+        "phone_number": "95584055"
+      },
+      {
+        "id": "3dcc0d61-b044-47c9-bc56-34919a633fc2",
+        "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+        "created_at": "2026-11-11T05:54:37.958492+00:00",
+        "full_name_ar": "خميس العامري",
+        "full_name_en": "Khamis Al Aamri",
+        "phone_number": null
+      }
+    ],
+    "coordination_by": "Ectron",
+    "visitors": [
+      {
+        "id": "a0fd25f3-1243-49f8-971f-e131e302853b",
+        "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+        "created_at": "2026-11-11T05:54:37.958492+00:00",
+        "full_name_ar": "خليل المسلمي",
+        "full_name_en": "Khalil Al Musallami",
+        "phone_number": "95584055",
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      },
+      {
+        "id": "3dcc0d61-b044-47c9-bc56-34919a633fc2",
+        "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+        "created_at": "2026-11-11T05:54:37.958492+00:00",
+        "full_name_ar": "خميس العامري",
+        "full_name_en": "Khamis Al Aamri",
+        "phone_number": null,
+        "organization_ar": "نماء لخدمات المياه",
+        "organization_en": "Nama Water Services"
+      }
+    ],
+    "organizations": [
+      {
+        "id": "org-1",
+        "organization_en": "Nama Water Services",
+        "organization_ar": "نماء لخدمات المياه",
+        "visitors": [
+          {
+            "id": "a0fd25f3-1243-49f8-971f-e131e302853b",
+            "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+            "created_at": "2026-11-11T05:54:37.958492+00:00",
+            "full_name_ar": "خليل المسلمي",
+            "full_name_en": "Khalil Al Musallami",
+            "phone_number": "95584055",
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          },
+          {
+            "id": "3dcc0d61-b044-47c9-bc56-34919a633fc2",
+            "visit_id": "a6d5503d-71c1-4b61-857b-11f1ca02d263",
+            "created_at": "2026-11-11T05:54:37.958492+00:00",
+            "full_name_ar": "خميس العامري",
+            "full_name_en": "Khamis Al Aamri",
+            "phone_number": null,
+            "organization_en": "Nama Water Services",
+            "organization_ar": "نماء لخدمات المياه"
+          }
+        ]
+      }
+    ]
   }
 ]

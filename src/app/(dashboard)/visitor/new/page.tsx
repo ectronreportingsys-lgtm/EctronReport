@@ -951,20 +951,36 @@ function VisitorNewForm() {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-100 text-sm font-bold transition-colors"
+                className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 hover:bg-slate-100 text-sm font-bold transition-colors cursor-pointer"
               >
                 {registrationType === 'visitor' ? t('Add Another Visitor', 'تسجيل زائر آخر') : t('Add Another Visit', 'تسجيل زيارة أخرى')}
               </button>
 
               <button
                 type="button"
-                onClick={() => router.push('/visitor/dashboard')}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 transition-all flex items-center gap-1.5"
+                onClick={() => {
+                  router.refresh();
+                  router.push('/visitor/list');
+                }}
+                className="px-4 py-2.5 rounded-xl bg-teal-50 dark:bg-zinc-800 text-[#0F766E] dark:text-teal-400 border border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-zinc-700 text-sm font-bold transition-colors cursor-pointer flex items-center gap-1.5"
               >
+                <ListFilter className="w-4 h-4" />
+                <span>{t('Go to Visits List', 'الذهاب لقائمة الزيارات')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  router.refresh();
+                  router.push('/visitor/dashboard');
+                }}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#173B63] to-[#0F766E] text-white text-sm font-bold shadow hover:opacity-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4" />
                 <span>{t('Go to Dashboard', 'الذهاب للوحة التحكم')}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>

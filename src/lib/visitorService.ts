@@ -188,16 +188,13 @@ export async function getVisits(filters?: {
         };
       });
 
-      // Merge any local fallback visits not in Supabase yet
-      try {
-        const localStore = ensureLocalStore();
-        const supaNumSet = new Set(results.map(v => v.visit_number));
-        const missingFromSupa = localStore.filter(v => v.visit_number && !supaNumSet.has(v.visit_number));
-        if (missingFromSupa.length > 0) {
-          results = [...missingFromSupa, ...results];
+      // Update local store as an up-to-date offline cache of Supabase if no query filters were applied
+      if (!filters || Object.keys(filters).length === 0) {
+        try {
+          writeLocalStore(results);
+        } catch (cacheErr) {
+          // ignore cache error
         }
-      } catch (mergeErr) {
-        // Ignore merge error
       }
 
       // Apply month filter in memory
@@ -849,8 +846,8 @@ export async function getDashboardStats(year: number, month?: number) {
 }
 
 // Get all unique available years across stored visits
-export async function getAvailableYears(): Promise<number[]> {
-  const visits = await getVisits();
+export async function getAvailableYears(preloadedVisits?: VisitRecord[]): Promise<number[]> {
+  const visits = preloadedVisits || (await getVisits());
   const currentYear = new Date().getFullYear();
   const yearsSet = new Set<number>([currentYear]);
 
