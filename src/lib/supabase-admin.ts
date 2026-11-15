@@ -2,6 +2,20 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
 
+function sanitizeKey(rawKey: string | undefined): string {
+  if (!rawKey) return '';
+  const lines = rawKey.split(/[\r\n]+/).map(l => l.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+  if (lines.length === 0) return '';
+  const jwtLine = lines.find(l => l.startsWith('ey')) || lines[0];
+  return jwtLine.trim();
+}
+
+function sanitizeUrl(rawUrl: string | undefined): string {
+  if (!rawUrl) return '';
+  const lines = rawUrl.split(/[\r\n]+/).map(l => l.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+  return lines[0]?.trim() || '';
+}
+
 function getServiceRoleKey(): string {
   // 1. Direct environment variable check
   const envKey =
@@ -10,8 +24,9 @@ function getServiceRoleKey(): string {
     process.env.SERVICE_ROLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
 
-  if (envKey && envKey.trim()) {
-    return envKey.trim();
+  const cleanEnvKey = sanitizeKey(envKey);
+  if (cleanEnvKey) {
+    return cleanEnvKey;
   }
 
   // 2. Fallback: Parse from local env files if in Node.js runtime
@@ -26,7 +41,7 @@ function getServiceRoleKey(): string {
           for (const line of lines) {
             const match = line.match(/^\s*(?:SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_KEY|SERVICE_ROLE_KEY)\s*=\s*(.*)$/);
             if (match && match[1]) {
-              const val = match[1].trim().replace(/^['"]|['"]$/g, '');
+              const val = sanitizeKey(match[1]);
               if (val) {
                 // Populate process.env so subsequent calls are fast
                 process.env.SUPABASE_SERVICE_ROLE_KEY = val;
@@ -42,12 +57,13 @@ function getServiceRoleKey(): string {
   }
 
   // 3. Fallback to ANON key so client initialization never crashes with "supabaseKey is required"
-  return (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim();
+  return sanitizeKey(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
 function getSupabaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.trim()) {
-    return process.env.NEXT_PUBLIC_SUPABASE_URL.trim();
+  const envUrl = sanitizeUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  if (envUrl) {
+    return envUrl;
   }
 
   if (typeof window === 'undefined') {
@@ -59,7 +75,7 @@ function getSupabaseUrl(): string {
           const content = fs.readFileSync(filePath, 'utf8');
           const match = content.match(/^\s*NEXT_PUBLIC_SUPABASE_URL\s*=\s*(.*)$/m);
           if (match && match[1]) {
-            const val = match[1].trim().replace(/^['"]|['"]$/g, '');
+            const val = sanitizeUrl(match[1]);
             if (val) {
               process.env.NEXT_PUBLIC_SUPABASE_URL = val;
               return val;

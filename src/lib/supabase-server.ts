@@ -4,9 +4,12 @@ import { cookies } from 'next/headers';
 export const createClient = async () => {
   const cookieStore = await cookies();
 
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').split(/[\r\n]+/)[0]?.trim().replace(/^['"]|['"]$/g, '') || '';
+  const rawKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').split(/[\r\n]+/)[0]?.trim().replace(/^['"]|['"]$/g, '') || '';
+
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    rawKey,
     {
       cookies: {
         get(name: string) {

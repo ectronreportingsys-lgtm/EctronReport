@@ -6,9 +6,12 @@ export async function proxy(request: NextRequest) {
     request,
   });
 
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').split(/[\r\n]+/)[0]?.trim().replace(/^['"]|['"]$/g, '') || '';
+  const rawKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').split(/[\r\n]+/)[0]?.trim().replace(/^['"]|['"]$/g, '') || '';
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    rawKey,
     {
       cookies: {
         getAll() {
