@@ -27,7 +27,14 @@ import {
   Upload,
   RefreshCw,
   PhoneCall,
-  UserPlus
+  UserPlus,
+  LayoutList,
+  LayoutGrid,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  User
 } from 'lucide-react';
 import { VisitRecord, OrganizationGroup, VisitorItem, extractOrganizationGroups } from '@/lib/visitorTypes';
 import { updateTimeOut, removeVisit, updateVisitDetails, fetchVisitsList } from '@/app/visitor/actions/visitorActions';
@@ -49,7 +56,8 @@ export default function VisitorDashboardView({
   mode = 'dashboard',
 }: VisitorDashboardViewProps) {
   const isManageMode = mode === 'manage';
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const isAr = lang === 'ar';
   const router = useRouter();
   const [visits, setVisits] = useState<VisitRecord[]>(initialVisits);
   const [selectedYear, setSelectedYear] = useState<number>(initialSelectedYear);
@@ -61,6 +69,16 @@ export default function VisitorDashboardView({
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // View presentation & pagination states
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [pageSize, setPageSize] = useState<number>(15);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // Reset page when any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCoordination, selectedSource, selectedCountry, selectedMonth, selectedYear, dateFrom, dateTo]);
 
   useEffect(() => {
     setVisits(initialVisits);
@@ -221,6 +239,18 @@ export default function VisitorDashboardView({
       return true;
     });
   }, [visits, selectedYear, selectedMonth, selectedSource, selectedCountry, selectedCoordination, dateFrom, dateTo, searchTerm]);
+
+  // Pagination Calculations
+  const totalItems = filteredVisits.length;
+  const effectivePageSize = pageSize === -1 ? (totalItems || 1) : pageSize;
+  const totalPages = Math.max(1, Math.ceil(totalItems / effectivePageSize));
+  const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const paginatedVisits = useMemo(() => {
+    if (pageSize === -1) return filteredVisits;
+    const startIndex = (validCurrentPage - 1) * pageSize;
+    return filteredVisits.slice(startIndex, startIndex + pageSize);
+  }, [filteredVisits, validCurrentPage, pageSize]);
 
   // Dashboard Stats Calculations for filtered subset
   const stats = useMemo(() => {
@@ -830,192 +860,303 @@ export default function VisitorDashboardView({
         </div>
       </div>
 
-      {/* 5. Visits List Table */}
+      {/* 5. Visits List Section (Table / Cards) */}
       <div className="bg-white dark:bg-zinc-900/60 rounded-3xl border border-border shadow-sm overflow-hidden glass">
-        <div className="p-5 sm:p-6 border-b border-border flex items-center justify-between">
+        {/* Header Bar with View Toggle & Page Size */}
+        <div className="p-4 sm:p-5 border-b border-border flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <h2 className="text-lg sm:text-xl font-extrabold text-[#173B63] dark:text-white">
               {t('Visits Log', 'سجل الزيارات')}
             </h2>
-            <span className="text-sm px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200 dark:border-teal-800">
+            <span className="text-xs sm:text-sm px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200 dark:border-teal-800">
               {filteredVisits.length} {t('Visits', 'زيارة')}
             </span>
           </div>
+
+          <div className="flex items-center flex-wrap gap-2.5">
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-slate-100 dark:bg-zinc-800/80 p-1 rounded-xl border border-slate-200 dark:border-zinc-700">
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'table'
+                    ? 'bg-white dark:bg-zinc-700 text-[#0F766E] dark:text-teal-400 shadow-xs'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title={t('Table View', 'عرض الجدول')}
+              >
+                <LayoutList className="w-4 h-4" />
+                <span>{t('Table', 'جدول')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('cards')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'cards'
+                    ? 'bg-white dark:bg-zinc-700 text-[#0F766E] dark:text-teal-400 shadow-xs'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title={t('Cards View', 'عرض البطاقات')}
+              >
+                <LayoutGrid className="w-4 h-4" />
+                <span>{t('Cards', 'بطاقات')}</span>
+              </button>
+            </div>
+
+            {/* Rows Per Page */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
+              <span>{t('Show', 'عرض')}:</span>
+              <select
+                value={pageSize}
+                onChange={e => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer"
+              >
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={-1}>{t('All', 'الكل')}</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-base border-collapse">
-            <thead>
-              <tr className="bg-slate-50/90 dark:bg-zinc-800/70 border-b border-border text-slate-700 dark:text-zinc-200 font-bold text-sm sm:text-base">
-                <th className="py-4 px-4">{t('Visit #', 'رقم الزيارة')}</th>
-                <th className="py-4 px-4">{t('Date', 'التاريخ')}</th>
-                <th className="py-4 px-4">{t('Time In / Out', 'الدخول / الخروج')}</th>
-                <th className="py-4 px-4">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
-                <th className="py-4 px-4">{t('Country', 'الدولة')}</th>
-                <th className="py-4 px-4">{t('Coordination by', 'عن طريق')}</th>
-                <th className="py-4 px-4">{t('Visitors', 'الزوار')}</th>
-                <th className="py-4 px-4">{t('Visit Reason', 'سبب الزيارة')}</th>
-                <th className="py-4 px-4 text-center">{t('Source', 'المصدر')}</th>
-                {isManageMode && <th className="py-4 px-4 text-center">{t('Actions', 'الإجراءات')}</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredVisits.length === 0 ? (
+        {/* Presentation: Table View or Cards View */}
+        {viewMode === 'table' ? (
+          <div className="overflow-x-auto overflow-y-auto max-h-[68vh] relative">
+            <table className="w-full text-right text-xs sm:text-sm border-collapse">
+              <thead className="sticky top-0 z-10 bg-slate-100/95 dark:bg-zinc-800/95 backdrop-blur-md border-b border-border text-slate-700 dark:text-zinc-200 font-bold">
                 <tr>
-                  <td colSpan={isManageMode ? 10 : 9} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
-                    {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
-                  </td>
+                  <th className="py-3 px-3 whitespace-nowrap">{t('Visit #', 'رقم الزيارة')}</th>
+                  <th className="py-3 px-3 whitespace-nowrap">{t('Date & Time', 'التاريخ والوقت')}</th>
+                  <th className="py-3 px-3 min-w-[150px]">{t('Organization & Country', 'المؤسسة / الدولة')}</th>
+                  <th className="py-3 px-3 whitespace-nowrap">{t('Coordination by', 'عن طريق')}</th>
+                  <th className="py-3 px-3 min-w-[160px]">{t('Visitors', 'الزوار')}</th>
+                  <th className="py-3 px-3 min-w-[120px]">{t('Visit Reason', 'سبب الزيارة')}</th>
+                  <th className="py-3 px-3 text-center whitespace-nowrap">{t('Source', 'المصدر')}</th>
+                  <th className="py-3 px-3 text-center whitespace-nowrap">{t('Actions', 'الإجراءات')}</th>
                 </tr>
-              ) : (
-                filteredVisits.map((visit) => {
-                  const visitorsList = visit.visitors || [];
-                  const orgGroups = extractOrganizationGroups(visit);
-                  const visitorNames = visitorsList
-                    .map(v => v.full_name_ar || v.full_name_en)
-                    .filter(Boolean)
-                    .join('، ');
+              </thead>
+              <tbody className="divide-y divide-border">
+                {paginatedVisits.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
+                      {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedVisits.map((visit) => {
+                    const visitorsList = visit.visitors || [];
+                    const orgGroups = extractOrganizationGroups(visit);
+                    const visitorNames = visitorsList
+                      .map(v => v.full_name_ar || v.full_name_en)
+                      .filter(Boolean)
+                      .join('، ');
 
-                  return (
-                    <tr
-                      key={visit.id}
-                      onDoubleClick={() => handleOpenVisitModal(visit, false)}
-                      className="hover:bg-teal-50/50 dark:hover:bg-zinc-800/60 transition-colors group cursor-pointer select-none"
-                      title={isManageMode ? t('Double-click to view and edit full details', 'انقر نقراً مزدوجاً لعرض وتعديل كامل البيانات') : t('Double-click to view full details', 'انقر نقراً مزدوجاً لعرض التفاصيل الكاملة')}
-                    >
-                      {/* Visit Number */}
-                      <td className="py-4 px-4 font-mono font-extrabold text-base text-[#173B63] dark:text-teal-400 whitespace-nowrap">
-                        {visit.visit_number}
-                      </td>
-
-                      {/* Date */}
-                      <td className="py-4 px-4 text-slate-800 dark:text-zinc-200 font-medium whitespace-nowrap text-base">
-                        {visit.visit_date}
-                      </td>
-
-                      {/* Time In / Out */}
-                      <td className="py-4 px-4 text-slate-700 dark:text-zinc-300 whitespace-nowrap">
-                        <div className="flex items-center gap-2 font-mono text-sm sm:text-base">
-                          <span className="text-[#0F766E] dark:text-teal-400 font-bold">{visit.time_in}</span>
-                          <span className="text-slate-400 font-bold">→</span>
-                          {visit.time_out ? (
-                            <span className="text-slate-800 dark:text-zinc-200 font-bold">{visit.time_out}</span>
-                          ) : isManageMode ? (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenTimeOut(visit)}
-                              className="text-xs sm:text-sm px-3 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900 font-bold transition-colors"
-                              title={t('Record check-out time now', 'تسجيل وقت الخروج الآن')}
-                            >
-                              {t('Check Out', 'تسجيل الخروج')}
-                            </button>
-                          ) : (
-                            <span className="text-xs px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 font-bold">
-                              {t('In Progress', 'قيد الزيارة')}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Organization */}
-                      <td className="py-4 px-4 font-bold text-slate-900 dark:text-zinc-100 max-w-[220px]">
-                        {orgGroups.length > 1 ? (
-                          <div className="space-y-1.5">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                              {t('Joint Delegation', 'وفد مشترك')} ({orgGroups.length} {t('orgs', 'مؤسسات')})
-                            </span>
-                            <div className="space-y-1">
-                              {orgGroups.map((og, idx) => (
-                                <div key={idx} className="text-xs font-extrabold text-slate-800 dark:text-zinc-200 flex items-center gap-1.5 truncate">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F766E] flex-shrink-0" />
-                                  <span className="truncate">{og.organization_ar || og.organization_en}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="truncate text-base font-extrabold text-slate-900 dark:text-white">
-                              {visit.organization_ar || visit.organization_en || '—'}
-                            </div>
-                            {visit.organization_ar && visit.organization_en && (
-                              <div className="text-xs text-slate-500 font-normal truncate mt-0.5">{visit.organization_en}</div>
+                    return (
+                      <tr
+                        key={visit.id}
+                        onDoubleClick={() => handleOpenVisitModal(visit, false)}
+                        className="hover:bg-teal-50/50 dark:hover:bg-zinc-800/60 transition-colors group cursor-pointer select-none"
+                        title={isManageMode ? t('Double-click to view and edit full details', 'انقر نقراً مزدوجاً لعرض وتعديل كامل البيانات') : t('Double-click to view full details', 'انقر نقراً مزدوجاً لعرض التفاصيل الكاملة')}
+                      >
+                        {/* Visit Number */}
+                        <td className="py-3.5 px-3 font-mono font-extrabold text-xs sm:text-sm text-[#0F766E] dark:text-teal-400 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5">
+                            <span>{visit.visit_number}</span>
+                            {orgGroups.length > 1 && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 font-extrabold border border-indigo-200 dark:border-indigo-800" title={t('Joint Delegation', 'وفد مشترك')}>
+                                {orgGroups.length}
+                              </span>
                             )}
                           </div>
-                        )}
-                      </td>
+                        </td>
 
-                      {/* Country */}
-                      <td className="py-4 px-4 text-slate-700 dark:text-zinc-300 font-medium whitespace-nowrap text-base">
-                        {visit.country || 'Oman'}
-                      </td>
+                        {/* Date & Time */}
+                        <td className="py-3.5 px-3 whitespace-nowrap">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="font-bold text-slate-800 dark:text-zinc-100 text-xs sm:text-sm">
+                              {visit.visit_date}
+                            </span>
+                            <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                              <span className="text-[#0F766E] dark:text-teal-400 font-bold">{visit.time_in}</span>
+                              <span className="text-slate-400 font-bold">→</span>
+                              {visit.time_out ? (
+                                <span className="text-slate-700 dark:text-zinc-300 font-bold">{visit.time_out}</span>
+                              ) : isManageMode ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleOpenTimeOut(visit); }}
+                                  className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900 font-bold transition-colors cursor-pointer"
+                                  title={t('Record check-out time now', 'تسجيل وقت الخروج الآن')}
+                                >
+                                  {t('Check Out', 'تسجيل الخروج')}
+                                </button>
+                              ) : (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 font-bold">
+                                  {t('In Progress', 'قيد الزيارة')}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
 
-                      {/* Coordination By */}
-                      <td className="py-4 px-4 whitespace-nowrap">
-                        {renderCoordinationBadge(visit.coordination_by)}
-                      </td>
+                        {/* Organization & Country */}
+                        <td className="py-3.5 px-3 min-w-[150px] max-w-[210px]">
+                          <div className="space-y-0.5">
+                            <div className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm truncate" title={visit.organization_ar || visit.organization_en || '—'}>
+                              {visit.organization_ar || visit.organization_en || '—'}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+                              <Globe2 className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                              <span className="truncate">{visit.country || 'Oman'}</span>
+                              {orgGroups.length > 1 && (
+                                <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">
+                                  ({orgGroups.length} {t('orgs', 'مؤسسات')})
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
 
-                      {/* Visitors Column - Separated completely by Organization */}
-                      <td className="py-4 px-4 min-w-[220px] max-w-[320px]">
-                        <div className="space-y-2">
-                          {orgGroups.map((og, oIdx) => {
-                            const ogVisitors = og.visitors || [];
-                            return (
-                              <div
-                                key={og.id || oIdx}
-                                className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/60 text-xs shadow-2xs space-y-1.5"
-                              >
-                                {/* Organization Header */}
-                                <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-zinc-700/50">
-                                  <div className="font-extrabold text-[#0F766E] dark:text-teal-400 flex items-center gap-1.5 truncate">
-                                    <Building2 className="w-3.5 h-3.5 flex-shrink-0" />
-                                    <span className="truncate font-bold" title={og.organization_ar || og.organization_en}>
-                                      {og.organization_ar || og.organization_en || t('Organization', 'المؤسسة')}
-                                    </span>
-                                  </div>
-                                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900/50 text-[#0F766E] dark:text-teal-300 font-extrabold flex-shrink-0">
-                                    {ogVisitors.length} {t('visitors', 'زائر')}
-                                  </span>
-                                </div>
+                        {/* Coordination By */}
+                        <td className="py-3.5 px-3 whitespace-nowrap">
+                          {renderCoordinationBadge(visit.coordination_by)}
+                        </td>
 
-                                {/* Visitors under this organization */}
-                                <div className="space-y-1 pr-1 pl-1">
-                                  {ogVisitors.length === 0 ? (
-                                    <span className="text-slate-400 text-[11px]">—</span>
-                                  ) : (
-                                    ogVisitors.map((vis, vIdx) => (
-                                      <div
-                                        key={vis.id || vIdx}
-                                        className="flex items-center justify-between gap-1.5 text-slate-800 dark:text-zinc-200"
-                                      >
-                                        <div className="flex items-center gap-1.5 truncate">
-                                          <span className="w-1.5 h-1.5 rounded-full bg-[#173B63] dark:bg-teal-400 flex-shrink-0" />
-                                          <span className="truncate font-semibold text-xs" title={vis.full_name_ar || vis.full_name_en}>
-                                            {vis.full_name_ar || vis.full_name_en}
-                                          </span>
-                                        </div>
-                                        {vis.phone_number && (
-                                          <span className="text-[10px] font-mono text-slate-500 dark:text-zinc-400 flex-shrink-0" dir="ltr">
-                                            {vis.phone_number}
-                                          </span>
-                                        )}
-                                      </div>
-                                    ))
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                        {/* Visitors */}
+                        <td className="py-3.5 px-3 min-w-[160px] max-w-[230px]">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                                <Users className="w-3 h-3 flex-shrink-0" />
+                                <span>{visitorsList.length || 1} {t('visitors', 'زائر')}</span>
+                              </span>
+                            </div>
+                            <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium truncate" title={visitorNames}>
+                              {visitorNames || '—'}
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Reason */}
+                        <td className="py-3.5 px-3 max-w-[140px] truncate text-slate-700 dark:text-zinc-300 font-medium text-xs sm:text-sm" title={visit.visit_reason || '—'}>
+                          {visit.visit_reason || '—'}
+                        </td>
+
+                        {/* Source */}
+                        <td className="py-3.5 px-3 text-center whitespace-nowrap">
+                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${
+                            visit.registration_source === 'public'
+                              ? 'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800'
+                              : visit.registration_source === 'internal'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800'
+                              : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
+                          }`}>
+                            {visit.registration_source === 'public'
+                              ? t('Public (QR)', 'ذاتي QR')
+                              : visit.registration_source === 'internal'
+                              ? t('Internal', 'داخلي')
+                              : t('Imported', 'إكسل')}
+                          </span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3.5 px-3 text-center whitespace-nowrap">
+                          <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
+                            {/* View Details */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenVisitModal(visit, false)}
+                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors cursor-pointer"
+                              title={t('View Full Details', 'عرض التفاصيل الكاملة')}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+
+                            {isManageMode && (
+                              <>
+                                {/* Edit Visit */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenVisitModal(visit, true)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                                  title={t('Edit Visit', 'تعديل الزيارة')}
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
+
+                                {/* Quick Time Out */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenTimeOut(visit)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                                  title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
+                                >
+                                  <Clock className="w-4 h-4" />
+                                </button>
+
+                                {/* Delete Visit */}
+                                <button
+                                  type="button"
+                                  onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                                  className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                                  title={t('Delete Visit', 'حذف الزيارة')}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* Cards Grid View */
+          paginatedVisits.length === 0 ? (
+            <div className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
+              {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
+            </div>
+          ) : (
+            <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {paginatedVisits.map((visit) => {
+                const visitorsList = visit.visitors || [];
+                const orgGroups = extractOrganizationGroups(visit);
+                const visitorNames = visitorsList
+                  .map(v => v.full_name_ar || v.full_name_en)
+                  .filter(Boolean)
+                  .join('، ');
+
+                return (
+                  <div
+                    key={visit.id}
+                    onDoubleClick={() => handleOpenVisitModal(visit, false)}
+                    className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-teal-400/60 dark:hover:border-teal-600/60 transition-all flex flex-col justify-between gap-3 group"
+                  >
+                    {/* Top Header */}
+                    <div className="flex items-start justify-between gap-2 border-b border-border pb-3">
+                      <div>
+                        <span className="font-mono text-base font-extrabold text-[#0F766E] dark:text-teal-400">
+                          {visit.visit_number}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                          <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
+                          <span>{visit.visit_date}</span>
                         </div>
-                      </td>
-
-                      {/* Reason */}
-                      <td className="py-4 px-4 text-slate-700 dark:text-zinc-300 font-medium max-w-[160px] truncate text-base">
-                        {visit.visit_reason || '—'}
-                      </td>
-
-                      {/* Source */}
-                      <td className="py-4 px-4 text-center whitespace-nowrap">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-extrabold ${
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5">
+                        {renderCoordinationBadge(visit.coordination_by)}
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
                           visit.registration_source === 'public'
                             ? 'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800'
                             : visit.registration_source === 'internal'
@@ -1023,65 +1164,193 @@ export default function VisitorDashboardView({
                             : 'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
                         }`}>
                           {visit.registration_source === 'public'
-                            ? t('Public (QR)', 'ذاتي (Public)')
+                            ? t('Public QR', 'ذاتي QR')
                             : visit.registration_source === 'internal'
-                            ? t('Internal', 'داخلي (Internal)')
-                            : t('Imported (Excel)', 'إكسل (Import)')}
+                            ? t('Internal', 'داخلي')
+                            : t('Imported', 'إكسل')}
                         </span>
-                      </td>
+                      </div>
+                    </div>
 
-                      {/* Actions */}
+                    {/* Time & Status */}
+                    <div className="flex items-center justify-between text-xs py-1.5 px-3 rounded-xl bg-slate-50 dark:bg-zinc-800/60">
+                      <span className="text-slate-500 dark:text-zinc-400 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{t('Time', 'الوقت')}:</span>
+                      </span>
+                      <div className="flex items-center gap-2 font-mono font-bold text-xs">
+                        <span className="text-[#0F766E] dark:text-teal-400">{visit.time_in}</span>
+                        <span className="text-slate-400">→</span>
+                        {visit.time_out ? (
+                          <span className="text-slate-700 dark:text-zinc-200">{visit.time_out}</span>
+                        ) : (
+                          <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
+                            {t('In Progress', 'قيد الزيارة')}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Organization & Country */}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm">
+                        <Building2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <span className="truncate">{visit.organization_ar || visit.organization_en || '—'}</span>
+                        {orgGroups.length > 1 && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 font-extrabold border border-indigo-200 dark:border-indigo-800 flex-shrink-0">
+                            {orgGroups.length} {t('orgs', 'مؤسسات')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 pr-6">
+                        <Globe2 className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{visit.country || 'Oman'}</span>
+                      </div>
+                    </div>
+
+                    {/* Visit Reason */}
+                    {visit.visit_reason && (
+                      <div className="text-xs bg-slate-50/70 dark:bg-zinc-800/40 p-2.5 rounded-xl border border-slate-200/50 dark:border-zinc-800 text-slate-700 dark:text-zinc-300">
+                        <span className="font-bold text-slate-900 dark:text-zinc-200">{t('Reason', 'سبب الزيارة')}: </span>
+                        <span>{visit.visit_reason}</span>
+                      </div>
+                    )}
+
+                    {/* Visitors */}
+                    <div className="border-t border-border pt-2 space-y-1.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-zinc-300">
+                        <span className="flex items-center gap-1.5">
+                          <Users className="w-3.5 h-3.5 text-teal-600" />
+                          <span>{t('Visitors', 'الزوار')}</span>
+                        </span>
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200 dark:border-teal-800">
+                          {visitorsList.length || 1} {t('visitors', 'زائر')}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium truncate" title={visitorNames}>
+                        {visitorNames || '—'}
+                      </div>
+                    </div>
+
+                    {/* Card Actions Footer */}
+                    <div className="flex items-center justify-between gap-2 pt-3 border-t border-border">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenVisitModal(visit, false)}
+                        className="flex-1 py-2 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/40 text-[#0F766E] dark:text-teal-300 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>{t('View Details', 'عرض التفاصيل')}</span>
+                      </button>
+
                       {isManageMode && (
-                        <td className="py-4 px-4 text-center whitespace-nowrap">
-                          <div className="flex items-center justify-center gap-2">
-                            {/* View Details */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenVisitModal(visit, false)}
-                              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors cursor-pointer"
-                              title={t('View Full Details', 'عرض التفاصيل الكاملة')}
-                            >
-                              <Eye className="w-5 h-5" />
-                            </button>
-
-                            {/* Edit Visit */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenVisitModal(visit, true)}
-                              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
-                              title={t('Edit Visit', 'تعديل الزيارة')}
-                            >
-                              <Edit3 className="w-5 h-5" />
-                            </button>
-
-                            {/* Quick Time Out */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenTimeOut(visit)}
-                              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors"
-                              title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
-                            >
-                              <Clock className="w-5 h-5" />
-                            </button>
-
-                            {/* Delete Visit */}
-                            <button
-                              type="button"
-                              onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
-                              className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors"
-                              title={t('Delete Visit', 'حذف الزيارة')}
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </td>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenVisitModal(visit, true)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                            title={t('Edit', 'تعديل')}
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenTimeOut(visit)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                            title={t('Check Out', 'تسجيل الخروج')}
+                          >
+                            <Clock className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                            className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                            title={t('Delete', 'حذف')}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
                       )}
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )
+        )}
+
+        {/* 5. Pagination Footer */}
+        <div className="p-4 sm:p-5 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-slate-600 dark:text-zinc-400">
+          <div className="flex items-center gap-2">
+            <span>
+              {t('Showing', 'عرض')}{' '}
+              <strong className="text-slate-900 dark:text-white font-bold">
+                {filteredVisits.length === 0 ? 0 : (validCurrentPage - 1) * (pageSize === -1 ? filteredVisits.length : pageSize) + 1}
+              </strong>{' '}
+              -{' '}
+              <strong className="text-slate-900 dark:text-white font-bold">
+                {pageSize === -1 ? filteredVisits.length : Math.min(validCurrentPage * pageSize, filteredVisits.length)}
+              </strong>{' '}
+              {t('of', 'من أصل')}{' '}
+              <strong className="text-[#0F766E] dark:text-teal-400 font-extrabold">{filteredVisits.length}</strong>{' '}
+              {t('visits', 'زيارة')}
+            </span>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1.5">
+              {/* First Page */}
+              <button
+                type="button"
+                disabled={validCurrentPage === 1}
+                onClick={() => setCurrentPage(1)}
+                className="p-2 rounded-xl border border-slate-200 dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('First Page', 'الصفحة الأولى')}
+              >
+                {isAr ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+              </button>
+
+              {/* Prev Page */}
+              <button
+                type="button"
+                disabled={validCurrentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                className="p-2 rounded-xl border border-slate-200 dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('Previous Page', 'الصفحة السابقة')}
+              >
+                {isAr ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              </button>
+
+              {/* Current / Total */}
+              <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-mono text-xs font-bold text-slate-900 dark:text-white">
+                <span>{validCurrentPage}</span>
+                <span className="text-slate-400">/</span>
+                <span>{totalPages}</span>
+              </div>
+
+              {/* Next Page */}
+              <button
+                type="button"
+                disabled={validCurrentPage === totalPages}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                className="p-2 rounded-xl border border-slate-200 dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('Next Page', 'الصفحة التالية')}
+              >
+                {isAr ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+
+              {/* Last Page */}
+              <button
+                type="button"
+                disabled={validCurrentPage === totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="p-2 rounded-xl border border-slate-200 dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                title={t('Last Page', 'الصفحة الأخيرة')}
+              >
+                {isAr ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
