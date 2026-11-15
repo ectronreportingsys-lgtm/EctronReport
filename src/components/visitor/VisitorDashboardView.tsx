@@ -1001,21 +1001,10 @@ export default function VisitorDashboardView({
                           </div>
                         </td>
 
-                        {/* Visitors */}
-                        <td className="py-3.5 px-3 min-w-[150px] max-w-[210px]">
-                          <div className="text-xs text-slate-800 dark:text-zinc-200 font-semibold truncate" title={visitorNamesStr || '—'}>
-                            {visitorNames.length === 0 ? (
-                              <span className="text-slate-400 font-normal">—</span>
-                            ) : visitorNames.length === 1 ? (
-                              <span className="truncate">{visitorNames[0]}</span>
-                            ) : (
-                              <span className="flex items-center gap-1.5 truncate">
-                                <span className="truncate">{visitorNames[0]}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-bold border border-slate-200 dark:border-zinc-700 flex-shrink-0" title={visitorNamesStr}>
-                                  +{visitorNames.length - 1}
-                                </span>
-                              </span>
-                            )}
+                        {/* Visitors (Names only - without count) */}
+                        <td className="py-3.5 px-3 min-w-[150px] max-w-[220px]">
+                          <div className="text-xs text-slate-800 dark:text-zinc-200 font-medium truncate" title={visitorNamesStr || '—'}>
+                            {visitorNamesStr || '—'}
                           </div>
                         </td>
 
