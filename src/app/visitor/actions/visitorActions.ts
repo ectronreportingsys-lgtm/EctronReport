@@ -174,9 +174,11 @@ export async function submitInternalRegistration(payload: {
   try {
     let createdByName = 'Staff';
     let createdById: string | null = null;
+    let supabaseAuthClient: any = null;
 
     try {
       const supabase = await createClient();
+      supabaseAuthClient = supabase;
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
@@ -234,7 +236,7 @@ export async function submitInternalRegistration(payload: {
         created_by: createdById,
         created_by_name: createdByName,
         organizations: validOrganizations
-      });
+      }, supabaseAuthClient);
 
       if (res.success && res.visit) {
         revalidateVisitorPages();
@@ -275,7 +277,7 @@ export async function submitInternalRegistration(payload: {
       created_by: createdById,
       created_by_name: createdByName,
       visitors: validVisitors
-    });
+    }, supabaseAuthClient);
 
     if (res.success && res.visit) {
       revalidateVisitorPages();
@@ -317,7 +319,8 @@ export async function fetchVisitsList(filters?: {
 
 // Update visit time out (Time Out)
 export async function updateTimeOut(visitId: string, timeOut: string) {
-  const res = await updateVisitTimeOut(visitId, timeOut);
+  const supabase = await createClient();
+  const res = await updateVisitTimeOut(visitId, timeOut, supabase);
   if (res.success) {
     revalidateVisitorPages();
   }
@@ -326,7 +329,8 @@ export async function updateTimeOut(visitId: string, timeOut: string) {
 
 // Update visit details and its visitors
 export async function updateVisitDetails(visitId: string, updates: Partial<VisitRecord>) {
-  const res = await updateVisit(visitId, updates);
+  const supabase = await createClient();
+  const res = await updateVisit(visitId, updates, supabase);
   if (res.success) {
     revalidateVisitorPages();
   }
@@ -335,7 +339,8 @@ export async function updateVisitDetails(visitId: string, updates: Partial<Visit
 
 // Delete visit (authorized users)
 export async function removeVisit(visitId: string) {
-  const res = await deleteVisit(visitId);
+  const supabase = await createClient();
+  const res = await deleteVisit(visitId, supabase);
   if (res.success) {
     revalidateVisitorPages();
   }

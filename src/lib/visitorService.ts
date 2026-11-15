@@ -360,7 +360,7 @@ export async function createVisit(data: {
     phone_number?: string;
   }>;
   organizations?: OrganizationGroup[];
-}): Promise<{ success: boolean; visit?: VisitRecord; error?: string }> {
+}, callerClient?: any): Promise<{ success: boolean; visit?: VisitRecord; error?: string }> {
   try {
     const visitDate = data.visit_date || new Date().toISOString().split('T')[0];
     const year = parseInt(visitDate.substring(0, 4), 10) || new Date().getFullYear();
@@ -422,7 +422,7 @@ export async function createVisit(data: {
 
     // Try Supabase first
     try {
-      const supabase = createAdminClient();
+      const supabase = callerClient || createAdminClient();
 
       // Check if stored procedure exists
       const { data: rpcRes, error: rpcErr } = await supabase.rpc('create_visit_with_visitors', {
@@ -560,11 +560,21 @@ export async function createVisit(data: {
 }
 
 // Update visit details
-export async function updateVisit(id: string, updates: Partial<VisitRecord>): Promise<{ success: boolean; error?: string }> {
+export async function updateVisit(
+  id: string,
+  updates: Partial<VisitRecord>,
+  callerClient?: any
+): Promise<{ success: boolean; error?: string }> {
   let supabaseUpdated = false;
+  let supaError: string | null = null;
 
   try {
-    const supabase = createAdminClient();
+    const clientsToTry: any[] = [];
+    if (callerClient) clientsToTry.push(callerClient);
+    try {
+      const admin = createAdminClient();
+      if (admin && !clientsToTry.includes(admin)) clientsToTry.push(admin);
+    } catch (e) {}
     
     // Process multiple organizations if provided
     let finalVisitors = updates.visitors;
@@ -619,22 +629,33 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
     if (orgNamesAr.length > 0) supabaseVisitPayload.organization_ar = orgNamesAr.join(' / ');
     else if (updates.organization_ar !== undefined) supabaseVisitPayload.organization_ar = updates.organization_ar;
 
-    const { error: visitUpdateErr } = await supabase.from('visits').update(supabaseVisitPayload).eq('id', id);
-    if (!visitUpdateErr) {
-      supabaseUpdated = true;
-      if (finalVisitors && finalVisitors.length > 0) {
-        await supabase.from('visit_visitors').delete().eq('visit_id', id);
-        const visitorsToInsert = finalVisitors.map(vis => ({
-          visit_id: id,
-          full_name_en: vis.full_name_en || '',
-          full_name_ar: vis.full_name_ar || '',
-          phone_number: vis.phone_number || null
-        }));
-        await supabase.from('visit_visitors').insert(visitorsToInsert);
+    for (const supabase of clientsToTry) {
+      const { data: updatedRows, error: visitUpdateErr } = await supabase
+        .from('visits')
+        .update(supabaseVisitPayload)
+        .eq('id', id)
+        .select('id');
+
+      if (visitUpdateErr) {
+        supaError = visitUpdateErr.message;
+      } else if (updatedRows && updatedRows.length > 0) {
+        supabaseUpdated = true;
+        if (finalVisitors && finalVisitors.length > 0) {
+          await supabase.from('visit_visitors').delete().eq('visit_id', id);
+          const visitorsToInsert = finalVisitors.map(vis => ({
+            visit_id: id,
+            full_name_en: vis.full_name_en || '',
+            full_name_ar: vis.full_name_ar || '',
+            phone_number: vis.phone_number || null
+          }));
+          await supabase.from('visit_visitors').insert(visitorsToInsert);
+        }
+        break;
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error('Supabase updateVisit error:', e);
+    supaError = e?.message || 'Error updating visit in database';
   }
 
   // Also update local store (or fallback)
@@ -685,7 +706,11 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
       organizations: orgs || extractOrganizationGroups({ ...list[idx], visitors: finalVisitors }),
       updated_at: new Date().toISOString()
     };
-    writeLocalStore(list);
+    try {
+      writeLocalStore(list);
+    } catch (fsErr) {
+      // Ignore filesystem error in serverless read-only environments
+    }
     return { success: true };
   }
 
@@ -693,96 +718,142 @@ export async function updateVisit(id: string, updates: Partial<VisitRecord>): Pr
     return { success: true };
   }
 
-  return { success: false, error: 'Visit record not found' };
+  return { success: false, error: supaError || 'Visit record not found' };
 }
 
 // Update Time Out
-export async function updateVisitTimeOut(id: string, timeOut: string): Promise<{ success: boolean; error?: string }> {
-  return updateVisit(id, { time_out: timeOut });
+export async function updateVisitTimeOut(
+  id: string,
+  timeOut: string,
+  callerClient?: any
+): Promise<{ success: boolean; error?: string }> {
+  return updateVisit(id, { time_out: timeOut }, callerClient);
 }
 
 // Delete visit (cascades to visitors and purges from both Supabase and Local Store)
-export async function deleteVisit(id: string): Promise<{ success: boolean; error?: string }> {
+export async function deleteVisit(
+  id: string,
+  callerClient?: any
+): Promise<{ success: boolean; error?: string }> {
   try {
     const list = ensureLocalStore();
     // 1. Identify visit details from local store or argument
     const localTarget = list.find(v => v.id === id || v.visit_number === id);
-    const visitNumber = localTarget?.visit_number;
+    const visitNumber = localTarget?.visit_number || (id.startsWith('VIS-') ? id : undefined);
     const localId = localTarget?.id || id;
 
     const isUuid = (val?: string | null) =>
       Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val));
 
     // 2. Perform deletion in Supabase
+    const clientsToTry: any[] = [];
+    if (callerClient) clientsToTry.push(callerClient);
     try {
-      const supabase = createAdminClient();
-      const supaIdsToDelete = new Set<string>();
-
-      // Check if id or localId is a valid UUID
-      if (isUuid(id)) supaIdsToDelete.add(id);
-      if (isUuid(localId)) supaIdsToDelete.add(localId);
-
-      // Search by visit_number in Supabase to find its exact Supabase UUID
-      if (visitNumber) {
-        const { data: byNum } = await supabase
-          .from('visits')
-          .select('id, visit_number')
-          .eq('visit_number', visitNumber);
-        if (byNum && byNum.length > 0) {
-          byNum.forEach(v => {
-            if (v.id) supaIdsToDelete.add(v.id);
-          });
-        }
+      const adminClient = createAdminClient();
+      if (adminClient && !clientsToTry.includes(adminClient)) {
+        clientsToTry.push(adminClient);
       }
+    } catch (e) {
+      // ignore
+    }
 
-      // If id was a visit_number itself
-      if (id.startsWith('VIS-')) {
-        const { data: byRawNum } = await supabase
-          .from('visits')
-          .select('id, visit_number')
-          .eq('visit_number', id);
-        if (byRawNum && byRawNum.length > 0) {
-          byRawNum.forEach(v => {
-            if (v.id) supaIdsToDelete.add(v.id);
-          });
-        }
-      }
+    let supaDeleted = false;
+    let supaError: string | null = null;
 
-      // For every matched Supabase visit, delete child visitors first, then visit
-      for (const supaId of supaIdsToDelete) {
+    for (const supabase of clientsToTry) {
+      try {
+        // Attempt stored procedure first if available
         try {
-          await supabase.from('visit_visitors').delete().eq('visit_id', supaId);
-        } catch (visErr) {
-          console.warn('Error deleting visit_visitors in Supabase:', visErr);
+          const { data: rpcSuccess, error: rpcErr } = await supabase.rpc('delete_visit_record', {
+            p_visit_id: id
+          });
+          if (!rpcErr && rpcSuccess === true) {
+            supaDeleted = true;
+            break;
+          }
+        } catch (rpcE) {
+          // Stored procedure not available, fallback to table deletion
         }
 
-        try {
-          await supabase.from('visits').delete().eq('id', supaId);
-        } catch (vErr) {
-          console.warn('Error deleting visit in Supabase:', vErr);
-        }
-      }
+        const supaIdsToDelete = new Set<string>();
+        if (isUuid(id)) supaIdsToDelete.add(id);
+        if (isUuid(localId)) supaIdsToDelete.add(localId);
 
-      // Also ensure deletion by visit_number if known
-      if (visitNumber) {
-        await supabase.from('visits').delete().eq('visit_number', visitNumber);
+        // Search by visit_number in Supabase to find its exact Supabase UUID
+        if (visitNumber) {
+          const { data: byNum } = await supabase
+            .from('visits')
+            .select('id, visit_number')
+            .eq('visit_number', visitNumber);
+          if (byNum && byNum.length > 0) {
+            byNum.forEach((v: any) => {
+              if (v.id) supaIdsToDelete.add(v.id);
+            });
+          }
+        }
+
+        // For every matched Supabase visit, delete child visitors first, then visit
+        for (const supaId of supaIdsToDelete) {
+          try {
+            await supabase.from('visit_visitors').delete().eq('visit_id', supaId);
+          } catch (visErr) {
+            console.warn('Error deleting visit_visitors in Supabase:', visErr);
+          }
+
+          const { data: delData, error: delErr } = await supabase
+            .from('visits')
+            .delete()
+            .eq('id', supaId)
+            .select('id');
+
+          if (delErr) {
+            supaError = delErr.message;
+          } else if (delData && delData.length > 0) {
+            supaDeleted = true;
+          }
+        }
+
+        // Also ensure deletion by visit_number if known
+        if (!supaDeleted && visitNumber) {
+          const { data: delByNum, error: delNumErr } = await supabase
+            .from('visits')
+            .delete()
+            .eq('visit_number', visitNumber)
+            .select('id');
+
+          if (delNumErr) {
+            supaError = delNumErr.message;
+          } else if (delByNum && delByNum.length > 0) {
+            supaDeleted = true;
+          }
+        }
+
+        if (supaDeleted) {
+          break; // successfully deleted from Supabase
+        }
+      } catch (err: any) {
+        supaError = err?.message || 'Database error during deletion';
       }
-      if (id.startsWith('VIS-')) {
-        await supabase.from('visits').delete().eq('visit_number', id);
-      }
-    } catch (supaErr) {
-      console.warn('Supabase delete error:', supaErr);
     }
 
     // 3. ALWAYS purge from local store by ALL matching keys so it never reappears
-    const remaining = list.filter(v => {
-      if (v.id === id || v.id === localId) return false;
-      if (visitNumber && v.visit_number === visitNumber) return false;
-      if (v.visit_number === id) return false;
-      return true;
-    });
+    try {
+      const remaining = list.filter(v => {
+        if (v.id === id || v.id === localId) return false;
+        if (visitNumber && v.visit_number === visitNumber) return false;
+        if (v.visit_number === id) return false;
+        return true;
+      });
 
-    writeLocalStore(remaining);
+      writeLocalStore(remaining);
+    } catch (fsErr) {
+      // Ignore filesystem error in serverless read-only environments
+    }
+
+    if (!supaDeleted && supaError) {
+      return { success: false, error: supaError };
+    }
+
     return { success: true };
   } catch (err: any) {
     console.error('Error in deleteVisit:', err);
