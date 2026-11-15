@@ -933,11 +933,11 @@ export default function VisitorDashboardView({
               <thead className="sticky top-0 z-10 bg-slate-100/95 dark:bg-zinc-800/95 backdrop-blur-md border-b border-border text-slate-700 dark:text-zinc-200 font-bold">
                 <tr>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Visit #', 'رقم الزيارة')}</th>
-                  <th className="py-3 px-3 whitespace-nowrap">{t('Date & Time', 'التاريخ والوقت')}</th>
-                  <th className="py-3 px-3 min-w-[150px]">{t('Organization & Country', 'المؤسسة / الدولة')}</th>
+                  <th className="py-3 px-3 whitespace-nowrap">{t('Date', 'التاريخ')}</th>
+                  <th className="py-3 px-3 min-w-[160px]">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
+                  <th className="py-3 px-3 whitespace-nowrap">{t('Country', 'الدولة')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Coordination by', 'عن طريق')}</th>
-                  <th className="py-3 px-3 min-w-[160px]">{t('Visitors', 'الزوار')}</th>
-                  <th className="py-3 px-3 min-w-[120px]">{t('Visit Reason', 'سبب الزيارة')}</th>
+                  <th className="py-3 px-3 min-w-[140px]">{t('Visit Reason', 'سبب الزيارة')}</th>
                   <th className="py-3 px-3 text-center whitespace-nowrap">{t('Source', 'المصدر')}</th>
                   <th className="py-3 px-3 text-center whitespace-nowrap">{t('Actions', 'الإجراءات')}</th>
                 </tr>
@@ -951,12 +951,7 @@ export default function VisitorDashboardView({
                   </tr>
                 ) : (
                   paginatedVisits.map((visit) => {
-                    const visitorsList = visit.visitors || [];
                     const orgGroups = extractOrganizationGroups(visit);
-                    const visitorNames = visitorsList
-                      .map(v => v.full_name_ar || v.full_name_en)
-                      .filter(Boolean)
-                      .join('، ');
 
                     return (
                       <tr
@@ -977,51 +972,32 @@ export default function VisitorDashboardView({
                           </div>
                         </td>
 
-                        {/* Date & Time */}
-                        <td className="py-3.5 px-3 whitespace-nowrap">
-                          <div className="flex flex-col gap-0.5">
-                            <span className="font-bold text-slate-800 dark:text-zinc-100 text-xs sm:text-sm">
-                              {visit.visit_date}
-                            </span>
-                            <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                              <span className="text-[#0F766E] dark:text-teal-400 font-bold">{visit.time_in}</span>
-                              <span className="text-slate-400 font-bold">→</span>
-                              {visit.time_out ? (
-                                <span className="text-slate-700 dark:text-zinc-300 font-bold">{visit.time_out}</span>
-                              ) : isManageMode ? (
-                                <button
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleOpenTimeOut(visit); }}
-                                  className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-900 font-bold transition-colors cursor-pointer"
-                                  title={t('Record check-out time now', 'تسجيل وقت الخروج الآن')}
-                                >
-                                  {t('Check Out', 'تسجيل الخروج')}
-                                </button>
-                              ) : (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 font-bold">
-                                  {t('In Progress', 'قيد الزيارة')}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                        {/* Date (Clean - time is hidden from list and visible in details) */}
+                        <td className="py-3.5 px-3 font-bold text-slate-800 dark:text-zinc-100 whitespace-nowrap text-xs sm:text-sm">
+                          {visit.visit_date}
                         </td>
 
-                        {/* Organization & Country */}
-                        <td className="py-3.5 px-3 min-w-[150px] max-w-[210px]">
-                          <div className="space-y-0.5">
+                        {/* Organization */}
+                        <td className="py-3.5 px-3 min-w-[160px] max-w-[240px]">
+                          <div>
                             <div className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm truncate" title={visit.organization_ar || visit.organization_en || '—'}>
                               {visit.organization_ar || visit.organization_en || '—'}
                             </div>
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-                              <Globe2 className="w-3 h-3 text-slate-400 flex-shrink-0" />
-                              <span className="truncate">{visit.country || 'Oman'}</span>
-                              {orgGroups.length > 1 && (
-                                <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">
-                                  ({orgGroups.length} {t('orgs', 'مؤسسات')})
-                                </span>
-                              )}
-                            </div>
+                            {orgGroups.length > 1 ? (
+                              <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold mt-0.5">
+                                ({orgGroups.length} {t('orgs', 'مؤسسات مشتركة')})
+                              </div>
+                            ) : (
+                              visit.organization_ar && visit.organization_en && (
+                                <div className="text-[11px] text-slate-400 truncate mt-0.5">{visit.organization_en}</div>
+                              )
+                            )}
                           </div>
+                        </td>
+
+                        {/* Country */}
+                        <td className="py-3.5 px-3 text-slate-700 dark:text-zinc-300 font-medium whitespace-nowrap text-xs sm:text-sm">
+                          {visit.country || 'Oman'}
                         </td>
 
                         {/* Coordination By */}
@@ -1029,23 +1005,8 @@ export default function VisitorDashboardView({
                           {renderCoordinationBadge(visit.coordination_by)}
                         </td>
 
-                        {/* Visitors */}
-                        <td className="py-3.5 px-3 min-w-[160px] max-w-[230px]">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-1.5">
-                              <span className="inline-flex items-center gap-1 text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-300 border border-teal-200 dark:border-teal-800">
-                                <Users className="w-3 h-3 flex-shrink-0" />
-                                <span>{visitorsList.length || 1} {t('visitors', 'زائر')}</span>
-                              </span>
-                            </div>
-                            <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium truncate" title={visitorNames}>
-                              {visitorNames || '—'}
-                            </div>
-                          </div>
-                        </td>
-
                         {/* Reason */}
-                        <td className="py-3.5 px-3 max-w-[140px] truncate text-slate-700 dark:text-zinc-300 font-medium text-xs sm:text-sm" title={visit.visit_reason || '—'}>
+                        <td className="py-3.5 px-3 max-w-[150px] truncate text-slate-700 dark:text-zinc-300 font-medium text-xs sm:text-sm" title={visit.visit_reason || '—'}>
                           {visit.visit_reason || '—'}
                         </td>
 
@@ -1130,12 +1091,7 @@ export default function VisitorDashboardView({
           ) : (
             <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {paginatedVisits.map((visit) => {
-                const visitorsList = visit.visitors || [];
                 const orgGroups = extractOrganizationGroups(visit);
-                const visitorNames = visitorsList
-                  .map(v => v.full_name_ar || v.full_name_en)
-                  .filter(Boolean)
-                  .join('، ');
 
                 return (
                   <div
@@ -1172,25 +1128,6 @@ export default function VisitorDashboardView({
                       </div>
                     </div>
 
-                    {/* Time & Status */}
-                    <div className="flex items-center justify-between text-xs py-1.5 px-3 rounded-xl bg-slate-50 dark:bg-zinc-800/60">
-                      <span className="text-slate-500 dark:text-zinc-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span>{t('Time', 'الوقت')}:</span>
-                      </span>
-                      <div className="flex items-center gap-2 font-mono font-bold text-xs">
-                        <span className="text-[#0F766E] dark:text-teal-400">{visit.time_in}</span>
-                        <span className="text-slate-400">→</span>
-                        {visit.time_out ? (
-                          <span className="text-slate-700 dark:text-zinc-200">{visit.time_out}</span>
-                        ) : (
-                          <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
-                            {t('In Progress', 'قيد الزيارة')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
                     {/* Organization & Country */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm">
@@ -1215,22 +1152,6 @@ export default function VisitorDashboardView({
                         <span>{visit.visit_reason}</span>
                       </div>
                     )}
-
-                    {/* Visitors */}
-                    <div className="border-t border-border pt-2 space-y-1.5">
-                      <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-zinc-300">
-                        <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-teal-600" />
-                          <span>{t('Visitors', 'الزوار')}</span>
-                        </span>
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-[#0F766E] dark:text-teal-400 font-extrabold border border-teal-200 dark:border-teal-800">
-                          {visitorsList.length || 1} {t('visitors', 'زائر')}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-700 dark:text-zinc-300 font-medium truncate" title={visitorNames}>
-                        {visitorNames || '—'}
-                      </div>
-                    </div>
 
                     {/* Card Actions Footer */}
                     <div className="flex items-center justify-between gap-2 pt-3 border-t border-border">
