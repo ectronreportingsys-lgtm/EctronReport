@@ -347,6 +347,54 @@ export async function removeVisit(visitId: string) {
   return res;
 }
 
+// Bulk delete visits
+export async function removeMultipleVisits(visitIds: string[]) {
+  const supabase = await createClient();
+  let deletedCount = 0;
+  const errors: string[] = [];
+
+  for (const id of visitIds) {
+    const res = await deleteVisit(id, supabase);
+    if (res.success) {
+      deletedCount++;
+    } else if (res.error) {
+      errors.push(res.error);
+    }
+  }
+
+  if (deletedCount > 0) {
+    revalidateVisitorPages();
+  }
+
+  return {
+    success: deletedCount > 0,
+    deletedCount,
+    errors
+  };
+}
+
+// Bulk update time out
+export async function updateMultipleTimeOut(visitIds: string[], timeOut: string) {
+  const supabase = await createClient();
+  let updatedCount = 0;
+
+  for (const id of visitIds) {
+    const res = await updateVisitTimeOut(id, timeOut, supabase);
+    if (res.success) {
+      updatedCount++;
+    }
+  }
+
+  if (updatedCount > 0) {
+    revalidateVisitorPages();
+  }
+
+  return {
+    success: updatedCount > 0,
+    updatedCount
+  };
+}
+
 // Import historical visits from Excel data
 export async function importHistoricalVisits(records: Array<{
   visit_date: string;

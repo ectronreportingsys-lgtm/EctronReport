@@ -37,7 +37,14 @@ import {
   User
 } from 'lucide-react';
 import { VisitRecord, OrganizationGroup, VisitorItem, extractOrganizationGroups } from '@/lib/visitorTypes';
-import { updateTimeOut, removeVisit, updateVisitDetails, fetchVisitsList } from '@/app/visitor/actions/visitorActions';
+import { 
+  updateTimeOut, 
+  removeVisit, 
+  updateVisitDetails, 
+  fetchVisitsList,
+  removeMultipleVisits,
+  updateMultipleTimeOut
+} from '@/app/visitor/actions/visitorActions';
 import { exportVisitsListToExcel, exportDetailedVisitorsToExcel, printVisitsReport } from '@/lib/visitorExporter';
 import { useLanguage } from '@/components/layout/LanguageProvider';
 import { TimePicker12 } from './TimePicker12';
@@ -75,9 +82,17 @@ export default function VisitorDashboardView({
   const [pageSize, setPageSize] = useState<number>(15);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Reset page when any filter changes
+  // Multi-selection & Bulk Actions state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
+  const [bulkTimeOutModalOpen, setBulkTimeOutModalOpen] = useState(false);
+  const [bulkTimeOutValue, setBulkTimeOutValue] = useState('');
+
+  // Reset page and selection when any filter changes
   useEffect(() => {
     setCurrentPage(1);
+    setSelectedIds(new Set());
   }, [searchTerm, selectedCoordination, selectedSource, selectedCountry, selectedMonth, selectedYear, dateFrom, dateTo]);
 
   useEffect(() => {
@@ -345,6 +360,107 @@ export default function VisitorDashboardView({
       }
     } catch (err: any) {
       alert(err?.message || t('Error deleting visit', 'حدث خطأ أثناء حذف الزيارة'));
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Multi-selection helpers
+  const currentPageIds = useMemo(() => paginatedVisits.map(v => v.id), [paginatedVisits]);
+  const isAllCurrentSelected = currentPageIds.length > 0 && currentPageIds.every(id => selectedIds.has(id));
+  const isSomeCurrentSelected = currentPageIds.some(id => selectedIds.has(id));
+
+  const handleToggleSelectAll = () => {
+    if (isAllCurrentSelected) {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        currentPageIds.forEach(id => next.delete(id));
+        return next;
+      });
+    } else {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        currentPageIds.forEach(id => next.add(id));
+        return next;
+      });
+    }
+  };
+
+  const handleToggleSelectOne = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      const idsArray = Array.from(selectedIds);
+      const res = await removeMultipleVisits(idsArray);
+      if (res.success) {
+        setVisits(prev => prev.filter(v => !selectedIds.has(v.id)));
+        setSuccessToast(t(`Successfully deleted ${res.deletedCount} visits`, `تم حذف ${res.deletedCount} زيارة بنجاح`));
+        setSelectedIds(new Set());
+        setBulkDeleteModalOpen(false);
+        setTimeout(() => setSuccessToast(null), 3500);
+      } else {
+        alert(res.errors?.join('\n') || t('Failed to delete some visits', 'تعذر حذف بعض الزيارات'));
+      }
+    } catch (err: any) {
+      alert(err?.message || t('Error deleting visits', 'حدث خطأ أثناء حذف الزيارات'));
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
+  const handleBulkExportExcel = async () => {
+    const selectedVisits = visits.filter(v => selectedIds.has(v.id));
+    if (selectedVisits.length === 0) return;
+    await exportVisitsListToExcel(selectedVisits, `ECTRON_Selected_Visits_${selectedVisits.length}.xlsx`);
+    setSuccessToast(t(`Exported ${selectedVisits.length} visits to Excel`, `تم تصدير ${selectedVisits.length} زيارة محددة إلى إكسل`));
+    setTimeout(() => setSuccessToast(null), 3000);
+  };
+
+  const handleOpenBulkTimeOut = () => {
+    const nowTime = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Muscat',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(new Date());
+
+    setBulkTimeOutValue(nowTime);
+    setBulkTimeOutModalOpen(true);
+  };
+
+  const handleConfirmBulkTimeOut = async () => {
+    if (selectedIds.size === 0 || !bulkTimeOutValue) return;
+    setIsUpdating(true);
+    try {
+      const idsArray = Array.from(selectedIds);
+      const res = await updateMultipleTimeOut(idsArray, bulkTimeOutValue);
+      if (res.success) {
+        setVisits(prev =>
+          prev.map(v => (selectedIds.has(v.id) ? { ...v, time_out: bulkTimeOutValue } : v))
+        );
+        setSuccessToast(t(`Updated check-out time for ${res.updatedCount} visits`, `تم تسجيل وقت الخروج لـ ${res.updatedCount} زيارة بنجاح`));
+        setBulkTimeOutModalOpen(false);
+        setSelectedIds(new Set());
+        setTimeout(() => setSuccessToast(null), 3000);
+      }
+    } catch (err: any) {
+      alert(err?.message || t('Error updating time out', 'حدث خطأ أثناء تحديث وقت الخروج'));
     } finally {
       setIsUpdating(false);
     }
@@ -932,6 +1048,18 @@ export default function VisitorDashboardView({
             <table className="w-full text-right text-xs sm:text-sm border-collapse">
               <thead className="sticky top-0 z-10 bg-slate-100/95 dark:bg-zinc-800/95 backdrop-blur-md border-b border-border text-slate-700 dark:text-zinc-200 font-bold">
                 <tr>
+                  <th className="py-3 px-3 w-10 text-center">
+                    <input
+                      type="checkbox"
+                      checked={isAllCurrentSelected}
+                      ref={input => {
+                        if (input) input.indeterminate = isSomeCurrentSelected && !isAllCurrentSelected;
+                      }}
+                      onChange={handleToggleSelectAll}
+                      className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                      title={t('Select All on this page', 'تحديد الكل في هذه الصفحة')}
+                    />
+                  </th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Visit #', 'رقم الزيارة')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Date', 'التاريخ')}</th>
                   <th className="py-3 px-3 min-w-[160px]">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
@@ -946,7 +1074,7 @@ export default function VisitorDashboardView({
               <tbody className="divide-y divide-border">
                 {paginatedVisits.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
+                    <td colSpan={10} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
                       {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
                     </td>
                   </tr>
@@ -958,14 +1086,29 @@ export default function VisitorDashboardView({
                       .map(v => v.full_name_ar || v.full_name_en)
                       .filter(Boolean);
                     const visitorNamesStr = visitorNames.join('، ');
+                    const isSelected = selectedIds.has(visit.id);
 
                     return (
                       <tr
                         key={visit.id}
                         onDoubleClick={() => handleOpenVisitModal(visit, false)}
-                        className="hover:bg-teal-50/50 dark:hover:bg-zinc-800/60 transition-colors group cursor-pointer select-none"
-                        title={isManageMode ? t('Double-click to view and edit full details', 'انقر نقراً مزدوجاً لعرض وتعديل كامل البيانات') : t('Double-click to view full details', 'انقر نقراً مزدوجاً لعرض التفاصيل الكاملة')}
+                        className={`transition-colors group cursor-pointer select-none ${
+                          isSelected
+                            ? 'bg-teal-50/80 dark:bg-teal-950/30'
+                            : 'hover:bg-teal-50/50 dark:hover:bg-zinc-800/60'
+                        }`}
+                        title={t('Double-click to view full details', 'انقر نقراً مزدوجاً لعرض التفاصيل الكاملة')}
                       >
+                        {/* Checkbox */}
+                        <td className="py-3.5 px-3 w-10 text-center" onClick={e => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleSelectOne(visit.id)}
+                            className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                          />
+                        </td>
+
                         {/* Visit Number */}
                         <td className="py-3.5 px-3 font-mono font-extrabold text-xs sm:text-sm text-[#0F766E] dark:text-teal-400 whitespace-nowrap">
                           <div className="flex items-center gap-1.5">
@@ -1053,39 +1196,35 @@ export default function VisitorDashboardView({
                               <Eye className="w-4 h-4" />
                             </button>
 
-                            {isManageMode && (
-                              <>
-                                {/* Edit Visit */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenVisitModal(visit, true)}
-                                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
-                                  title={t('Edit Visit', 'تعديل الزيارة')}
-                                >
-                                  <Edit3 className="w-4 h-4" />
-                                </button>
+                            {/* Edit Visit */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenVisitModal(visit, true)}
+                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                              title={t('Edit Visit', 'تعديل الزيارة')}
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
 
-                                {/* Quick Time Out */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenTimeOut(visit)}
-                                  className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
-                                  title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
-                                >
-                                  <Clock className="w-4 h-4" />
-                                </button>
+                            {/* Quick Time Out */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenTimeOut(visit)}
+                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                              title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
+                            >
+                              <Clock className="w-4 h-4" />
+                            </button>
 
-                                {/* Delete Visit */}
-                                <button
-                                  type="button"
-                                  onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
-                                  className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                                  title={t('Delete Visit', 'حذف الزيارة')}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
+                            {/* Delete Visit */}
+                            <button
+                              type="button"
+                              onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                              title={t('Delete Visit', 'حذف الزيارة')}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -1110,22 +1249,38 @@ export default function VisitorDashboardView({
                   .map(v => v.full_name_ar || v.full_name_en)
                   .filter(Boolean);
                 const visitorNamesStr = visitorNames.join('، ');
+                const isSelected = selectedIds.has(visit.id);
 
                 return (
                   <div
                     key={visit.id}
                     onDoubleClick={() => handleOpenVisitModal(visit, false)}
-                    className="rounded-2xl border border-slate-200/90 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-teal-400/60 dark:hover:border-teal-600/60 transition-all flex flex-col justify-between gap-3 group"
+                    className={`rounded-2xl border p-4 sm:p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between gap-3 group ${
+                      isSelected
+                        ? 'border-teal-500 bg-teal-50/40 dark:bg-teal-950/20 shadow-teal-500/10'
+                        : 'border-slate-200/90 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 hover:border-teal-400/60 dark:hover:border-teal-600/60'
+                    }`}
                   >
-                    {/* Top Header */}
+                    {/* Top Header with Checkbox */}
                     <div className="flex items-start justify-between gap-2 border-b border-border pb-3">
-                      <div>
-                        <span className="font-mono text-base font-extrabold text-[#0F766E] dark:text-teal-400">
-                          {visit.visit_number}
-                        </span>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                          <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
-                          <span>{visit.visit_date}</span>
+                      <div className="flex items-start gap-2.5">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={e => {
+                            e.stopPropagation();
+                            handleToggleSelectOne(visit.id);
+                          }}
+                          className="w-4 h-4 mt-1 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                        />
+                        <div>
+                          <span className="font-mono text-base font-extrabold text-[#0F766E] dark:text-teal-400">
+                            {visit.visit_number}
+                          </span>
+                          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                            <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
+                            <span>{visit.visit_date}</span>
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1.5">
@@ -1192,34 +1347,30 @@ export default function VisitorDashboardView({
                         <span>{t('View Details', 'عرض التفاصيل')}</span>
                       </button>
 
-                      {isManageMode && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenVisitModal(visit, true)}
-                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
-                            title={t('Edit', 'تعديل')}
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenTimeOut(visit)}
-                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
-                            title={t('Check Out', 'تسجيل الخروج')}
-                          >
-                            <Clock className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
-                            className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                            title={t('Delete', 'حذف')}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenVisitModal(visit, true)}
+                        className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                        title={t('Edit', 'تعديل')}
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenTimeOut(visit)}
+                        className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                        title={t('Check Out', 'تسجيل الخروج')}
+                      >
+                        <Clock className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                        className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                        title={t('Delete', 'حذف')}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -2003,6 +2154,177 @@ export default function VisitorDashboardView({
                 type="button"
                 onClick={() => setIsAddChoiceModalOpen(false)}
                 className="px-6 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 text-xs font-bold text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                {t('Cancel', 'إلغاء')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Bulk Action Bar */}
+      {selectedIds.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#173B63] dark:bg-zinc-800 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-teal-500/40 flex items-center gap-3.5 flex-wrap animate-in slide-in-from-bottom duration-200">
+          <div className="flex items-center gap-2 pr-2 border-r border-slate-600 dark:border-zinc-700">
+            <CheckCircle2 className="w-5 h-5 text-teal-400" />
+            <span className="font-bold text-sm">
+              {t('Selected', 'تم تحديد')}{' '}
+              <span className="font-extrabold text-teal-300 font-mono text-base px-1">
+                {selectedIds.size}
+              </span>{' '}
+              {t('visits', 'زيارة')}
+            </span>
+          </div>
+
+          {/* Action: Delete Selected */}
+          <button
+            type="button"
+            onClick={() => setBulkDeleteModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow cursor-pointer"
+            title={t('Delete selected visits', 'حذف الزيارات المحددة')}
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>{t('Delete Selected', 'حذف المحدد')}</span>
+          </button>
+
+          {/* Action: Bulk Time Out */}
+          <button
+            type="button"
+            onClick={handleOpenBulkTimeOut}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow cursor-pointer"
+            title={t('Record check-out for selected visits', 'تسجيل خروج للزيارات المحددة')}
+          >
+            <Clock className="w-4 h-4" />
+            <span>{t('Record Check-Out', 'تسجيل خروج جماعي')}</span>
+          </button>
+
+          {/* Action: Export Selected */}
+          <button
+            type="button"
+            onClick={handleBulkExportExcel}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow cursor-pointer"
+            title={t('Export selected visits to Excel', 'تصدير الزيارات المحددة إلى إكسل')}
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            <span>{t('Export Excel', 'تصدير إكسل')}</span>
+          </button>
+
+          {/* Action: Clear Selection */}
+          <button
+            type="button"
+            onClick={handleClearSelection}
+            className="p-1.5 rounded-xl hover:bg-slate-700 dark:hover:bg-zinc-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            title={t('Clear Selection', 'إلغاء التحديد')}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* MODAL: Bulk Delete Confirmation */}
+      {bulkDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-md w-full p-6 sm:p-8 border border-border shadow-2xl relative text-center">
+            <div className="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-4 shadow-inner">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">
+              {t('Confirm Bulk Deletion', 'تأكيد الحذف الجماعي')}
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mb-6 leading-relaxed">
+              {t(
+                `Are you sure you want to permanently delete the selected ${selectedIds.size} visit(s) and all associated visitor records? This action cannot be undone.`,
+                `هل أنت متأكد من رغبتك في حذف ${selectedIds.size} زيارة محددة نهائياً مع كافة بيانات الزوار المرتبطة بها؟ هذا الإجراء لا يمكن التراجع عنه.`
+              )}
+            </p>
+
+            <div className="flex items-center justify-center gap-3">
+              <button
+                type="button"
+                disabled={isBulkDeleting}
+                onClick={handleConfirmBulkDelete}
+                className="flex-1 py-3 px-4 rounded-2xl bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isBulkDeleting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>{t('Deleting...', 'جارٍ الحذف...')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>{t('Yes, Delete All', 'نعم، حذف الزيارات المحددة')}</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                disabled={isBulkDeleting}
+                onClick={() => setBulkDeleteModalOpen(false)}
+                className="flex-1 py-3 px-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer"
+              >
+                {t('Cancel', 'إلغاء')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Bulk Time Out */}
+      {bulkTimeOutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl max-w-md w-full p-6 sm:p-8 border border-border shadow-2xl relative text-center">
+            <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-4 shadow-inner">
+              <Clock className="w-7 h-7" />
+            </div>
+
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">
+              {t('Bulk Check Out', 'تسجيل خروج جماعي')}
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 mb-4 leading-relaxed">
+              {t(
+                `Set the check-out time for ${selectedIds.size} selected visit(s):`,
+                `حدد وقت الخروج لـ ${selectedIds.size} زيارة محددة:`
+              )}
+            </p>
+
+            <div className="mb-6 flex justify-center">
+              <TimePicker12
+                value={bulkTimeOutValue}
+                onChange={setBulkTimeOutValue}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex items-center justify-center gap-3">
+              <button
+                type="button"
+                disabled={isUpdating || !bulkTimeOutValue}
+                onClick={handleConfirmBulkTimeOut}
+                className="flex-1 py-3 px-4 rounded-2xl bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isUpdating ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>{t('Saving...', 'جارٍ الحفظ...')}</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{t('Save Check-Out', 'تأكيد وحفظ')}</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                disabled={isUpdating}
+                onClick={() => setBulkTimeOutModalOpen(false)}
+                className="flex-1 py-3 px-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 font-bold text-xs sm:text-sm transition-colors cursor-pointer"
               >
                 {t('Cancel', 'إلغاء')}
               </button>
