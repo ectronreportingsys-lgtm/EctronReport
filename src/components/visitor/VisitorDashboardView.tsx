@@ -1048,18 +1048,20 @@ export default function VisitorDashboardView({
             <table className="w-full text-right text-xs sm:text-sm border-collapse">
               <thead className="sticky top-0 z-10 bg-slate-100/95 dark:bg-zinc-800/95 backdrop-blur-md border-b border-border text-slate-700 dark:text-zinc-200 font-bold">
                 <tr>
-                  <th className="py-3 px-3 w-10 text-center">
-                    <input
-                      type="checkbox"
-                      checked={isAllCurrentSelected}
-                      ref={input => {
-                        if (input) input.indeterminate = isSomeCurrentSelected && !isAllCurrentSelected;
-                      }}
-                      onChange={handleToggleSelectAll}
-                      className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
-                      title={t('Select All on this page', 'تحديد الكل في هذه الصفحة')}
-                    />
-                  </th>
+                  {isManageMode && (
+                    <th className="py-3 px-3 w-10 text-center">
+                      <input
+                        type="checkbox"
+                        checked={isAllCurrentSelected}
+                        ref={input => {
+                          if (input) input.indeterminate = isSomeCurrentSelected && !isAllCurrentSelected;
+                        }}
+                        onChange={handleToggleSelectAll}
+                        className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                        title={t('Select All on this page', 'تحديد الكل في هذه الصفحة')}
+                      />
+                    </th>
+                  )}
                   <th className="py-3 px-3 whitespace-nowrap">{t('Visit #', 'رقم الزيارة')}</th>
                   <th className="py-3 px-3 whitespace-nowrap">{t('Date', 'التاريخ')}</th>
                   <th className="py-3 px-3 min-w-[160px]">{t('Organization / Company', 'المؤسسة / الشركة')}</th>
@@ -1068,13 +1070,15 @@ export default function VisitorDashboardView({
                   <th className="py-3 px-3 whitespace-nowrap">{t('Coordination by', 'عن طريق')}</th>
                   <th className="py-3 px-3 min-w-[140px]">{t('Visit Reason', 'سبب الزيارة')}</th>
                   <th className="py-3 px-3 text-center whitespace-nowrap">{t('Source', 'المصدر')}</th>
-                  <th className="py-3 px-3 text-center whitespace-nowrap">{t('Actions', 'الإجراءات')}</th>
+                  {isManageMode && (
+                    <th className="py-3 px-3 text-center whitespace-nowrap">{t('Actions', 'الإجراءات')}</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {paginatedVisits.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
+                    <td colSpan={isManageMode ? 10 : 8} className="py-14 text-center text-slate-400 dark:text-zinc-500 text-base">
                       {t('No visits found matching the current search criteria', 'لا توجد زيارات مطابقة لمعايير البحث الحالية')}
                     </td>
                   </tr>
@@ -1099,19 +1103,25 @@ export default function VisitorDashboardView({
                         }`}
                         title={t('Double-click to view full details', 'انقر نقراً مزدوجاً لعرض التفاصيل الكاملة')}
                       >
-                        {/* Checkbox */}
-                        <td className="py-3.5 px-3 w-10 text-center" onClick={e => e.stopPropagation()}>
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => handleToggleSelectOne(visit.id)}
-                            className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
-                          />
-                        </td>
+                        {/* Checkbox (Only in Manage Mode) */}
+                        {isManageMode && (
+                          <td className="py-3.5 px-3 w-10 text-center" onClick={e => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleSelectOne(visit.id)}
+                              className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                            />
+                          </td>
+                        )}
 
                         {/* Visit Number */}
                         <td className="py-3.5 px-3 font-mono font-extrabold text-xs sm:text-sm text-[#0F766E] dark:text-teal-400 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5">
+                          <div 
+                            className="flex items-center gap-1.5 cursor-pointer hover:underline"
+                            onClick={() => handleOpenVisitModal(visit, false)}
+                            title={t('Click to view full details', 'انقر لعرض التفاصيل الكاملة')}
+                          >
                             <span>{visit.visit_number}</span>
                             {orgGroups.length > 1 && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 font-extrabold border border-indigo-200 dark:border-indigo-800" title={t('Joint Delegation', 'وفد مشترك')}>
@@ -1183,50 +1193,52 @@ export default function VisitorDashboardView({
                           </span>
                         </td>
 
-                        {/* Actions */}
-                        <td className="py-3.5 px-3 text-center whitespace-nowrap">
-                          <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
-                            {/* View Details */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenVisitModal(visit, false)}
-                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors cursor-pointer"
-                              title={t('View Full Details', 'عرض التفاصيل الكاملة')}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
+                        {/* Actions (Only in Manage Mode) */}
+                        {isManageMode && (
+                          <td className="py-3.5 px-3 text-center whitespace-nowrap">
+                            <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
+                              {/* View Details */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenVisitModal(visit, false)}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-[#0F766E] transition-colors cursor-pointer"
+                                title={t('View Full Details', 'عرض التفاصيل الكاملة')}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
 
-                            {/* Edit Visit */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenVisitModal(visit, true)}
-                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
-                              title={t('Edit Visit', 'تعديل الزيارة')}
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
+                              {/* Edit Visit */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenVisitModal(visit, true)}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                                title={t('Edit Visit', 'تعديل الزيارة')}
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
 
-                            {/* Quick Time Out */}
-                            <button
-                              type="button"
-                              onClick={() => handleOpenTimeOut(visit)}
-                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
-                              title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
-                            >
-                              <Clock className="w-4 h-4" />
-                            </button>
+                              {/* Quick Time Out */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenTimeOut(visit)}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                                title={t('Record/Update Time Out', 'تسجيل/تحديث وقت الخروج')}
+                              >
+                                <Clock className="w-4 h-4" />
+                              </button>
 
-                            {/* Delete Visit */}
-                            <button
-                              type="button"
-                              onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
-                              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                              title={t('Delete Visit', 'حذف الزيارة')}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+                              {/* Delete Visit */}
+                              <button
+                                type="button"
+                                onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                                className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                                title={t('Delete Visit', 'حذف الزيارة')}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })
@@ -1264,15 +1276,17 @@ export default function VisitorDashboardView({
                     {/* Top Header with Checkbox */}
                     <div className="flex items-start justify-between gap-2 border-b border-border pb-3">
                       <div className="flex items-start gap-2.5">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={e => {
-                            e.stopPropagation();
-                            handleToggleSelectOne(visit.id);
-                          }}
-                          className="w-4 h-4 mt-1 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
-                        />
+                        {isManageMode && (
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={e => {
+                              e.stopPropagation();
+                              handleToggleSelectOne(visit.id);
+                            }}
+                            className="w-4 h-4 mt-1 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-zinc-700 cursor-pointer"
+                          />
+                        )}
                         <div>
                           <span className="font-mono text-base font-extrabold text-[#0F766E] dark:text-teal-400">
                             {visit.visit_number}
@@ -1347,30 +1361,34 @@ export default function VisitorDashboardView({
                         <span>{t('View Details', 'عرض التفاصيل')}</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => handleOpenVisitModal(visit, true)}
-                        className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
-                        title={t('Edit', 'تعديل')}
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenTimeOut(visit)}
-                        className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
-                        title={t('Check Out', 'تسجيل الخروج')}
-                      >
-                        <Clock className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
-                        className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                        title={t('Delete', 'حذف')}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {isManageMode && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenVisitModal(visit, true)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-blue-600 transition-colors cursor-pointer"
+                            title={t('Edit', 'تعديل')}
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenTimeOut(visit)}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:text-amber-600 transition-colors cursor-pointer"
+                            title={t('Check Out', 'تسجيل الخروج')}
+                          >
+                            <Clock className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirm({ isOpen: true, visitId: visit.id, visitNumber: visit.visit_number })}
+                            className="p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                            title={t('Delete', 'حذف')}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -2163,7 +2181,7 @@ export default function VisitorDashboardView({
       )}
 
       {/* Floating Bulk Action Bar */}
-      {selectedIds.size > 0 && (
+      {isManageMode && selectedIds.size > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#173B63] dark:bg-zinc-800 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-teal-500/40 flex items-center gap-3.5 flex-wrap animate-in slide-in-from-bottom duration-200">
           <div className="flex items-center gap-2 pr-2 border-r border-slate-600 dark:border-zinc-700">
             <CheckCircle2 className="w-5 h-5 text-teal-400" />
